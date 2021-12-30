@@ -5197,12 +5197,13 @@ export interface StringsMap {
   'cv.verificationErrored': string
   'cv.verificationStatus': string
   'cv.verifications': string
-  'sto.stepDescription.ZeroNorth': string
   'cv.wednesday': string
   'cv.widowEnds': string
   'cv.windowEndsDay': string
   'cv.windowsEndIsRequired': string
   'cv.yourExistingErrorBudgetIs': string
+  'sto.stepDescription.ZeroNorth': string
+  'sto.zeroNorthImagePlaceholder': string
   /**
    * @deprecated migrate this string to module level file
    */
