@@ -34,6 +34,7 @@ module.exports = ({ enableGitOpsUI, enableSTO }) => {
 
   // TODO (tnhu): Use build an environment variable to enable Governance
   remotes.governance = "governance@[window.getApiBaseUrl('pm/remoteEntry.js')]"
+  remotes.ccmui = "ccmui@[window.getApiBaseUrl('ccmui/remoteEntry.js')]"
 
   if (enableSTO) {
     remotes.sto = "sto@[window.getApiBaseUrl('sto/remoteEntry.js')]"
