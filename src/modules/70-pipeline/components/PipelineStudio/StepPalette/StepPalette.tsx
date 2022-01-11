@@ -19,6 +19,7 @@ import { useFeature } from '@common/hooks/useFeatures'
 import { StepActions } from '@common/constants/TrackingConstants'
 import type { StageType } from '@pipeline/utils/stageHelpers'
 import { StepPopover } from '@pipeline/components/PipelineStudio/StepPalette/StepPopover/StepPopover'
+import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import type { AbstractStepFactory, StepData as FactoryStepData } from '../../AbstractSteps/AbstractStepFactory'
 
 import { iconMapByName } from './iconMap'
@@ -110,7 +111,7 @@ export function StepPalette({ onSelect, stepsFactory, stepPaletteModuleInfos }: 
               stepsData: [
                 {
                   name: 'Security Test',
-                  type: 'ZeroNorth',
+                  type: StepType.ZeroNorth,
                   disabled: false
                 }
               ]
