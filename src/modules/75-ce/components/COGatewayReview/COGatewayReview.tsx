@@ -10,7 +10,7 @@ import type { CellProps } from 'react-table'
 import cx from 'classnames'
 import { isEmpty as _isEmpty, defaultTo as _defaultTo } from 'lodash-es'
 import { Heading, Container, Layout, Text, Table, Color, Icon, IconName } from '@wings-software/uicore'
-import type { ConnectionMetadata, GatewayDetails, InstanceDetails } from '@ce/components/COCreateGateway/models'
+import type { GatewayDetails, InstanceDetails } from '@ce/components/COCreateGateway/models'
 import { Utils } from '@ce/common/Utils'
 import type { ContainerSvc, HealthCheck, PortConfig, RDSDatabase, Service } from 'services/lw'
 import FixedSchedeulesList from '@ce/common/FixedSchedulesList/FixedSchedulesList'
@@ -80,6 +80,8 @@ const COGatewayReview: React.FC<COGatewayReviewProps> = props => {
   const isK8sRule = Utils.isK8sRule(props.gatewayDetails)
   const filteredSchedules = props.gatewayDetails.schedules?.filter(s => !s.isDeleted)
   const hasSelectedInstances = !_isEmpty(props.gatewayDetails.selectedInstances)
+  const hasCustomDomains = !_isEmpty(props.gatewayDetails.customDomains)
+  const hasHostName = !_isEmpty(props.gatewayDetails.hostName)
   const serviceIdToNameMap = useMemo(() => {
     const map: Record<number, string> = {}
     props.allServices?.forEach(s => {
@@ -401,11 +403,11 @@ const COGatewayReview: React.FC<COGatewayReviewProps> = props => {
                 />
               </ReviewDetailsSection>
             )}
-          {_isEmpty(props.gatewayDetails.routing.database) && (
+          {_isEmpty(props.gatewayDetails.routing.database) && (hasCustomDomains || hasHostName) && (
             <ReviewDetailsSection isEditable onEdit={() => props.onEdit({ id: 'setupAccess' })}>
               <Heading level={2}>DNS Link mapping</Heading>
               <Layout.Vertical style={{ marginTop: 'var(--spacing-large)' }}>
-                {!_isEmpty(props.gatewayDetails.customDomains) && (
+                {hasCustomDomains && (
                   <Layout.Horizontal
                     spacing={'large'}
                     padding={{ bottom: 'medium' }}
@@ -415,20 +417,7 @@ const COGatewayReview: React.FC<COGatewayReviewProps> = props => {
                     <Text>{props.gatewayDetails.customDomains?.join(',')}</Text>
                   </Layout.Horizontal>
                 )}
-                {_isEmpty(props.gatewayDetails.routing.container_svc) &&
-                  _isEmpty(props.gatewayDetails.routing.database) && (
-                    <Layout.Horizontal
-                      spacing={'large'}
-                      padding={{ bottom: 'medium' }}
-                      className={cx(css.equalSpacing, css.borderSpacing)}
-                    >
-                      <Text>Is it publicly accessible?</Text>
-                      <Text>
-                        {(props.gatewayDetails.opts.access_details as ConnectionMetadata).dnsLink.public || 'Yes'}
-                      </Text>
-                    </Layout.Horizontal>
-                  )}
-                {_isEmpty(props.gatewayDetails.customDomains) && props.gatewayDetails.hostName && (
+                {_isEmpty(props.gatewayDetails.customDomains) && hasHostName && (
                   <Layout.Horizontal
                     spacing={'large'}
                     padding={{ bottom: 'medium' }}

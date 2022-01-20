@@ -1,7 +1,14 @@
+/*
+ * Copyright 2021 Harness Inc. All rights reserved.
+ * Use of this source code is governed by the PolyForm Shield 1.0.0 license
+ * that can be found in the licenses directory at the root of this repository, also available at
+ * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
+ */
+
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { isEmpty as _isEmpty, debounce as _debounce, defaultTo as _defaultTo } from 'lodash-es'
-import { Checkbox, Color, Container, FormInput, Heading, Layout, SelectOption, Text } from '@wings-software/uicore'
+import { Color, Container, FormInput, Heading, Layout, SelectOption, Text } from '@wings-software/uicore'
 import { Radio } from '@blueprintjs/core'
 import type { FormikProps } from 'formik'
 import { useStrings } from 'framework/strings'
@@ -90,10 +97,6 @@ const ResourceAccessUrlSelector: React.FC<ResourceAccessUrlSelectorProps> = ({
     }
   }, [gatewayDetails.routing.ports])
 
-  const shouldDisplayPublicAccessCheck = () => {
-    return _isEmpty(gatewayDetails.routing.container_svc)
-  }
-
   const debouncedCustomDomainTextChange = React.useCallback(
     _debounce((value: string, shouldLoadHostedZones: boolean) => {
       const updatedGatewayDetails = { ...gatewayDetails }
@@ -170,26 +173,6 @@ const ResourceAccessUrlSelector: React.FC<ResourceAccessUrlSelectorProps> = ({
             disabled={formikProps.values.usingCustomDomain !== 'yes'}
           />
         </Layout.Horizontal>
-        {shouldDisplayPublicAccessCheck() && (
-          <Checkbox
-            name="publicallyAccessible"
-            label={'This url is publicly accessible'}
-            onChange={() => {
-              const cbVal = Utils.booleanToString(formikProps.values.publicallyAccessible !== 'yes')
-              formikProps.setFieldValue('publicallyAccessible', cbVal)
-              const updatedGatewayDetails = {
-                ...gatewayDetails,
-                opts: {
-                  ...gatewayDetails.opts,
-                  access_details: { ...gatewayDetails.opts.access_details, dnsLink: { public: cbVal } }
-                }
-              }
-              setGatewayDetails(updatedGatewayDetails)
-            }}
-            checked={formikProps.values.publicallyAccessible === 'yes'}
-            className={css.publicAccessibleCheckboxContainer}
-          />
-        )}
       </Container>
       {formikProps.values.customURL && isAwsProvider && (
         <CustomDomainMapping
