@@ -152,7 +152,7 @@ const LoadBalancerSelection: React.FC<LoadBalancerSelectionProps> = ({ gatewayDe
   })
 
   useEffect(() => {
-    if (accessPoints?.response?.length == 0) {
+    if (accessPoints?.response?.length === 0) {
       return
     }
     if (gatewayDetails.accessPointID) {

@@ -969,19 +969,6 @@ exports[`Testing COGatewayAccess DNS checkbox checks succesfully 1`] = `
                             </div>
                           </div>
                         </div>
-                        <label
-                          class="bp3-control bp3-checkbox StyledProps--font Checkbox--checkbox publicAccessibleCheckboxContainer StyledProps--main"
-                        >
-                          <input
-                            checked=""
-                            name="publicallyAccessible"
-                            type="checkbox"
-                          />
-                          <span
-                            class="bp3-control-indicator"
-                          />
-                          This url is publicly accessible
-                        </label>
                       </div>
                       
                     </div>
