@@ -110,7 +110,7 @@ export function StepPalette({ onSelect, stepsFactory, stepPaletteModuleInfos }: 
               stepCategories: [],
               stepsData: [
                 {
-                  name: 'Security Test',
+                  name: 'Security Scan',
                   type: StepType.ZeroNorth,
                   disabled: false
                 }
