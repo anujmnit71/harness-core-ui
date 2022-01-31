@@ -34,7 +34,7 @@ interface PerspectiveGridCardProps {
     viewType: ViewType
   ) => void
   deletePerpsective: (perspectiveId: string, perspectiveName: string) => void
-  clonePerspective: (values: QlceView | Record<string, string>, isClone: boolean) => void
+  clonePerspective: (perspectiveId: string, perspectiveName: string) => void
 }
 
 const PerpsectiveGridCard: (props: PerspectiveGridCardProps) => JSX.Element | null = ({
@@ -89,7 +89,7 @@ const PerpsectiveGridCard: (props: PerspectiveGridCardProps) => JSX.Element | nu
   }
 
   const onCloneClick: () => void = () => {
-    clonePerspective(data, true)
+    data?.id && data?.name && clonePerspective(data.id, data.name)
   }
 
   const viewType = data?.viewType
@@ -193,7 +193,7 @@ interface PerspectiveListViewProps {
     viewType: ViewType
   ) => void
   deletePerpsective: (perspectiveId: string, perspectiveName: string) => void
-  clonePerspective: (values: QlceView | Record<string, string>, isClone: boolean) => void
+  clonePerspective: (perspectiveId: string, perspectiveName: string) => void
 }
 
 const PerspectiveListView: React.FC<PerspectiveListViewProps> = ({

@@ -3057,6 +3057,49 @@ export const useCreatePerspective = (props: UseCreatePerspectiveProps) =>
     ...props
   })
 
+export interface ClonePerspectiveQueryParams {
+  accountIdentifier: string
+  cloneName: string
+}
+
+export interface ClonePerspectivePathParams {
+  perspectiveId: string
+}
+
+export type ClonePerspectiveProps = Omit<
+  MutateProps<ResponseCEView, unknown, ClonePerspectiveQueryParams, void, ClonePerspectivePathParams>,
+  'path' | 'verb'
+> &
+  ClonePerspectivePathParams
+
+/**
+ * Clone perspective
+ */
+export const ClonePerspective = ({ perspectiveId, ...props }: ClonePerspectiveProps) => (
+  <Mutate<ResponseCEView, unknown, ClonePerspectiveQueryParams, void, ClonePerspectivePathParams>
+    verb="POST"
+    path={`/perspective/clone/${perspectiveId}`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseClonePerspectiveProps = Omit<
+  UseMutateProps<ResponseCEView, unknown, ClonePerspectiveQueryParams, void, ClonePerspectivePathParams>,
+  'path' | 'verb'
+> &
+  ClonePerspectivePathParams
+
+/**
+ * Clone perspective
+ */
+export const useClonePerspective = ({ perspectiveId, ...props }: UseClonePerspectiveProps) =>
+  useMutate<ResponseCEView, unknown, ClonePerspectiveQueryParams, void, ClonePerspectivePathParams>(
+    'POST',
+    (paramsInPath: ClonePerspectivePathParams) => `/perspective/clone/${paramsInPath.perspectiveId}`,
+    { base: getConfig('ccm/api'), pathParams: { perspectiveId }, ...props }
+  )
+
 export interface UpdatePerspectiveQueryParams {
   accountIdentifier: string
 }

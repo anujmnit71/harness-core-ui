@@ -28,7 +28,7 @@ import { PageSpinner, useToaster } from '@common/components'
 import { useFeature } from '@common/hooks/useFeatures'
 import { useTelemetry } from '@common/hooks/useTelemetry'
 import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
-import { useCreatePerspective, useDeletePerspective, CEView } from 'services/ce'
+import { useCreatePerspective, useDeletePerspective, CEView, useClonePerspective } from 'services/ce'
 import {
   CcmMetaData,
   QlceView,
@@ -241,6 +241,7 @@ interface PerspectiveListGridViewProps {
   ) => void
   deletePerpsective: (perspectiveId: string, perspectiveName: string) => void
   createNewPerspective: (values: QlceView | Record<string, string>, isClone: boolean) => void
+  clonePerspective: (perspectiveId: string, perspectiveName: string) => void
   filteredPerspectiveData: QlceView[]
   view: Views
 }
@@ -251,6 +252,7 @@ const PerspectiveListGridView: (props: PerspectiveListGridViewProps) => JSX.Elem
   navigateToPerspectiveDetailsPage,
   deletePerpsective,
   createNewPerspective,
+  clonePerspective,
   filteredPerspectiveData,
   view
 }) => {
@@ -284,7 +286,7 @@ const PerspectiveListGridView: (props: PerspectiveListGridViewProps) => JSX.Elem
               pespectiveData={recentViewList}
               navigateToPerspectiveDetailsPage={navigateToPerspectiveDetailsPage}
               deletePerpsective={deletePerpsective}
-              clonePerspective={createNewPerspective}
+              clonePerspective={clonePerspective}
             />
           </Container>
         ) : null}
@@ -303,7 +305,7 @@ const PerspectiveListGridView: (props: PerspectiveListGridViewProps) => JSX.Elem
           pespectiveData={filteredPerspectiveData}
           navigateToPerspectiveDetailsPage={navigateToPerspectiveDetailsPage}
           deletePerpsective={deletePerpsective}
-          clonePerspective={createNewPerspective}
+          clonePerspective={clonePerspective}
         />
       </>
     )
@@ -385,6 +387,14 @@ const PerspectiveListPage: React.FC = () => {
     }
   })
 
+  const { mutate: cloneView } = useClonePerspective({
+    perspectiveId: '', // this will be set by cloneView fn when called.
+    queryParams: {
+      accountIdentifier: accountId,
+      cloneName: '' // this will be set by cloneView fn when called.
+    }
+  })
+
   const [ccmMetaResult] = useFetchCcmMetaDataQuery()
   const { data: ccmData, fetching: fetchingCCMMetaData } = ccmMetaResult
 
@@ -405,6 +415,38 @@ const PerspectiveListPage: React.FC = () => {
 
     try {
       const response = await createView(formData as CEView)
+      const uuid = response?.data?.uuid
+
+      if (uuid) {
+        history.push(
+          routes.toCECreatePerspective({
+            accountId: accountId,
+            perspectiveId: uuid
+          })
+        )
+      }
+    } catch (e: any) {
+      const errMessage = e.data.message
+      showError(errMessage)
+    }
+  }
+
+  const clonePerspective: (perspectiveId: string, perspectiveName: string) => void = async (
+    perspectiveId,
+    perspectiveName
+  ) => {
+    const cloneName = `${perspectiveName}-clone`
+
+    try {
+      const response = await cloneView(void 0, {
+        queryParams: {
+          accountIdentifier: accountId,
+          cloneName
+        },
+        pathParams: {
+          perspectiveId: perspectiveId
+        }
+      })
       const uuid = response?.data?.uuid
 
       if (uuid) {
@@ -614,6 +656,7 @@ const PerspectiveListPage: React.FC = () => {
             navigateToPerspectiveDetailsPage={navigateToPerspectiveDetailsPage}
             deletePerpsective={deletePerpsective}
             createNewPerspective={createNewPerspective}
+            clonePerspective={clonePerspective}
             filteredPerspectiveData={filteredPerspectiveData}
             view={view}
           />
