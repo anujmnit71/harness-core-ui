@@ -350,6 +350,9 @@ execution:
     right: Align to right
     float: Floating window
     minimize: Minimize window
+  dialogMessages:
+    abortExecution: Are you sure you want to abort the execution?
+    abortTitle: Abort Execution?
 resourceConstraints:
   title: Resource Constraint
   infoText: 'You have {{executioncount}} executions in queue that have to complete before your execution begins. Only one execution on a K8s namespace is allowed at a time.'
@@ -744,6 +747,7 @@ verification:
   baselineTest: Baseline test
   metricsInViolation: Metrics in violation
   logClustersInViolation: Log Clusters in violation
+  errorClustersInViolation: Error Clusters in violation
   metricViewPlaceholder: Filter for a metric or transaction
   anomalousMetrics: Anomalous Metrics
   anomalousLogClusters: Anomalous Log Clusters

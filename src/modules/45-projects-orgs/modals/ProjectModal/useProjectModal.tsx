@@ -6,7 +6,8 @@
  */
 
 import React, { useCallback, useState } from 'react'
-import { useModalHook, StepWizard, Button } from '@wings-software/uicore'
+import { StepWizard, Button } from '@wings-software/uicore'
+import { useModalHook } from '@harness/use-modal'
 import { Dialog, IDialogProps } from '@blueprintjs/core'
 import { useLocation, useParams } from 'react-router-dom'
 import type { ModuleName } from 'framework/types/ModuleName'

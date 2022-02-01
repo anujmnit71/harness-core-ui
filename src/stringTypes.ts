@@ -464,11 +464,13 @@ export interface StringsMap {
   'common.purpose.cv.description': string
   'common.purpose.cv.intelligence': string
   'common.purpose.cv.moduleSelectionSubHeading': string
+  'common.purpose.cv.serviceReliability': string
   'common.purpose.cv.subtitle': string
   'common.purpose.cv.verification': string
   'common.purpose.howToProceed': string
   'common.purpose.moduleSuccess': string
   'common.purpose.selectAModule': string
+  'common.purpose.service': string
   'common.purpose.setup': string
   'common.purpose.startATrial': string
   'common.purpose.welcome': string
@@ -517,6 +519,7 @@ export interface StringsMap {
   'common.selectVersion': string
   'common.selected': string
   'common.serviceCreated': string
+  'common.serviceReliabilityManagement': string
   'common.serviceType': string
   'common.serviceUpdated': string
   'common.setAsDefault': string
@@ -713,6 +716,7 @@ export interface StringsMap {
   'notifications.userGroupsPlaceholder': string
   'notifications.validationPDKey': string
   'notifications.validationWebhook': string
+  'auditTrail.Platform': string
   'auditTrail.actions.added_collaborator': string
   'auditTrail.actions.added_membership': string
   'auditTrail.actions.invite_resent': string
@@ -1035,6 +1039,7 @@ export interface StringsMap {
   'delegates.successfullyUpdatedConfig': string
   'delegates.tokens.createdBySystem': string
   'delegates.tokens.delegateTokens': string
+  'delegates.tokens.delegateTokensTitle': string
   'delegates.tokens.generatedValuePlaceholder': string
   'delegates.tokens.moreInfo': string
   'delegates.tokens.moreInfoSubtitle': string
@@ -2134,6 +2139,7 @@ export interface StringsMap {
   'projectsOrgs.purposeList.moduleSuccess': string
   'projectsOrgs.purposeList.name': string
   'projectsOrgs.purposeList.selectAModule': string
+  'projectsOrgs.purposeList.service': string
   'projectsOrgs.purposeList.time': string
   'projectsOrgs.purposeList.verification': string
   'projectsOrgs.recentActivities': string
@@ -2296,6 +2302,8 @@ export interface StringsMap {
   'pipeline.execution.actions.resumePipeline': string
   'pipeline.execution.actions.resumeStage': string
   'pipeline.execution.currentExecution': string
+  'pipeline.execution.dialogMessages.abortExecution': string
+  'pipeline.execution.dialogMessages.abortTitle': string
   'pipeline.execution.ignoreFailedWarningText': string
   'pipeline.execution.iotab.noInputText': string
   'pipeline.execution.iotab.noOutputText': string
@@ -2961,6 +2969,7 @@ export interface StringsMap {
   'pipeline.verification.collapseAll': string
   'pipeline.verification.controlHostName': string
   'pipeline.verification.currentTest': string
+  'pipeline.verification.errorClustersInViolation': string
   'pipeline.verification.expandAll': string
   'pipeline.verification.healthSourceLabel': string
   'pipeline.verification.healthSourcePlaceholder': string
@@ -3409,6 +3418,7 @@ export interface StringsMap {
   'ce.co.dnsSetup.autoURL': string
   'ce.co.dnsSetup.customURL': string
   'ce.co.dnsSetup.isURLaccessible': string
+  'ce.co.emptyResultText': string
   'ce.co.gatewayAccess.accessDescription': string
   'ce.co.gatewayAccess.backgroundTasks': string
   'ce.co.gatewayAccess.dnsLink': string
@@ -3469,6 +3479,7 @@ export interface StringsMap {
   'ce.co.rulesTableHeaders.name': string
   'ce.co.rulesTableHeaders.savings': string
   'ce.co.rulesTableHeaders.status': string
+  'ce.co.searchResultsText': string
   'ce.co.setupCloudProvider': string
   'ce.co.sshSetup': string
   'ce.common.budget': string
@@ -4143,7 +4154,8 @@ export interface StringsMap {
   'cf.planEnforcement.freePlan.upgradeRequired': string
   'cf.planEnforcement.teamEnterprisePlan.approachingLimit': string
   'cf.planEnforcement.teamEnterprisePlan.upgradeRequired': string
-  'cf.planEnforcement.upgradeRequired': string
+  'cf.planEnforcement.upgradeRequiredDev': string
+  'cf.planEnforcement.upgradeRequiredMau': string
   'cf.rbac.category': string
   'cf.rbac.featureflag.delete': string
   'cf.rbac.featureflag.edit': string
@@ -4390,10 +4402,12 @@ export interface StringsMap {
   'cv.activitySources.name': string
   'cv.addGroupName': string
   'cv.addNew': string
+  'cv.adjustTheErrorBudgetToContinueWithDeployments': string
   'cv.admin.activitySources.dialogDeleteTitle': string
   'cv.allMetrics': string
   'cv.allServices': string
   'cv.analysisScreens.totalClusters': string
+  'cv.andYouHave': string
   'cv.anomalous': string
   'cv.anomalousMetrics': string
   'cv.bad': string
@@ -4471,11 +4485,13 @@ export interface StringsMap {
   'cv.dashboard.createProject': string
   'cv.dashboard.notStarted': string
   'cv.dashboard.subHeading': string
+  'cv.dateAndTime': string
   'cv.day': string
   'cv.days': string
   'cv.dependenciesHealthWithCount': string
   'cv.errorBudget': string
   'cv.errorBudgetBurnDown': string
+  'cv.errorBudgetIsSuccessfullyReset': string
   'cv.errorBudgetRecalculationInProgress': string
   'cv.errorBudgetRemaining': string
   'cv.evaluationPeriod': string
@@ -4549,11 +4565,15 @@ export interface StringsMap {
   'cv.hostNamePlaceholder': string
   'cv.identifierPlaceholder': string
   'cv.ignore': string
+  'cv.increaseErrorBudgetBy': string
+  'cv.increaseErrorBudgetByIsRequired': string
+  'cv.increaseWithPercentSign': string
   'cv.initiated': string
   'cv.jobNamePlaceholder': string
   'cv.known': string
   'cv.lastSuccessfulRun': string
   'cv.learnMore': string
+  'cv.left': string
   'cv.logCluster': string
   'cv.logsCluster': string
   'cv.maxValue': string
@@ -4565,6 +4585,7 @@ export interface StringsMap {
   'cv.metricVerificationModal.viewCalls': string
   'cv.minValueN': string
   'cv.mins': string
+  'cv.minutes': string
   'cv.monday': string
   'cv.monitoredServices.addNewMonitoredServices': string
   'cv.monitoredServices.assignLabel': string
@@ -4830,6 +4851,7 @@ export interface StringsMap {
   'cv.navLinks.adminSideNavLinks.monitoringSources': string
   'cv.noAnalysis': string
   'cv.noAnomalies': string
+  'cv.noPreviousErrorBudgetResetHistoryAvailable': string
   'cv.nonAnomalous': string
   'cv.objectiveValue': string
   'cv.onboarding.activitySources.addMoreSources': string
@@ -4888,12 +4910,16 @@ export interface StringsMap {
   'cv.pleaseFillTheRequiredFieldsToSeeTheSLIData': string
   'cv.postDeployment': string
   'cv.preProductionTests': string
+  'cv.previousErrorBudgetResetHistory': string
   'cv.proceedToEdit': string
   'cv.quarterly': string
   'cv.queries': string
   'cv.query': string
+  'cv.reasonIsRequired': string
+  'cv.remainingErrorBudget': string
   'cv.request': string
   'cv.required': string
+  'cv.resetErrorBudget': string
   'cv.response': string
   'cv.responseBody': string
   'cv.responseTime': string
@@ -5017,6 +5043,7 @@ export interface StringsMap {
   'cv.unexpected': string
   'cv.unit': string
   'cv.unknown': string
+  'cv.updatedErrorBudget': string
   'cv.urlCopied': string
   'cv.verificationErrored': string
   'cv.verificationStatus': string
@@ -5025,6 +5052,7 @@ export interface StringsMap {
   'cv.widowEnds': string
   'cv.windowEndsDay': string
   'cv.windowsEndIsRequired': string
+  'cv.yourExistingErrorBudgetIs': string
   /**
    * @deprecated migrate this string to module level file
    */
