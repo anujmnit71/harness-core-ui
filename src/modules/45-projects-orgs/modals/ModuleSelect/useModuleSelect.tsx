@@ -28,6 +28,7 @@ import { getModuleDescriptionsForModuleSelectionDialog, getModuleFullLengthTitle
 import { getModuleIcon } from '@common/utils/utils'
 import type { Project } from 'services/cd-ng'
 import ModuleSelectionFactory from '@projects-orgs/factories/ModuleSelectionFactory'
+import { useAppStore } from 'framework/AppStore/AppStoreContext'
 import css from './useModuleSelect.module.scss'
 
 export interface UseModuleSelectModalProps {
@@ -53,6 +54,13 @@ export const useModuleSelectModal = ({
   const [selectedModuleName, setSelectedModuleName] = React.useState<ModuleName>()
   const [projectData, setProjectData] = React.useState<Project>()
   const { accountId } = useParams<AccountPathProps>()
+  const { currentUserInfo } = useAppStore()
+  const { NG_LICENSES_ENABLED } = useFeatureFlags()
+  const { accounts } = currentUserInfo
+
+  const createdFromNG = accounts?.find(account => account.uuid === accountId)?.createdFromNG
+
+  const showTrialPages = createdFromNG || NG_LICENSES_ENABLED
   const { CDNG_ENABLED, CVNG_ENABLED, CING_ENABLED, CENG_ENABLED, CFNG_ENABLED } = useFeatureFlags()
   const modalProps: IDialogProps = {
     isOpen: true,
@@ -143,8 +151,14 @@ export const useModuleSelectModal = ({
                       {getString(getModuleFullLengthTitle(selectedModuleName))}
                     </Text>
                     <Button
-                      text={getString('projectsOrgs.goToModuleBtn')}
-                      width={150}
+                      text={
+                        showTrialPages
+                          ? getString('common.startTrial', {
+                              module: selectedModuleName
+                            })
+                          : getString('projectsOrgs.goToModuleBtn')
+                      }
+                      width={showTrialPages ? undefined : 150}
                       variation={ButtonVariation.PRIMARY}
                       onClick={() => {
                         if (projectData && projectData.orgIdentifier) {
