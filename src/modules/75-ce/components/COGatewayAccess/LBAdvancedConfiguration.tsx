@@ -1,3 +1,10 @@
+/*
+ * Copyright 2021 Harness Inc. All rights reserved.
+ * Use of this source code is governed by the PolyForm Shield 1.0.0 license
+ * that can be found in the licenses directory at the root of this repository, also available at
+ * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
+ */
+
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { isEmpty as _isEmpty, defaultTo as _defaultTo } from 'lodash-es'
@@ -30,6 +37,7 @@ interface LBAdvancedConfigurationProps {
   gatewayDetails: GatewayDetails
   setGatewayDetails: (details: GatewayDetails) => void
   activeStepDetails?: ASRuleCreationActiveStep | null
+  setServerNames: (values: string[]) => void
 }
 
 const LBAdvancedConfiguration: React.FC<LBAdvancedConfigurationProps> = props => {
@@ -59,12 +67,17 @@ const LBAdvancedConfiguration: React.FC<LBAdvancedConfigurationProps> = props =>
     }
   }, [])
 
+  const getServerNames = () => {
+    return routingRecords ? routingRecords?.map(record => record.server_name).filter(v => !_isEmpty(v)) : []
+  }
+
   useEffect(() => {
     const updatedGatewayDetails = {
       ...props.gatewayDetails,
       routing: { ...props.gatewayDetails.routing, ports: routingRecords }
     }
     props.setGatewayDetails(updatedGatewayDetails)
+    props.setServerNames(getServerNames() as string[])
   }, [routingRecords])
 
   const handleSaveRoutingRecords = (data: NetworkSecurityGroupForInstanceArray) => {
@@ -101,10 +114,6 @@ const LBAdvancedConfiguration: React.FC<LBAdvancedConfigurationProps> = props =>
     } finally {
       setShowRoutingTable(true)
     }
-  }
-
-  const addPort = () => {
-    setRoutingRecords(records => [...records, getPortConfig()])
   }
 
   const updateGatewayHealthCheck = (_healthCheckDetails: HealthCheck | null) => {
@@ -151,15 +160,6 @@ const LBAdvancedConfiguration: React.FC<LBAdvancedConfigurationProps> = props =>
                     ) : (
                       <CORoutingTable routingRecords={routingRecords} setRoutingRecords={setRoutingRecords} />
                     )}
-                    <Container className={css.rowItem}>
-                      <Text
-                        onClick={() => {
-                          addPort()
-                        }}
-                      >
-                        {getString('ce.co.gatewayConfig.addPortLabel')}
-                      </Text>
-                    </Container>
                   </Layout.Vertical>
                 </>
               )}

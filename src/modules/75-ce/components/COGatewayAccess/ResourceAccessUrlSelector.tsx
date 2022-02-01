@@ -26,13 +26,15 @@ interface ResourceAccessUrlSelectorProps {
   gatewayDetails: GatewayDetails
   setGatewayDetails: (details: GatewayDetails) => void
   setHelpTextSections: (s: string[]) => void
+  serverNames: string[]
 }
 
 const ResourceAccessUrlSelector: React.FC<ResourceAccessUrlSelectorProps> = ({
   gatewayDetails,
   setGatewayDetails,
   formikProps,
-  setHelpTextSections
+  setHelpTextSections,
+  serverNames
 }) => {
   const { accountId } = useParams<AccountPathProps>()
   const { getString } = useStrings()
@@ -86,16 +88,9 @@ const ResourceAccessUrlSelector: React.FC<ResourceAccessUrlSelectorProps> = ({
     }
   }, [dnsProvider])
 
-  const getServerNames = () => {
-    return gatewayDetails.routing.ports?.map(record => record.server_name).filter(v => !_isEmpty(v))
-  }
-
   useEffect(() => {
-    const serverNames = getServerNames()
-    if (!_isEmpty(serverNames)) {
-      debouncedCustomDomainTextChange(serverNames.join(','), true)
-    }
-  }, [gatewayDetails.routing.ports])
+    debouncedCustomDomainTextChange(serverNames.join(','), !_isEmpty(serverNames))
+  }, [serverNames])
 
   const debouncedCustomDomainTextChange = React.useCallback(
     _debounce((value: string, shouldLoadHostedZones: boolean) => {
@@ -109,7 +104,15 @@ const ResourceAccessUrlSelector: React.FC<ResourceAccessUrlSelectorProps> = ({
       updatedGatewayDetails.customDomains = value.split(',')
       setGatewayDetails(updatedGatewayDetails)
       setHelpTextSections(['usingCustomDomain'])
-      shouldLoadHostedZones && loadHostedZones()
+      shouldLoadHostedZones &&
+        loadHostedZones({
+          queryParams: {
+            cloud_account_id: gatewayDetails.cloudAccount.id, // eslint-disable-line
+            region: 'us-east-1',
+            domain: updatedGatewayDetails.customDomains[0],
+            accountIdentifier: accountId
+          }
+        })
     }, 500),
     [gatewayDetails]
   )
@@ -125,7 +128,7 @@ const ResourceAccessUrlSelector: React.FC<ResourceAccessUrlSelectorProps> = ({
         <Layout.Horizontal>
           <Radio
             value="no"
-            disabled={!_isEmpty(getServerNames())}
+            disabled={!_isEmpty(serverNames)}
             onChange={e => {
               formikProps.setFieldValue('usingCustomDomain', e.currentTarget.value)
               if (e.currentTarget.value === 'no') {

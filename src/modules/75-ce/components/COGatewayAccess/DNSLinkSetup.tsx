@@ -5,7 +5,7 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Heading, Layout, Formik, FormikForm } from '@wings-software/uicore'
 import * as Yup from 'yup'
 import { isEmpty as _isEmpty, defaultTo as _defaultTo } from 'lodash-es'
@@ -29,6 +29,7 @@ const DNSLinkSetup: React.FC<DNSLinkSetupProps> = props => {
   const { getString } = useStrings()
   const accessDetails = props.gatewayDetails.opts.access_details as ConnectionMetadata // eslint-disable-line
   const customDomainProviderDetails = props.gatewayDetails.routing.custom_domain_providers as CustomDomainDetails // eslint-disable-line
+  const [serverNames, setServerNames] = useState<string[]>([])
 
   return (
     <Layout.Vertical spacing="medium" padding="medium">
@@ -75,6 +76,7 @@ const DNSLinkSetup: React.FC<DNSLinkSetupProps> = props => {
                   gatewayDetails={props.gatewayDetails}
                   setGatewayDetails={props.setGatewayDetails}
                   activeStepDetails={props.activeStepDetails}
+                  setServerNames={setServerNames}
                 />
               )}
               <ResourceAccessUrlSelector
@@ -82,6 +84,7 @@ const DNSLinkSetup: React.FC<DNSLinkSetupProps> = props => {
                 gatewayDetails={props.gatewayDetails}
                 setGatewayDetails={props.setGatewayDetails}
                 setHelpTextSections={props.setHelpTextSections}
+                serverNames={serverNames}
               />
             </Layout.Vertical>
           </FormikForm>
