@@ -1,3 +1,10 @@
+/*
+ * Copyright 2022 Harness Inc. All rights reserved.
+ * Use of this source code is governed by the PolyForm Shield 1.0.0 license
+ * that can be found in the licenses directory at the root of this repository, also available at
+ * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
+ */
+
 import React, { useEffect, useState } from 'react'
 import {
   Button,
@@ -13,12 +20,12 @@ import {
   Text,
   Icon,
   TableV2,
-  Color,
-  useModalHook
+  Color
 } from '@wings-software/uicore'
 import { Link, useParams } from 'react-router-dom'
 import type { CellProps, Renderer } from 'react-table'
 import { Classes, Drawer, Menu, MenuItem, Popover, Position } from '@blueprintjs/core'
+import { useModalHook } from '@harness/use-modal'
 import { useStrings } from 'framework/strings'
 
 import PerspectiveTimeRangePicker from '@ce/components/PerspectiveTimeRangePicker/PerspectiveTimeRangePicker'
