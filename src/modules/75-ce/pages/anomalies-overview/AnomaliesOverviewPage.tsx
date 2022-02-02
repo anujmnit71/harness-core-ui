@@ -13,11 +13,12 @@ import {
   Text,
   Icon,
   TableV2,
-  Color
+  Color,
+  useModalHook
 } from '@wings-software/uicore'
 import { Link, useParams } from 'react-router-dom'
 import type { CellProps, Renderer } from 'react-table'
-import { Classes, Menu, MenuItem, Popover, Position } from '@blueprintjs/core'
+import { Classes, Drawer, Menu, MenuItem, Popover, Position } from '@blueprintjs/core'
 import { useStrings } from 'framework/strings'
 
 import PerspectiveTimeRangePicker from '@ce/components/PerspectiveTimeRangePicker/PerspectiveTimeRangePicker'
@@ -29,6 +30,7 @@ import {
 } from '@ce/utils/momentUtils'
 import { AnomalyData, useListAnomalies } from 'services/ce'
 import formatCost from '@ce/utils/formatCost'
+import SettingsDrawer from '@ce/components/AnomaliesList/SettingsDrawer'
 import css from './AnomaliesOverviewPage.module.scss'
 
 export interface TimeRange {
@@ -105,9 +107,10 @@ const AnomalyFilters: React.FC = () => {
 interface SearchProps {
   searchText: string
   onChange: React.Dispatch<React.SetStateAction<string>>
+  showModal: any
 }
 
-const AnomaliesSearch: React.FC<SearchProps> = ({ searchText, onChange }) => {
+const AnomaliesSearch: React.FC<SearchProps> = ({ searchText, onChange, showModal }) => {
   const { getString } = useStrings()
 
   return (
@@ -124,6 +127,7 @@ const AnomaliesSearch: React.FC<SearchProps> = ({ searchText, onChange }) => {
       <Button
         text={getString('ce.anomalyDetection.settingsBtn')}
         icon="nav-settings"
+        onClick={showModal}
         variation={ButtonVariation.SECONDARY}
         size={ButtonSize.MEDIUM}
       />
@@ -252,7 +256,7 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
         <Text font={{ weight: 'semi-bold', size: 'normal' }} color={Color.BLACK}>
           {formatCost(actualAmount)}
         </Text>
-        {trend ? <Text font={{ size: 'xsmall' }} color={Color.RED_600}>{`+${trend}%`}</Text> : null}
+        {trend ? <Text font={{ size: 'xsmall' }} color={Color.RED_600}>{`(+${trend}%)`}</Text> : null}
       </Layout.Horizontal>
     )
   }
@@ -263,6 +267,7 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
 
     return (
       <Layout.Horizontal style={{ alignItems: 'center' }}>
+        {/* TODO: Need to updated the image based on the cloud provider */}
         <Icon name="app-kubernetes" size={24} />
         <Layout.Vertical spacing="small">
           <Link to={''}>{resourceName || 'squidward/spongebob/1233445...'}</Link>
@@ -306,30 +311,25 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
           Header: getString('ce.anomalyDetection.tableHeaders.date'),
           accessor: 'time',
           Cell: DateCell,
-          width: '25%'
+          width: '20%'
         },
         {
           Header: getString('ce.anomalyDetection.tableHeaders.anomalousSpend'),
           accessor: 'actualAmount',
           Cell: CostCell,
-          width: '25%'
+          width: '20%'
         },
         {
           Header: getString('ce.anomalyDetection.tableHeaders.resource'),
           accessor: 'resourceName',
           Cell: ResourceCell,
-          width: '25%'
-        },
-        {
-          Header: getString('ce.anomalyDetection.tableHeaders.details'),
-          accessor: 'details',
-          width: '25%'
+          width: '35%'
         },
         {
           Header: getString('ce.anomalyDetection.tableHeaders.status'),
           accessor: 'status',
           Cell: StatusCell,
-          width: '25%'
+          width: '20%'
         },
         {
           Header: ' ',
@@ -349,6 +349,19 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
   )
 }
 
+const drawerProps = {
+  autoFocus: true,
+  canEscapeKeyClose: true,
+  canOutsideClickClose: true,
+  enforceFocus: true,
+  isOpen: true,
+  hasBackdrop: true,
+  position: Position.RIGHT,
+  usePortal: true,
+  size: '40%',
+  isCloseButtonShown: true
+}
+
 const AnomaliesOverviewPage: React.FC = () => {
   const { getString } = useStrings()
   const [searchText, setSearchText] = React.useState('')
@@ -360,6 +373,19 @@ const AnomaliesOverviewPage: React.FC = () => {
       accountIdentifier: accountId
     }
   })
+
+  const [showModal, hideDrawer] = useModalHook(() => {
+    return (
+      <Drawer
+        onClose={() => {
+          hideDrawer()
+        }}
+        {...drawerProps}
+      >
+        <SettingsDrawer hideDrawer={hideDrawer} />
+      </Drawer>
+    )
+  }, [])
 
   useEffect(() => {
     const getList = async () => {
@@ -386,7 +412,7 @@ const AnomaliesOverviewPage: React.FC = () => {
         })
         setListData(response?.data as AnomalyData[])
       } catch (error) {
-        console.log('AnomaliesOverviewPage: Error in fetching the anomalies list', error)
+        // console.log('AnomaliesOverviewPage: Error in fetching the anomalies list', error)
       }
     }
     getList()
@@ -406,7 +432,7 @@ const AnomaliesOverviewPage: React.FC = () => {
             top: 'medium'
           }}
         >
-          <AnomaliesSearch searchText={searchText} onChange={setSearchText} />
+          <AnomaliesSearch searchText={searchText} onChange={setSearchText} showModal={showModal} />
           <AnomaliesOverview />
           <AnomaliesListGridView listData={listData} />
         </Container>
