@@ -674,6 +674,8 @@ export interface StringsMap {
   'common.viewUsage': string
   'common.webhookURL': string
   'common.welcome': string
+  'common.with': string
+  'common.without': string
   'common.yearly': string
   'notifications.buttonSend': string
   'notifications.emailOrAlias': string
@@ -3749,24 +3751,30 @@ export interface StringsMap {
   'ce.recommendation.detailsPage.costOptimizedDetails': string
   'ce.recommendation.detailsPage.currentResources': string
   'ce.recommendation.detailsPage.customDetails': string
+  'ce.recommendation.detailsPage.headerText': string
   'ce.recommendation.detailsPage.histogramText': string
   'ce.recommendation.detailsPage.histogramTextDetails1': string
   'ce.recommendation.detailsPage.histogramTextDetails2': string
   'ce.recommendation.detailsPage.howItWorks': string
   'ce.recommendation.detailsPage.idleCost': string
   'ce.recommendation.detailsPage.limitPercentileLegendText': string
+  'ce.recommendation.detailsPage.memoryValueBuffer': string
   'ce.recommendation.detailsPage.percentileOfReqAndLimit': string
   'ce.recommendation.detailsPage.performanceOptimized': string
   'ce.recommendation.detailsPage.performanceOptimizedCaps': string
   'ce.recommendation.detailsPage.performanceOptimizedDetails': string
+  'ce.recommendation.detailsPage.qualityOfService': string
   'ce.recommendation.detailsPage.recommendationComputation': string
   'ce.recommendation.detailsPage.recommendedResources': string
   'ce.recommendation.detailsPage.reqPercentileLegendText': string
   'ce.recommendation.detailsPage.resetRecommendationText': string
   'ce.recommendation.detailsPage.resizeText': string
   'ce.recommendation.detailsPage.resourceChanges': string
+  'ce.recommendation.detailsPage.setQoSAndBuffer': string
   'ce.recommendation.detailsPage.timeChangeText': string
   'ce.recommendation.detailsPage.totalCost': string
+  'ce.recommendation.detailsPage.tuneRecommendations': string
+  'ce.recommendation.detailsPage.utilizationDataComputation': string
   'ce.recommendation.detailsPage.viewMoreDetailsText': string
   'ce.recommendation.listPage.backToPerspectives': string
   'ce.recommendation.listPage.filterHereText': string
@@ -3784,6 +3792,7 @@ export interface StringsMap {
   'ce.recommendation.listPage.listTableHeaders.resourceName': string
   'ce.recommendation.listPage.listTableHeaders.resourceType': string
   'ce.recommendation.listPage.monthlyForcastedCostText': string
+  'ce.recommendation.listPage.monthlyPotentialCostText': string
   'ce.recommendation.listPage.monthlySavingsText': string
   'ce.recommendation.listPage.recommendationDetails.resize': string
   'ce.recommendation.listPage.recommendationTypes.resizing': string

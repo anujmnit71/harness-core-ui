@@ -6,9 +6,10 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Container, Layout, Text, Button, Icon, Popover } from '@wings-software/uicore'
+import { Container, Layout, Text, Button, Icon, Popover, FontVariation, Color } from '@wings-software/uicore'
 import copy from 'copy-to-clipboard'
-import { PopoverInteractionKind, Position, Menu, MenuItem } from '@blueprintjs/core'
+import { PopoverInteractionKind, Position } from '@blueprintjs/core'
+import moment from 'moment'
 import { useStrings } from 'framework/strings'
 
 import { convertNumberToFixedDecimalPlaces } from '@ce/utils/convertNumberToFixedDecimalPlaces'
@@ -20,28 +21,40 @@ import {
   getCPUValueInCPUFromExpression
 } from '@ce/utils/formatResourceValue'
 import type { RecommendationItem, TimeRangeValue, ResourceObject } from '@ce/types'
+import type { RecommendationOverviewStats } from 'services/ce/services'
 
-import { RecommendationType, ChartColors, ViewTimeRange } from './constants'
+import formatCost from '@ce/utils/formatCost'
+import { RecommendationType, ChartColors } from './constants'
 import RecommendationTabs from './RecommendationTabs'
 import RecommendationDiffViewer from '../RecommendationDiffViewer/RecommendationDiffViewer'
 import RecommendationHistogram, { CustomHighcharts } from '../RecommendationHistogram/RecommendationHistogram'
 import limitLegend from './images/limit-legend.svg'
 import requestLegend from './images/request-legend.svg'
 import histogramImg from './images/histogram.gif'
+import {
+  RecommendationDetailsSavingsCard,
+  RecommendationDetailsSpendCard
+} from '../RecommendationDetailsSummaryCards/RecommendationDetailsSummaryCards'
 import css from './RecommendationDetails.module.scss'
 
 interface RecommendationDetailsProps {
   histogramData: RecommendationItem
   currentResources: ResourceObject
   timeRange: TimeRangeValue
-  setTimeRange: React.Dispatch<React.SetStateAction<TimeRangeValue>>
+  recommendationStats: RecommendationOverviewStats
+  qualityOfService: string
+  timeRangeFilter: string[]
+  cpuAndMemoryValueBuffer: number
 }
 
 const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
   histogramData,
   currentResources,
   timeRange,
-  setTimeRange
+  recommendationStats,
+  qualityOfService,
+  timeRangeFilter,
+  cpuAndMemoryValueBuffer
 }) => {
   const [cpuReqVal, setCPUReqVal] = useState(50)
   const [memReqVal, setMemReqVal] = useState(50)
@@ -193,9 +206,27 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
 
   return (
     <Container className={css.mainContainer} background="white" padding="large">
-      <Text color="grey800" font="medium">
+      {/* <Text color="grey800" font="medium">
         {histogramData.containerName}:
-      </Text>
+      </Text> */}
+      <Layout.Horizontal spacing="large" padding={{ top: 'large' }}>
+        <RecommendationDetailsSpendCard
+          withRecommendationAmount={formatCost(
+            recommendationStats.totalMonthlyCost - recommendationStats.totalMonthlySaving
+          )}
+          withoutRecommendationAmount={formatCost(recommendationStats.totalMonthlyCost)}
+          title={getString('ce.recommendation.listPage.monthlyPotentialCostText')}
+        />
+        <RecommendationDetailsSavingsCard
+          amount={formatCost(recommendationStats.totalMonthlySaving)}
+          title={getString('ce.recommendation.listPage.monthlySavingsText')}
+          iconName="money-icon"
+          amountSubTitle={`(${Math.floor(
+            (recommendationStats.totalMonthlySaving / recommendationStats.totalMonthlyCost) * 100
+          )})%`}
+          subTitle={`${moment(timeRangeFilter[0]).format('MMM DD')} - ${moment(timeRangeFilter[1]).format('MMM DD')}`}
+        />
+      </Layout.Horizontal>
       <RecommendationTabs
         costOptimizedSavings={costOptimizedSavings}
         performanceOptimizedSavings={performanceOptimizedSavings}
@@ -209,7 +240,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
         isCostOptimizedCustomized={isCostOptimizedCustomized}
       />
       <section className={css.diffContainer}>
-        <Text padding="xsmall" font={{ size: 'normal', align: 'center' }} background="grey100">
+        <Text padding="xsmall" font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }} background="grey100">
           {getString('ce.recommendation.detailsPage.resourceChanges')}
         </Text>
         <section className={css.diffHeader}>
@@ -251,21 +282,28 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
         <RecommendationDiffViewer
           recommendedResources={{
             limits: {
-              memory: getMemValueInReadableForm(histogramData?.memoryHistogram.precomputed[memLimitVal])
+              memory: getMemValueInReadableForm(
+                ((100 + cpuAndMemoryValueBuffer) / 100) * histogramData?.memoryHistogram.precomputed[memLimitVal]
+              )
             },
             requests: {
-              memory: getMemValueInReadableForm(histogramData?.memoryHistogram.precomputed[memReqVal]),
-              cpu: getCPUValueInReadableForm(histogramData?.cpuHistogram.precomputed[cpuReqVal])
+              memory: getMemValueInReadableForm(
+                ((100 + cpuAndMemoryValueBuffer) / 100) * histogramData?.memoryHistogram.precomputed[memReqVal]
+              ),
+              cpu: getCPUValueInReadableForm(
+                ((100 + cpuAndMemoryValueBuffer) / 100) * histogramData?.cpuHistogram.precomputed[cpuReqVal]
+              )
             }
           }}
           currentResources={currentResources}
+          qualityOfService={qualityOfService}
         />
       </section>
       <Container className={css.timeframeContainer}>
         <Layout.Horizontal
           background="grey100"
           style={{
-            alignItems: 'center',
+            alignItems: 'baseline',
             justifyContent: 'center'
           }}
         >
@@ -273,6 +311,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
             margin={{
               right: 'xsmall'
             }}
+            font={{ variation: FontVariation.TABLE_HEADERS }}
           >
             {selectedRecommendation === RecommendationType.CostOptimized
               ? getString('ce.recommendation.detailsPage.costOptimizedCaps')
@@ -304,46 +343,16 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
               </Container>
             }
           >
-            <Text color="primary5" className={css.actionText}>
+            <Text color={Color.PRIMARY_5} className={css.actionText} font={{ variation: FontVariation.TABLE_HEADERS }}>
               {getString('ce.recommendation.detailsPage.histogramText')}
             </Text>
           </Popover>
-          <Text padding="xsmall" font={{ size: 'normal', align: 'center' }}>
+          <Text padding="xsmall" font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}>
             {getString('ce.recommendation.detailsPage.timeChangeText')}
           </Text>
-          <Popover
-            position={Position.BOTTOM_LEFT}
-            modifiers={{
-              arrow: { enabled: false },
-              flip: { enabled: true },
-              keepTogether: { enabled: true },
-              preventOverflow: { enabled: true }
-            }}
-            content={
-              <Menu>
-                {ViewTimeRange.map(viewTimeRange => (
-                  <MenuItem
-                    onClick={() => {
-                      setTimeRange(viewTimeRange)
-                    }}
-                    text={viewTimeRange.label}
-                    key={viewTimeRange.value}
-                  />
-                ))}
-              </Menu>
-            }
-          >
-            <Text
-              color="primary5"
-              rightIcon="caret-down"
-              rightIconProps={{
-                color: 'primary5'
-              }}
-              className={css.actionText}
-            >
-              {timeRange?.label}
-            </Text>
-          </Popover>
+          <Text font={{ variation: FontVariation.TABLE_HEADERS }} className={css.actionText}>
+            {timeRange?.label}
+          </Text>
         </Layout.Horizontal>
       </Container>
       <Container className={css.histogramContainer}>
@@ -378,10 +387,9 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           ) : null}
         </Container>
         <img src={requestLegend} />
-        <Text>{getString('ce.recommendation.detailsPage.reqPercentileLegendText')}</Text>
-
+        <Text style={{ fontSize: 14 }}>{getString('ce.recommendation.detailsPage.reqPercentileLegendText')}</Text>
         <img src={limitLegend} />
-        <Text>{getString('ce.recommendation.detailsPage.limitPercentileLegendText')}</Text>
+        <Text style={{ fontSize: 14 }}>{getString('ce.recommendation.detailsPage.limitPercentileLegendText')}</Text>
       </Container>
     </Container>
   )

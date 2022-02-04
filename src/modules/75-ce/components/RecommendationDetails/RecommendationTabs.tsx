@@ -10,7 +10,6 @@ import { Container, Layout, Text } from '@wings-software/uicore'
 import cx from 'classnames'
 
 import { useStrings } from 'framework/strings'
-import formatCost from '@ce/utils/formatCost'
 import { useTelemetry } from '@common/hooks/useTelemetry'
 import { USER_JOURNEY_EVENTS } from '@ce/TrackingEventsConstants'
 import { RecommendationType } from './constants'
@@ -35,12 +34,7 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
   setSelectedRecommendation,
   setCPUReqVal,
   setMemReqVal,
-  setMemLimitVal,
-  costOptimizedSavings,
-  performanceOptimizedSavings,
-  currentSavings,
-  isPerfOptimizedCustomized,
-  isCostOptimizedCustomized
+  setMemLimitVal
 }) => {
   const { getString } = useStrings()
   const { trackEvent } = useTelemetry()
@@ -69,10 +63,11 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
               align: 'center'
             }}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.CostOptimized })}
+            tooltipProps={{}}
           >
             {getString('ce.recommendation.detailsPage.costOptimized')}
           </Text>
-          {costOptimizedSavings > 0 ? (
+          {/* {costOptimizedSavings > 0 ? (
             <Text
               font={{
                 size: 'xsmall',
@@ -95,7 +90,7 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
                 </Text>
               ) : null}
             </Text>
-          ) : null}
+          ) : null} */}
         </Layout.Horizontal>
 
         <Layout.Horizontal
@@ -119,10 +114,11 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
               align: 'center'
             }}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.PerformanceOptimized })}
+            tooltip={<></>}
           >
             {getString('ce.recommendation.detailsPage.performanceOptimized')}
           </Text>
-          {performanceOptimizedSavings > 0 ? (
+          {/* {performanceOptimizedSavings > 0 ? (
             <Text
               font={{
                 size: 'xsmall',
@@ -147,7 +143,7 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
                 </Text>
               ) : null}
             </Text>
-          ) : null}
+          ) : null} */}
         </Layout.Horizontal>
       </Layout.Horizontal>
     </Container>

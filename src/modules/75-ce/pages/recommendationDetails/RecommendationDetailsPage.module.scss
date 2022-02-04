@@ -18,7 +18,8 @@
 }
 
 .customImage {
-  width: 200px;
+  width: 131px;
+  height: 105px;
 }
 
 .savingsContainer {
@@ -46,4 +47,34 @@
 }
 .subText {
   padding-bottom: 1px !important;
+}
+
+.pillToggle {
+  width: 166px;
+  height: 20px;
+  > div[class*='selected'] {
+    background-color: var(--primary-7);
+  }
+  > div[data-name^='toggle-option'] {
+    width: 82px;
+    padding: 2px 11px;
+  }
+}
+
+.actionText {
+  cursor: pointer;
+}
+
+.bufferSlider {
+  > span[class*='bp3-slider-handle'] {
+    border-radius: 50px !important;
+  }
+
+  > div[class*='bp3-slider-track'] {
+    // height: 2px;
+  }
+}
+
+.sliderContainer {
+  width: 212px;
 }
