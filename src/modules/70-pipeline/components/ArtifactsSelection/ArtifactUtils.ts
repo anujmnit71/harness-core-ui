@@ -169,7 +169,7 @@ export const defaultArtifactInitialValues = (selectedArtifact: ArtifactType): Im
         identifier: '',
         imagePath: '',
         repository: '',
-        dockerRepositoryServer: '',
+        artifactRepositoryUrl: '',
         tagType: TagTypes.Value,
         tag: RUNTIME_INPUT_VALUE,
         tagRegex: RUNTIME_INPUT_VALUE
@@ -182,9 +182,9 @@ export const defaultArtifactInitialValues = (selectedArtifact: ArtifactType): Im
         tag: RUNTIME_INPUT_VALUE,
         tagRegex: RUNTIME_INPUT_VALUE,
         repository: '',
-        repositoryPortorDockerServer: RepositoryPortOrServer.DockerRepositoryServer,
+        repositoryPortorArtifactRepositoryUrl: RepositoryPortOrServer.ArtifactRepositoryUrl,
         repositoryPort: '',
-        dockerRepositoryServer: ''
+        artifactRepositoryUrl: ''
       }
     case ENABLED_ARTIFACT_TYPES.DockerRegistry:
     case ENABLED_ARTIFACT_TYPES.Ecr:

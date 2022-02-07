@@ -73,12 +73,12 @@ export const NexusArtifact: React.FC<StepProps<ConnectorConfigDTO> & ImagePathPr
       is: 'value',
       then: Yup.mixed().required(getString('pipeline.artifactsSelection.validation.tag'))
     }),
-    repositoryPortorDockerServer: Yup.string().required(),
-    dockerRepositoryServer: Yup.string().when('repositoryPortorDockerServer', {
-      is: 'dockerRepositoryServer',
-      then: Yup.string().required(getString('pipeline.artifactsSelection.validation.dockerRepositoryServer'))
+    repositoryPortorArtifactRepositoryUrl: Yup.string().required(),
+    artifactRepositoryUrl: Yup.string().when('repositoryPortorArtifactRepositoryUrl', {
+      is: 'artifactRepositoryUrl',
+      then: Yup.string().required(getString('pipeline.artifactsSelection.validation.artifactRepositoryUrl'))
     }),
-    repositoryPort: Yup.string().when('repositoryPortorDockerServer', {
+    repositoryPort: Yup.string().when('repositoryPortorArtifactRepositoryUrl', {
       is: 'repositoryPort',
       then: Yup.string().required(getString('pipeline.artifactsSelection.validation.repositoryPort'))
     })
@@ -160,18 +160,18 @@ export const NexusArtifact: React.FC<StepProps<ConnectorConfigDTO> & ImagePathPr
     const values = getArtifactFormData(initialValues, selectedArtifact as ArtifactType, context === 2)
     const specValues = get(initialValues, 'spec', null)
     merge(specValues, {
-      repositoryPortorDockerServer: specValues?.repositoryPort
+      repositoryPortorArtifactRepositoryUrl: specValues?.repositoryPort
         ? RepositoryPortOrServer.RepositoryPort
-        : RepositoryPortOrServer.DockerRepositoryServer
+        : RepositoryPortOrServer.ArtifactRepositoryUrl
     })
     return values
   }, [context, initialValues, selectedArtifact])
 
   const submitFormData = (formData: ImagePathTypes & { connectorId?: string }): void => {
     const repositoryPortOrServerData =
-      formData?.repositoryPortorDockerServer === RepositoryPortOrServer.RepositoryPort
+      formData?.repositoryPortorArtifactRepositoryUrl === RepositoryPortOrServer.RepositoryPort
         ? { repositoryPort: formData?.repositoryPort }
-        : { dockerRepositoryServer: formData?.dockerRepositoryServer }
+        : { artifactRepositoryUrl: formData?.artifactRepositoryUrl }
 
     const artifactObj = getFinalArtifactObj(formData, context === 2)
     merge(artifactObj.spec, {
@@ -240,37 +240,37 @@ export const NexusArtifact: React.FC<StepProps<ConnectorConfigDTO> & ImagePathPr
               </div>
               <div className={css.tagGroup}>
                 <FormInput.RadioGroup
-                  name="repositoryPortorDockerServer"
+                  name="repositoryPortorArtifactRepositoryUrl"
                   radioGroup={{ inline: true }}
                   items={repositoryPortOrServer}
                   className={css.radioGroup}
                 />
               </div>
 
-              {formik.values?.repositoryPortorDockerServer === 'dockerRepositoryServer' && (
+              {formik.values?.repositoryPortorArtifactRepositoryUrl === 'artifactRepositoryUrl' && (
                 <div className={css.imagePathContainer}>
                   <FormInput.MultiTextInput
-                    label={getString('pipeline.artifactsSelection.dockerRepositoryServer')}
-                    name="dockerRepositoryServer"
-                    placeholder={getString('pipeline.artifactsSelection.dockerRepositoryServerPlaceholder')}
+                    label={getString('pipeline.artifactsSelection.artifactRepositoryUrl')}
+                    name="artifactRepositoryUrl"
+                    placeholder={getString('pipeline.artifactsSelection.artifactRepositoryUrlPlaceholder')}
                     multiTextInputProps={{
                       expressions,
                       allowableTypes
                     }}
                   />
 
-                  {getMultiTypeFromValue(formik.values.dockerRepositoryServer) === MultiTypeInputType.RUNTIME && (
+                  {getMultiTypeFromValue(formik.values.artifactRepositoryUrl) === MultiTypeInputType.RUNTIME && (
                     <div className={css.configureOptions}>
                       <ConfigureOptions
                         style={{ alignSelf: 'center' }}
-                        value={formik.values?.dockerRepositoryServer as string}
+                        value={formik.values?.artifactRepositoryUrl as string}
                         type="String"
-                        variableName="dockerRepositoryServer"
+                        variableName="artifactRepositoryUrl"
                         showRequiredField={false}
                         showDefaultField={false}
                         showAdvanced={true}
                         onChange={value => {
-                          formik.setFieldValue('dockerRepositoryServer', value)
+                          formik.setFieldValue('artifactRepositoryUrl', value)
                         }}
                         isReadonly={isReadonly}
                       />
@@ -279,7 +279,7 @@ export const NexusArtifact: React.FC<StepProps<ConnectorConfigDTO> & ImagePathPr
                 </div>
               )}
 
-              {formik.values?.repositoryPortorDockerServer === 'repositoryPort' && (
+              {formik.values?.repositoryPortorArtifactRepositoryUrl === 'repositoryPort' && (
                 <div className={css.imagePathContainer}>
                   <FormInput.MultiTextInput
                     label={getString('pipeline.artifactsSelection.repositoryPort')}

@@ -701,16 +701,16 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
                     name={`${path}.artifacts.primary.spec.repositoryPort`}
                   />
                 )}
-                {getMultiTypeFromValue(get(template, `artifacts.primary.spec.dockerRepositoryServer`, '')) ===
+                {getMultiTypeFromValue(get(template, `artifacts.primary.spec.artifactRepositoryUrl`, '')) ===
                   MultiTypeInputType.RUNTIME && (
                   <FormInput.MultiTextInput
-                    label={getString('pipeline.artifactsSelection.dockerRepositoryServer')}
-                    disabled={disablePrimaryFields(`artifacts.primary.spec.dockerRepositoryServer`)}
+                    label={getString('pipeline.artifactsSelection.artifactRepositoryUrl')}
+                    disabled={disablePrimaryFields(`artifacts.primary.spec.artifactRepositoryUrl`)}
                     multiTextInputProps={{
                       expressions,
                       allowableTypes: [MultiTypeInputType.FIXED, MultiTypeInputType.EXPRESSION]
                     }}
-                    name={`${path}.artifacts.primary.spec.dockerRepositoryServer`}
+                    name={`${path}.artifacts.primary.spec.artifactRepositoryUrl`}
                   />
                 )}
 
@@ -848,7 +848,7 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
                       registryHostname = '',
                       repository = '',
                       repositoryPort = '',
-                      dockerRepositoryServer = ''
+                      artifactRepositoryUrl = ''
                     } = {}
                   } = {}
                 }: any,
@@ -986,15 +986,15 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
                         name={`${path}.artifacts.sidecars[${index}].sidecar.spec.repositoryPort`}
                       />
                     )}
-                    {getMultiTypeFromValue(dockerRepositoryServer) === MultiTypeInputType.RUNTIME && (
+                    {getMultiTypeFromValue(artifactRepositoryUrl) === MultiTypeInputType.RUNTIME && (
                       <FormInput.MultiTextInput
-                        label={getString('pipeline.artifactsSelection.dockerRepositoryServer')}
+                        label={getString('pipeline.artifactsSelection.artifactRepositoryUrl')}
                         multiTextInputProps={{
                           expressions,
                           allowableTypes: [MultiTypeInputType.FIXED, MultiTypeInputType.EXPRESSION]
                         }}
-                        disabled={disableField(`sidecars[${index}].sidecar.spec.dockerRepositoryServer`)}
-                        name={`${path}.artifacts.sidecars[${index}].sidecar.spec.dockerRepositoryServer`}
+                        disabled={disableField(`sidecars[${index}].sidecar.spec.artifactRepositoryUrl`)}
+                        name={`${path}.artifacts.sidecars[${index}].sidecar.spec.artifactRepositoryUrl`}
                       />
                     )}
                     {getMultiTypeFromValue(registryHostname) === MultiTypeInputType.RUNTIME && (

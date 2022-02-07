@@ -149,9 +149,9 @@ exports[`Nexus Artifact tests form renders correctly in Edit Case 1`] = `
                       <input
                         checked=""
                         class="RadioButton--input"
-                        name="repositoryPortorDockerServer"
+                        name="repositoryPortorArtifactRepositoryUrl"
                         type="radio"
-                        value="dockerRepositoryServer"
+                        value="artifactRepositoryUrl"
                       />
                       <span
                         class="RadioButton--radioIcon"
@@ -163,7 +163,7 @@ exports[`Nexus Artifact tests form renders correctly in Edit Case 1`] = `
                     >
                       <input
                         class="RadioButton--input"
-                        name="repositoryPortorDockerServer"
+                        name="repositoryPortorArtifactRepositoryUrl"
                         type="radio"
                         value="repositoryPort"
                       />
@@ -185,13 +185,13 @@ exports[`Nexus Artifact tests form renders correctly in Edit Case 1`] = `
             >
               <label
                 class="bp3-label"
-                for="dockerRepositoryServer"
+                for="artifactRepositoryUrl"
               >
                 <span
                   class="Tooltip--acenter"
-                  data-tooltip-id="imagePath_dockerRepositoryServer"
+                  data-tooltip-id="imagePath_artifactRepositoryUrl"
                 >
-                  pipeline.artifactsSelection.dockerRepositoryServer
+                  pipeline.artifactsSelection.artifactRepositoryUrl
                 </span>
                  
                 <span
@@ -210,8 +210,8 @@ exports[`Nexus Artifact tests form renders correctly in Edit Case 1`] = `
                     <input
                       autocomplete="off"
                       class="bp3-input"
-                      name="dockerRepositoryServer"
-                      placeholder="pipeline.artifactsSelection.dockerRepositoryServerPlaceholder"
+                      name="artifactRepositoryUrl"
+                      placeholder="pipeline.artifactsSelection.artifactRepositoryUrlPlaceholder"
                       type="text"
                       value=""
                     />
@@ -693,9 +693,9 @@ exports[`Nexus Artifact tests renders without crashing 1`] = `
                       <input
                         checked=""
                         class="RadioButton--input"
-                        name="repositoryPortorDockerServer"
+                        name="repositoryPortorArtifactRepositoryUrl"
                         type="radio"
-                        value="dockerRepositoryServer"
+                        value="artifactRepositoryUrl"
                       />
                       <span
                         class="RadioButton--radioIcon"
@@ -707,7 +707,7 @@ exports[`Nexus Artifact tests renders without crashing 1`] = `
                     >
                       <input
                         class="RadioButton--input"
-                        name="repositoryPortorDockerServer"
+                        name="repositoryPortorArtifactRepositoryUrl"
                         type="radio"
                         value="repositoryPort"
                       />
@@ -729,13 +729,13 @@ exports[`Nexus Artifact tests renders without crashing 1`] = `
             >
               <label
                 class="bp3-label"
-                for="dockerRepositoryServer"
+                for="artifactRepositoryUrl"
               >
                 <span
                   class="Tooltip--acenter"
-                  data-tooltip-id="imagePath_dockerRepositoryServer"
+                  data-tooltip-id="imagePath_artifactRepositoryUrl"
                 >
-                  pipeline.artifactsSelection.dockerRepositoryServer
+                  pipeline.artifactsSelection.artifactRepositoryUrl
                 </span>
                  
                 <span
@@ -754,8 +754,8 @@ exports[`Nexus Artifact tests renders without crashing 1`] = `
                     <input
                       autocomplete="off"
                       class="bp3-input"
-                      name="dockerRepositoryServer"
-                      placeholder="pipeline.artifactsSelection.dockerRepositoryServerPlaceholder"
+                      name="artifactRepositoryUrl"
+                      placeholder="pipeline.artifactsSelection.artifactRepositoryUrlPlaceholder"
                       type="text"
                       value=""
                     />
@@ -1237,9 +1237,9 @@ exports[`Nexus Artifact tests submits correctly with tagRegex data 1`] = `
                       <input
                         checked=""
                         class="RadioButton--input"
-                        name="repositoryPortorDockerServer"
+                        name="repositoryPortorArtifactRepositoryUrl"
                         type="radio"
-                        value="dockerRepositoryServer"
+                        value="artifactRepositoryUrl"
                       />
                       <span
                         class="RadioButton--radioIcon"
@@ -1251,7 +1251,7 @@ exports[`Nexus Artifact tests submits correctly with tagRegex data 1`] = `
                     >
                       <input
                         class="RadioButton--input"
-                        name="repositoryPortorDockerServer"
+                        name="repositoryPortorArtifactRepositoryUrl"
                         type="radio"
                         value="repositoryPort"
                       />
@@ -1273,13 +1273,13 @@ exports[`Nexus Artifact tests submits correctly with tagRegex data 1`] = `
             >
               <label
                 class="bp3-label"
-                for="dockerRepositoryServer"
+                for="artifactRepositoryUrl"
               >
                 <span
                   class="Tooltip--acenter"
-                  data-tooltip-id="imagePath_dockerRepositoryServer"
+                  data-tooltip-id="imagePath_artifactRepositoryUrl"
                 >
-                  pipeline.artifactsSelection.dockerRepositoryServer
+                  pipeline.artifactsSelection.artifactRepositoryUrl
                 </span>
                  
                 <span
@@ -1298,10 +1298,10 @@ exports[`Nexus Artifact tests submits correctly with tagRegex data 1`] = `
                     <input
                       autocomplete="off"
                       class="bp3-input"
-                      name="dockerRepositoryServer"
-                      placeholder="pipeline.artifactsSelection.dockerRepositoryServerPlaceholder"
+                      name="artifactRepositoryUrl"
+                      placeholder="pipeline.artifactsSelection.artifactRepositoryUrlPlaceholder"
                       type="text"
-                      value="dockerRepositoryServer"
+                      value="artifactRepositoryUrl"
                     />
                   </div>
                   <span

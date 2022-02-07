@@ -158,7 +158,7 @@ const Artifactory: React.FC<StepProps<ConnectorConfigDTO> & ImagePathProps> = ({
     const artifactObj = getFinalArtifactObj(formData, context === 2)
     merge(artifactObj.spec, {
       repository: formData?.repository,
-      dockerRepositoryServer: formData?.dockerRepositoryServer,
+      artifactRepositoryUrl: formData?.artifactRepositoryUrl,
       repositoryFormat
     })
     handleSubmit(artifactObj)
@@ -221,27 +221,27 @@ const Artifactory: React.FC<StepProps<ConnectorConfigDTO> & ImagePathProps> = ({
               </div>
               <div className={css.imagePathContainer}>
                 <FormInput.MultiTextInput
-                  label={getString('pipeline.artifactsSelection.dockerRepositoryServer')}
-                  name="dockerRepositoryServer"
-                  placeholder={getString('pipeline.artifactsSelection.dockerRepositoryServerPlaceholder')}
+                  label={getString('pipeline.artifactsSelection.artifactRepositoryUrl')}
+                  name="artifactRepositoryUrl"
+                  placeholder={getString('pipeline.artifactsSelection.artifactRepositoryUrlPlaceholder')}
                   multiTextInputProps={{
                     expressions,
                     allowableTypes
                   }}
                 />
 
-                {getMultiTypeFromValue(formik.values.dockerRepositoryServer) === MultiTypeInputType.RUNTIME && (
+                {getMultiTypeFromValue(formik.values.artifactRepositoryUrl) === MultiTypeInputType.RUNTIME && (
                   <div className={css.configureOptions}>
                     <ConfigureOptions
                       style={{ alignSelf: 'center' }}
-                      value={formik.values?.dockerRepositoryServer as string}
+                      value={formik.values?.artifactRepositoryUrl as string}
                       type="String"
-                      variableName="dockerRepositoryServer"
+                      variableName="artifactRepositoryUrl"
                       showRequiredField={false}
                       showDefaultField={false}
                       showAdvanced={true}
                       onChange={value => {
-                        formik.setFieldValue('dockerRepositoryServer', value)
+                        formik.setFieldValue('artifactRepositoryUrl', value)
                       }}
                       isReadonly={isReadonly}
                     />

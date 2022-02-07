@@ -318,6 +318,10 @@ export interface AccessControlCheckError {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_CONFIGURATION_ARTIFACTORY_ARTIFACT'
+    | 'INVALID_REQUEST_ARTIFACTORY_REGISTRY'
+    | 'INVALID_CONFIGURATION_NEXUS_ARTIFACT'
+    | 'INVALID_REQUEST_NEXUS_REGISTRY'
   correlationId?: string
   detailedMessage?: string
   failedPermissionChecks?: PermissionCheck[]
@@ -757,10 +761,20 @@ export type ArtifactoryConnector = ConnectorConfigDTO & {
   delegateSelectors?: string[]
 }
 
+export type ArtifactoryRegistryArtifactConfig = ArtifactConfig & {
+  artifactRepositoryUrl?: string
+  connectorRef: string
+  imagePath: string
+  metadata?: string
+  repository: string
+  repositoryFormat: string
+  tag?: string
+  tagRegex?: string
+}
+
 export interface ArtifactoryRequestDTO {
   tag?: string
   tagRegex?: string
-  tagsList?: string[]
 }
 
 export interface ArtifactoryResponseDTO {
@@ -2419,6 +2433,10 @@ export interface Error {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_CONFIGURATION_ARTIFACTORY_ARTIFACT'
+    | 'INVALID_REQUEST_ARTIFACTORY_REGISTRY'
+    | 'INVALID_CONFIGURATION_NEXUS_ARTIFACT'
+    | 'INVALID_REQUEST_NEXUS_REGISTRY'
   correlationId?: string
   detailedMessage?: string
   message?: string
@@ -2785,6 +2803,10 @@ export interface Failure {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_CONFIGURATION_ARTIFACTORY_ARTIFACT'
+    | 'INVALID_REQUEST_ARTIFACTORY_REGISTRY'
+    | 'INVALID_CONFIGURATION_NEXUS_ARTIFACT'
+    | 'INVALID_REQUEST_NEXUS_REGISTRY'
   correlationId?: string
   errors?: ValidationError[]
   message?: string
@@ -4812,10 +4834,21 @@ export type NexusConnector = ConnectorConfigDTO & {
   version: string
 }
 
+export type NexusRegistryArtifactConfig = ArtifactConfig & {
+  artifactRepositoryUrl?: string
+  connectorRef: string
+  imagePath: string
+  metadata?: string
+  repository: string
+  repositoryFormat: string
+  repositoryPort?: string
+  tag?: string
+  tagRegex?: string
+}
+
 export interface NexusRequestDTO {
   tag?: string
   tagRegex?: string
-  tagsList?: string[]
 }
 
 export interface NexusResponseDTO {
@@ -5553,7 +5586,7 @@ export interface PollingResponseDTO {
 
 export interface PrimaryArtifact {
   spec: ArtifactConfig
-  type: 'DockerRegistry' | 'Gcr' | 'Ecr'
+  type: 'DockerRegistry' | 'Gcr' | 'Ecr' | 'NexusRegistry' | 'ArtifactoryRegistry'
 }
 
 export interface Principal {
@@ -6668,6 +6701,10 @@ export interface ResponseMessage {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_CONFIGURATION_ARTIFACTORY_ARTIFACT'
+    | 'INVALID_REQUEST_ARTIFACTORY_REGISTRY'
+    | 'INVALID_CONFIGURATION_NEXUS_ARTIFACT'
+    | 'INVALID_REQUEST_NEXUS_REGISTRY'
   exception?: Throwable
   failureTypes?: (
     | 'EXPIRED'
@@ -8148,7 +8185,7 @@ export type ShellScriptStepInfo = StepSpecType & {
 export interface SidecarArtifact {
   identifier: string
   spec: ArtifactConfig
-  type: 'DockerRegistry' | 'Gcr' | 'Ecr'
+  type: 'DockerRegistry' | 'Gcr' | 'Ecr' | 'NexusRegistry' | 'ArtifactoryRegistry'
 }
 
 export interface SidecarArtifactWrapper {
@@ -9058,7 +9095,7 @@ export type GetBuildDetailsForArtifactoryArtifactWithYamlBodyRequestBody = strin
 
 export type GetBuildDetailsForEcrWithYamlBodyRequestBody = string
 
-export type SubscribeBodyRequestBody = string[]
+export type ProcessPollingResultNgBodyRequestBody = string[]
 
 export type UpdateWhitelistedDomainsBodyRequestBody = string[]
 
@@ -10783,7 +10820,7 @@ export interface GetBuildDetailsForArtifactoryArtifactQueryParams {
   repository?: string
   imagePath?: string
   repositoryFormat?: string
-  dockerRepositoryServer?: string
+  artifactRepositoryUrl?: string
   connectorRef?: string
   accountIdentifier: string
   orgIdentifier: string
@@ -10846,7 +10883,7 @@ export interface GetBuildDetailsForArtifactoryArtifactWithYamlQueryParams {
   repository?: string
   imagePath?: string
   repositoryFormat?: string
-  dockerRepositoryServer?: string
+  artifactRepositoryUrl?: string
   connectorRef?: string
   accountIdentifier: string
   orgIdentifier: string
@@ -10939,7 +10976,7 @@ export interface GetLastSuccessfulBuildForArtifactoryArtifactQueryParams {
   repository?: string
   imagePath?: string
   repositoryFormat?: string
-  dockerRepositoryServer?: string
+  artifactRepositoryUrl?: string
   connectorRef?: string
   accountIdentifier: string
   orgIdentifier: string
@@ -12387,7 +12424,7 @@ export interface GetBuildDetailsForNexusArtifactQueryParams {
   repository?: string
   repositoryPort?: string
   repositoryFormat?: string
-  dockerRepositoryServer?: string
+  artifactRepositoryUrl?: string
   imagePath?: string
   connectorRef?: string
   accountIdentifier: string
@@ -12452,7 +12489,7 @@ export interface GetBuildDetailsForNexusArtifactWithYamlQueryParams {
   repositoryPort?: string
   imagePath?: string
   repositoryFormat?: string
-  dockerRepositoryServer?: string
+  artifactRepositoryUrl?: string
   connectorRef?: string
   accountIdentifier: string
   orgIdentifier: string
@@ -12542,7 +12579,7 @@ export interface GetLastSuccessfulBuildForNexusArtifactQueryParams {
   repositoryPort?: string
   imagePath?: string
   repositoryFormat?: string
-  dockerRepositoryServer?: string
+  artifactRepositoryUrl?: string
   connectorRef?: string
   accountIdentifier: string
   orgIdentifier: string
@@ -22718,7 +22755,7 @@ export type ProcessPollingResultNgProps = Omit<
     void,
     Failure | Error,
     ProcessPollingResultNgQueryParams,
-    SubscribeBodyRequestBody,
+    ProcessPollingResultNgBodyRequestBody,
     ProcessPollingResultNgPathParams
   >,
   'path' | 'verb'
@@ -22730,7 +22767,7 @@ export const ProcessPollingResultNg = ({ perpetualTaskId, ...props }: ProcessPol
     void,
     Failure | Error,
     ProcessPollingResultNgQueryParams,
-    SubscribeBodyRequestBody,
+    ProcessPollingResultNgBodyRequestBody,
     ProcessPollingResultNgPathParams
   >
     verb="POST"
@@ -22745,7 +22782,7 @@ export type UseProcessPollingResultNgProps = Omit<
     void,
     Failure | Error,
     ProcessPollingResultNgQueryParams,
-    SubscribeBodyRequestBody,
+    ProcessPollingResultNgBodyRequestBody,
     ProcessPollingResultNgPathParams
   >,
   'path' | 'verb'
@@ -22757,7 +22794,7 @@ export const useProcessPollingResultNg = ({ perpetualTaskId, ...props }: UseProc
     void,
     Failure | Error,
     ProcessPollingResultNgQueryParams,
-    SubscribeBodyRequestBody,
+    ProcessPollingResultNgBodyRequestBody,
     ProcessPollingResultNgPathParams
   >(
     'POST',
@@ -22773,7 +22810,7 @@ export const processPollingResultNgPromise = (
     void,
     Failure | Error,
     ProcessPollingResultNgQueryParams,
-    SubscribeBodyRequestBody,
+    ProcessPollingResultNgBodyRequestBody,
     ProcessPollingResultNgPathParams
   > & { perpetualTaskId: string },
   signal?: RequestInit['signal']
@@ -22782,17 +22819,17 @@ export const processPollingResultNgPromise = (
     void,
     Failure | Error,
     ProcessPollingResultNgQueryParams,
-    SubscribeBodyRequestBody,
+    ProcessPollingResultNgBodyRequestBody,
     ProcessPollingResultNgPathParams
   >('POST', getConfig('ng/api'), `/polling/delegate-response/${perpetualTaskId}`, props, signal)
 
 export type SubscribeProps = Omit<
-  MutateProps<ResponsePollingResponseDTO, Failure | Error, void, SubscribeBodyRequestBody, void>,
+  MutateProps<ResponsePollingResponseDTO, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>,
   'path' | 'verb'
 >
 
 export const Subscribe = (props: SubscribeProps) => (
-  <Mutate<ResponsePollingResponseDTO, Failure | Error, void, SubscribeBodyRequestBody, void>
+  <Mutate<ResponsePollingResponseDTO, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>
     verb="POST"
     path={`/polling/subscribe`}
     base={getConfig('ng/api')}
@@ -22801,22 +22838,28 @@ export const Subscribe = (props: SubscribeProps) => (
 )
 
 export type UseSubscribeProps = Omit<
-  UseMutateProps<ResponsePollingResponseDTO, Failure | Error, void, SubscribeBodyRequestBody, void>,
+  UseMutateProps<ResponsePollingResponseDTO, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>,
   'path' | 'verb'
 >
 
 export const useSubscribe = (props: UseSubscribeProps) =>
-  useMutate<ResponsePollingResponseDTO, Failure | Error, void, SubscribeBodyRequestBody, void>(
+  useMutate<ResponsePollingResponseDTO, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>(
     'POST',
     `/polling/subscribe`,
     { base: getConfig('ng/api'), ...props }
   )
 
 export const subscribePromise = (
-  props: MutateUsingFetchProps<ResponsePollingResponseDTO, Failure | Error, void, SubscribeBodyRequestBody, void>,
+  props: MutateUsingFetchProps<
+    ResponsePollingResponseDTO,
+    Failure | Error,
+    void,
+    ProcessPollingResultNgBodyRequestBody,
+    void
+  >,
   signal?: RequestInit['signal']
 ) =>
-  mutateUsingFetch<ResponsePollingResponseDTO, Failure | Error, void, SubscribeBodyRequestBody, void>(
+  mutateUsingFetch<ResponsePollingResponseDTO, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>(
     'POST',
     getConfig('ng/api'),
     `/polling/subscribe`,
@@ -22825,12 +22868,12 @@ export const subscribePromise = (
   )
 
 export type UnsubscribeProps = Omit<
-  MutateProps<boolean, Failure | Error, void, SubscribeBodyRequestBody, void>,
+  MutateProps<boolean, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>,
   'path' | 'verb'
 >
 
 export const Unsubscribe = (props: UnsubscribeProps) => (
-  <Mutate<boolean, Failure | Error, void, SubscribeBodyRequestBody, void>
+  <Mutate<boolean, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>
     verb="POST"
     path={`/polling/unsubscribe`}
     base={getConfig('ng/api')}
@@ -22839,21 +22882,22 @@ export const Unsubscribe = (props: UnsubscribeProps) => (
 )
 
 export type UseUnsubscribeProps = Omit<
-  UseMutateProps<boolean, Failure | Error, void, SubscribeBodyRequestBody, void>,
+  UseMutateProps<boolean, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>,
   'path' | 'verb'
 >
 
 export const useUnsubscribe = (props: UseUnsubscribeProps) =>
-  useMutate<boolean, Failure | Error, void, SubscribeBodyRequestBody, void>('POST', `/polling/unsubscribe`, {
-    base: getConfig('ng/api'),
-    ...props
-  })
+  useMutate<boolean, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>(
+    'POST',
+    `/polling/unsubscribe`,
+    { base: getConfig('ng/api'), ...props }
+  )
 
 export const unsubscribePromise = (
-  props: MutateUsingFetchProps<boolean, Failure | Error, void, SubscribeBodyRequestBody, void>,
+  props: MutateUsingFetchProps<boolean, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>,
   signal?: RequestInit['signal']
 ) =>
-  mutateUsingFetch<boolean, Failure | Error, void, SubscribeBodyRequestBody, void>(
+  mutateUsingFetch<boolean, Failure | Error, void, ProcessPollingResultNgBodyRequestBody, void>(
     'POST',
     getConfig('ng/api'),
     `/polling/unsubscribe`,

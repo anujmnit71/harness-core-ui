@@ -79,7 +79,7 @@ export const tagOptions: IOptionProps[] = [
 export const repositoryPortOrServer: IOptionProps[] = [
   {
     label: 'Docker Repository Server',
-    value: 'dockerRepositoryServer'
+    value: 'artifactRepositoryUrl'
   },
   {
     label: 'Repository Port',

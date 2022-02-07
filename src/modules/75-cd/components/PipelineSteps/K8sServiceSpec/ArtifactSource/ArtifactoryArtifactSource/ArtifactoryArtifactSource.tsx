@@ -178,7 +178,7 @@ const Content = (props: ArtifactoryRenderContent): JSX.Element => {
 
           {isFieldRuntime(`artifacts.${artifactPath}.spec.artifactRepositoryUrl`, template) && (
             <FormInput.MultiTextInput
-              label={getString('pipeline.artifactsSelection.dockerRepositoryServer')}
+              label={getString('pipeline.artifactsSelection.artifactRepositoryUrl')}
               disabled={isFieldDisabled(`artifacts.${artifactPath}.spec.artifactRepositoryUrl`)}
               multiTextInputProps={{
                 expressions,

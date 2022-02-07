@@ -2234,9 +2234,9 @@ export interface StringsMap {
   'pipeline.approvalStep.validation.userGroups': string
   'pipeline.approvalTypeRequired': string
   'pipeline.artifactsSelection.artifactDetails': string
+  'pipeline.artifactsSelection.artifactRepositoryUrl': string
+  'pipeline.artifactsSelection.artifactRepositoryUrlPlaceholder': string
   'pipeline.artifactsSelection.artifactTyperequired': string
-  'pipeline.artifactsSelection.dockerRepositoryServer': string
-  'pipeline.artifactsSelection.dockerRepositoryServerPlaceholder': string
   'pipeline.artifactsSelection.existingDocker.enterTagRegex': string
   'pipeline.artifactsSelection.existingDocker.imageNamePlaceholder': string
   'pipeline.artifactsSelection.existingDocker.sidecarId': string
@@ -2245,7 +2245,7 @@ export interface StringsMap {
   'pipeline.artifactsSelection.repositoryPlaceholder': string
   'pipeline.artifactsSelection.repositoryPort': string
   'pipeline.artifactsSelection.repositoryPortPlaceholder': string
-  'pipeline.artifactsSelection.validation.dockerRepositoryServer': string
+  'pipeline.artifactsSelection.validation.artifactRepositoryUrl': string
   'pipeline.artifactsSelection.validation.imagePath': string
   'pipeline.artifactsSelection.validation.region': string
   'pipeline.artifactsSelection.validation.repositoryPort': string

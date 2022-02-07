@@ -34,7 +34,7 @@ const initialValues = {
   tagType: TagTypes.Value,
   tagRegex: '',
   repository: '',
-  dockerRepositoryServer: ''
+  artifactRepositoryUrl: ''
 }
 
 describe('Nexus Artifact tests', () => {
@@ -99,7 +99,7 @@ describe('Nexus Artifact tests', () => {
           imagePath: 'image-path',
           repository: 'repository',
           tag: '<+input>',
-          dockerRepositoryServer: '',
+          artifactRepositoryUrl: '',
           repositoryFormat: 'docker'
         }
       })
@@ -114,7 +114,7 @@ describe('Nexus Artifact tests', () => {
       tag: 'tag',
       tagRegex: '',
       repository: 'repository-name',
-      dockerRepositoryServer: 'dockerRepositoryServer'
+      artifactRepositoryUrl: 'artifactRepositoryUrl'
     }
     const { container } = render(
       <TestWrapper>
@@ -124,7 +124,7 @@ describe('Nexus Artifact tests', () => {
     const repositoryField = container.querySelector('input[name="repository"]')
     expect(repositoryField).not.toBeNull()
     expect(container.querySelector('input[name="imagePath"]')).not.toBeNull()
-    expect(container.querySelector('input[name="dockerRepositoryServer"]')).not.toBeNull()
+    expect(container.querySelector('input[name="artifactRepositoryUrl"]')).not.toBeNull()
 
     expect(container).toMatchSnapshot()
   })
@@ -137,7 +137,7 @@ describe('Nexus Artifact tests', () => {
       tagType: TagTypes.Value,
       tagRegex: '',
       repository: '',
-      dockerRepositoryServer: ''
+      artifactRepositoryUrl: ''
     }
     const { container } = render(
       <TestWrapper>
@@ -154,7 +154,7 @@ describe('Nexus Artifact tests', () => {
       fireEvent.change(queryByNameAttribute('identifier')!, { target: { value: 'testidentifier' } })
       fireEvent.change(queryByNameAttribute('imagePath')!, { target: { value: 'image-path' } })
       fireEvent.change(queryByNameAttribute('repository')!, { target: { value: 'repository' } })
-      fireEvent.change(queryByNameAttribute('dockerRepositoryServer')!, { target: { value: 'dockerRepositoryServer' } })
+      fireEvent.change(queryByNameAttribute('artifactRepositoryUrl')!, { target: { value: 'artifactRepositoryUrl' } })
     })
     fireEvent.click(submitBtn)
 
@@ -167,7 +167,7 @@ describe('Nexus Artifact tests', () => {
           imagePath: 'image-path',
           repository: 'repository',
           tag: '<+input>',
-          dockerRepositoryServer: 'dockerRepositoryServer',
+          artifactRepositoryUrl: 'artifactRepositoryUrl',
           repositoryFormat: 'docker'
         }
       })
@@ -175,7 +175,7 @@ describe('Nexus Artifact tests', () => {
     await waitFor(() => expect(container.querySelector('input[name="repository"]')).toHaveValue('repository'))
     await waitFor(() => expect(container.querySelector('input[name="imagePath"]')).toHaveValue('image-path'))
     await waitFor(() =>
-      expect(container.querySelector('input[name="dockerRepositoryServer"]')).toHaveValue('dockerRepositoryServer')
+      expect(container.querySelector('input[name="artifactRepositoryUrl"]')).toHaveValue('artifactRepositoryUrl')
     )
   })
 })

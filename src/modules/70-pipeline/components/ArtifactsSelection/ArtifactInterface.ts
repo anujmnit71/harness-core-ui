@@ -53,7 +53,7 @@ export enum TagTypes {
 }
 export enum RepositoryPortOrServer {
   RepositoryPort = 'repositoryPort',
-  DockerRepositoryServer = 'dockerRepositoryServer'
+  ArtifactRepositoryUrl = 'artifactRepositoryUrl'
 }
 export interface InitialArtifactDataType {
   submittedArtifact?: ArtifactType | null
@@ -69,8 +69,8 @@ export interface ImagePathTypes {
   region?: any
   repositoryPort?: number | string
   repository?: string
-  dockerRepositoryServer?: string
-  repositoryPortorDockerServer?: string
+  artifactRepositoryUrl?: string
+  repositoryPortorArtifactRepositoryUrl?: string
 }
 
 export interface ImagePathProps {
