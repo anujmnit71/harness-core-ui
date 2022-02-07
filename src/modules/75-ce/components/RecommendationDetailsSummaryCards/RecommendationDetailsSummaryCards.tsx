@@ -55,20 +55,24 @@ export const RecommendationDetailsSavingsCard: React.FC<RecommendationDetailsSav
 
 interface RecommendationDetailsSpendCardProps {
   title: string
+  spentBy: string
   withRecommendationAmount: string
   withoutRecommendationAmount: string
 }
 
 export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpendCardProps> = props => {
-  const { title, withRecommendationAmount, withoutRecommendationAmount } = props
+  const { title, spentBy, withRecommendationAmount, withoutRecommendationAmount } = props
   const { getString } = useStrings()
 
   return (
     <Card className={cx(css.potentialSpendCard)} elevation={1}>
       <Layout.Vertical spacing="small">
-        <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_500}>
-          {title}
-        </Text>
+        <Layout.Horizontal style={{ alignItems: 'baseline' }} spacing="xsmall">
+          <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_500}>
+            {title}
+          </Text>
+          <Text color={Color.GREY_500}>{`(${getString('common.by')} ${spentBy})`}</Text>
+        </Layout.Horizontal>
         <Layout.Horizontal padding={{ left: 'small', right: 'small' }}>
           <Layout.Vertical
             padding={{ top: 'medium', right: 'medium' }}

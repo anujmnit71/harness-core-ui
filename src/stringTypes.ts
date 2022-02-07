@@ -89,6 +89,7 @@ export interface StringsMap {
   'common.bash': string
   'common.billed': string
   'common.blank': string
+  'common.by': string
   'common.capsAll': string
   'common.ce.autostopping': string
   'common.ce.cost': string
@@ -3749,6 +3750,7 @@ export interface StringsMap {
   'ce.recommendation.detailsPage.costOptimized': string
   'ce.recommendation.detailsPage.costOptimizedCaps': string
   'ce.recommendation.detailsPage.costOptimizedDetails': string
+  'ce.recommendation.detailsPage.cpuHistogramHeader': string
   'ce.recommendation.detailsPage.currentResources': string
   'ce.recommendation.detailsPage.customDetails': string
   'ce.recommendation.detailsPage.headerText': string
@@ -3758,6 +3760,7 @@ export interface StringsMap {
   'ce.recommendation.detailsPage.howItWorks': string
   'ce.recommendation.detailsPage.idleCost': string
   'ce.recommendation.detailsPage.limitPercentileLegendText': string
+  'ce.recommendation.detailsPage.memoryHistogramHeader': string
   'ce.recommendation.detailsPage.memoryValueBuffer': string
   'ce.recommendation.detailsPage.percentileOfReqAndLimit': string
   'ce.recommendation.detailsPage.performanceOptimized': string

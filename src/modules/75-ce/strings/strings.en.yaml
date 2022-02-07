@@ -478,6 +478,8 @@ recommendation:
     setQoSAndBuffer: 'Set QoS and Buffer'
     qualityOfService: 'Quality of service'
     memoryValueBuffer: '% Buffer to be considered for CPU/Memory values'
+    cpuHistogramHeader: 'Number of samples whose CPU Request will be met'
+    memoryHistogramHeader: 'Number of samples whose Memory Request and Limit will be met'
   recommendationChart:
     cpuPlaceholder: 'CPU Usage(millicores)'
     noOfSamples: 'Number of samples'

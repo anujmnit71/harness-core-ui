@@ -122,11 +122,21 @@ exports[`test cases for Recommendation List Page should be able to render the li
               <div
                 class="Layout--vertical Layout--layout-spacing-small StyledProps--main"
               >
-                <p
-                  class="StyledProps--font StyledProps--main StyledProps--font-variation-h6 StyledProps--color StyledProps--color-grey500"
+                <div
+                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main"
+                  style="align-items: baseline;"
                 >
-                  ce.recommendation.listPage.monthlyPotentialCostText
-                </p>
+                  <p
+                    class="StyledProps--font StyledProps--main StyledProps--font-variation-h6 StyledProps--color StyledProps--color-grey500"
+                  >
+                    ce.recommendation.listPage.monthlyPotentialCostText
+                  </p>
+                  <p
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500"
+                  >
+                    (common.by Feb 07)
+                  </p>
+                </div>
                 <div
                   class="Layout--horizontal StyledProps--main StyledProps--padding-left-small StyledProps--padding-right-small"
                 >
@@ -418,7 +428,7 @@ exports[`test cases for Recommendation List Page should be able to render the li
                   <p
                     class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--font-variation-body2"
                   >
-                    (NaN)%
+                    (NaN%)
                   </p>
                 </div>
                 <p
@@ -664,28 +674,46 @@ exports[`test cases for Recommendation List Page should be able to render the li
               class="StyledProps--font StyledProps--main chartContainer"
             >
               <div
-                class="StyledProps--font StyledProps--main"
+                class="Layout--vertical StyledProps--main"
               >
                 <p
-                  class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-size-normal StyledProps--font-align-center StyledProps--background-primary1 StyledProps--color StyledProps--color-primary5"
+                  class="StyledProps--font StyledProps--main StyledProps--padding-bottom-xsmall StyledProps--font-variation-small-semi"
                 >
-                  delegate.delegateCPU
+                  ce.recommendation.detailsPage.cpuHistogramHeader
                 </p>
-                <mock
-                  options="[object Object]"
-                />
+                <div
+                  class="StyledProps--font StyledProps--main"
+                >
+                  <p
+                    class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-size-normal StyledProps--font-align-center StyledProps--background-primary1 StyledProps--color StyledProps--color-primary5"
+                  >
+                    delegate.delegateCPU
+                  </p>
+                  <mock
+                    options="[object Object]"
+                  />
+                </div>
               </div>
               <div
-                class="StyledProps--font StyledProps--main"
+                class="Layout--vertical StyledProps--main"
               >
                 <p
-                  class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-size-normal StyledProps--font-align-center StyledProps--background-primary1 StyledProps--color StyledProps--color-primary5"
+                  class="StyledProps--font StyledProps--main StyledProps--padding-bottom-xsmall StyledProps--font-variation-small-semi"
                 >
-                  ce.recommendation.recommendationChart.memoryLabel
+                  ce.recommendation.detailsPage.memoryHistogramHeader
                 </p>
-                <mock
-                  options="[object Object]"
-                />
+                <div
+                  class="StyledProps--font StyledProps--main"
+                >
+                  <p
+                    class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-size-normal StyledProps--font-align-center StyledProps--background-primary1 StyledProps--color StyledProps--color-primary5"
+                  >
+                    ce.recommendation.recommendationChart.memoryLabel
+                  </p>
+                  <mock
+                    options="[object Object]"
+                  />
+                </div>
               </div>
             </div>
           </div>

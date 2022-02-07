@@ -215,7 +215,8 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
             recommendationStats?.totalMonthlyCost - recommendationStats?.totalMonthlySaving
           )}
           withoutRecommendationAmount={formatCost(recommendationStats?.totalMonthlyCost)}
-          title={getString('ce.recommendation.listPage.monthlyPotentialCostText')}
+          title={`${getString('ce.recommendation.listPage.monthlyPotentialCostText')}`}
+          spentBy={moment(timeRangeFilter[1]).format('MMM DD')}
         />
         <RecommendationDetailsSavingsCard
           amount={formatCost(recommendationStats?.totalMonthlySaving)}
@@ -223,7 +224,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           iconName="money-icon"
           amountSubTitle={`(${Math.floor(
             (recommendationStats?.totalMonthlySaving / recommendationStats?.totalMonthlyCost) * 100
-          )})%`}
+          )}%)`}
           subTitle={`${moment(timeRangeFilter[0]).format('MMM DD')} - ${moment(timeRangeFilter[1]).format('MMM DD')}`}
         />
       </Layout.Horizontal>
