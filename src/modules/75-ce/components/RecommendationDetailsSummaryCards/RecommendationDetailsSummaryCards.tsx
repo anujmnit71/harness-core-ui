@@ -82,7 +82,7 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
                 ${getString('common.with')}
               </Text>
               <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY }}>
-                ${getString('ce.recommendation.sideNavText').toLowerCase()}
+                {getString('ce.recommendation.sideNavText').toLowerCase()}
               </Text>
             </Layout.Horizontal>
           </Layout.Vertical>
