@@ -216,7 +216,7 @@ export default function ExecutionTabs(props: React.PropsWithChildren<unknown>): 
           className={css.tabLink}
           activeClassName={css.activeLink}
         >
-          <Icon name="shield" size={16} />
+          <Icon name="sto-grey" size={16} />
           <span>{getString('pipeline.security.title')}</span>
         </NavLink>
       )
