@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test cases for recommendation tabs should be able to render recommendation tabs 1`] = `
+<div>
+  <div
+    class="StyledProps--font StyledProps--main recommendationTypeContainer StyledProps--padding-small"
+  >
+    <div
+      class="Layout--horizontal StyledProps--main recommendations"
+    >
+      <div
+        class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText selectedTab"
+      >
+        <p
+          class="StyledProps--font StyledProps--main selectedTab StyledProps--font-size-small StyledProps--font-align-center"
+        >
+          ce.recommendation.detailsPage.costOptimized
+        </p>
+      </div>
+      <div
+        class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText"
+      >
+        <span
+          class="bp3-popover-wrapper"
+        >
+          <span
+            class="bp3-popover-target Text--targetClass"
+          >
+            <p
+              class="StyledProps--font StyledProps--main StyledProps--font-size-small StyledProps--font-align-center"
+              tabindex="0"
+            >
+              ce.recommendation.detailsPage.performanceOptimized
+            </p>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -134,7 +134,7 @@ exports[`test cases for Recommendation List Page should be able to render the li
                   <p
                     class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500"
                   >
-                    (common.by Feb 07)
+                    (common.by Feb 08)
                   </p>
                 </div>
                 <div
@@ -434,7 +434,7 @@ exports[`test cases for Recommendation List Page should be able to render the li
                 <p
                   class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500 StyledProps--font-variation-tiny"
                 >
-                  Feb 01 - Feb 07
+                  Feb 02 - Feb 08
                 </p>
               </div>
             </div>
