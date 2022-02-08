@@ -3747,12 +3747,14 @@ export interface StringsMap {
   'ce.perspectives.workloadDetails.fieldNames.workload': string
   'ce.perspectives.workloadDetails.fieldNames.workloadType': string
   'ce.perspectives.workloadDetails.workloadDetailsText': string
+  'ce.recommendation.detailsPage.burstable': string
   'ce.recommendation.detailsPage.costOptimized': string
   'ce.recommendation.detailsPage.costOptimizedCaps': string
   'ce.recommendation.detailsPage.costOptimizedDetails': string
   'ce.recommendation.detailsPage.cpuHistogramHeader': string
   'ce.recommendation.detailsPage.currentResources': string
   'ce.recommendation.detailsPage.customDetails': string
+  'ce.recommendation.detailsPage.guaranteed': string
   'ce.recommendation.detailsPage.headerText': string
   'ce.recommendation.detailsPage.histogramText': string
   'ce.recommendation.detailsPage.histogramTextDetails1': string

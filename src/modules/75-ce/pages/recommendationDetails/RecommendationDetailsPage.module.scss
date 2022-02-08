@@ -50,13 +50,16 @@
 }
 
 .pillToggle {
-  width: 166px;
+  width: 170px;
   height: 20px;
+  background-color: var(--white);
+  border: 1px solid var(--primary-2) !important;
+
   > div[class*='selected'] {
     background-color: var(--primary-7);
   }
   > div[data-name^='toggle-option'] {
-    width: 82px;
+    width: 85px;
     padding: 2px 11px;
   }
 }

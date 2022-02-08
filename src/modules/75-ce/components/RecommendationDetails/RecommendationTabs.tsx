@@ -63,34 +63,10 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
               align: 'center'
             }}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.CostOptimized })}
-            tooltipProps={{}}
+            tooltipProps={{ dataTooltipId: 'costOptimized' }}
           >
             {getString('ce.recommendation.detailsPage.costOptimized')}
           </Text>
-          {/* {costOptimizedSavings > 0 ? (
-            <Text
-              font={{
-                size: 'xsmall',
-                align: 'center'
-              }}
-              className={cx(css.recommendationCost, {
-                [css.selectedTabCost]: selectedRecommendation === RecommendationType.CostOptimized
-              })}
-              padding={{
-                left: 'small',
-                right: 'small'
-              }}
-            >
-              {formatCost(
-                selectedRecommendation === RecommendationType.CostOptimized ? currentSavings : costOptimizedSavings
-              )}
-              {isCostOptimizedCustomized ? (
-                <Text className={css.astericSign} inline font="normal">
-                  *
-                </Text>
-              ) : null}
-            </Text>
-          ) : null} */}
         </Layout.Horizontal>
 
         <Layout.Horizontal
@@ -114,36 +90,10 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
               align: 'center'
             }}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.PerformanceOptimized })}
-            tooltip={<></>}
+            tooltipProps={{ dataTooltipId: 'performanceOptimized' }}
           >
             {getString('ce.recommendation.detailsPage.performanceOptimized')}
           </Text>
-          {/* {performanceOptimizedSavings > 0 ? (
-            <Text
-              font={{
-                size: 'xsmall',
-                align: 'center'
-              }}
-              className={cx(css.recommendationCost, {
-                [css.selectedTabCost]: selectedRecommendation === RecommendationType.PerformanceOptimized
-              })}
-              padding={{
-                left: 'small',
-                right: 'small'
-              }}
-            >
-              {formatCost(
-                selectedRecommendation === RecommendationType.PerformanceOptimized
-                  ? currentSavings
-                  : performanceOptimizedSavings
-              )}
-              {isPerfOptimizedCustomized ? (
-                <Text className={css.astericSign} inline font="normal">
-                  *
-                </Text>
-              ) : null}
-            </Text>
-          ) : null} */}
         </Layout.Horizontal>
       </Layout.Horizontal>
     </Container>

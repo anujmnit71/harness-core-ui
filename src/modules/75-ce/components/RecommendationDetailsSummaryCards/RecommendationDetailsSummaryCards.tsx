@@ -26,7 +26,11 @@ export const RecommendationDetailsSavingsCard: React.FC<RecommendationDetailsSav
   return (
     <Card className={cx(css.savingsCard)} style={{ backgroundColor: Color.PRIMARY_1 }} elevation={1}>
       <Layout.Vertical spacing="small">
-        <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_500}>
+        <Text
+          font={{ variation: FontVariation.H6 }}
+          color={Color.GREY_500}
+          tooltipProps={{ dataTooltipId: 'recommendationDetailsSavingsCardTitle' }}
+        >
           {title}
         </Text>
         <Layout.Horizontal style={{ alignItems: 'baseline' }} spacing="xsmall">
@@ -68,7 +72,11 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
     <Card className={cx(css.potentialSpendCard)} elevation={1}>
       <Layout.Vertical spacing="small">
         <Layout.Horizontal style={{ alignItems: 'baseline' }} spacing="xsmall">
-          <Text font={{ variation: FontVariation.H6 }} color={Color.GREY_500}>
+          <Text
+            font={{ variation: FontVariation.H6 }}
+            color={Color.GREY_500}
+            tooltipProps={{ dataTooltipId: 'recommendationDetailsSpendCardTitle' }}
+          >
             {title}
           </Text>
           <Text color={Color.GREY_500}>{`(${getString('common.by')} ${spentBy})`}</Text>
@@ -99,7 +107,7 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
                 {getString('common.without')}
               </Text>
               <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY }}>
-                ${getString('ce.recommendation.sideNavText').toLowerCase()}
+                {getString('ce.recommendation.sideNavText').toLowerCase()}
               </Text>
             </Layout.Horizontal>
           </Layout.Vertical>

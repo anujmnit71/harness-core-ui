@@ -20,7 +20,7 @@ import {
   getMemoryValueInGBFromExpression,
   getCPUValueInCPUFromExpression
 } from '@ce/utils/formatResourceValue'
-import type { RecommendationItem, TimeRangeValue, ResourceObject } from '@ce/types'
+import { RecommendationItem, TimeRangeValue, ResourceObject, QualityOfSerive } from '@ce/types'
 import type { RecommendationOverviewStats } from 'services/ce/services'
 
 import formatCost from '@ce/utils/formatCost'
@@ -151,8 +151,16 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
   }
 
   useEffect(() => {
+    if (qualityOfService === QualityOfSerive.GUARANTEED) {
+      setMemLimitVal(memReqVal)
+    } else {
+      setMemLimitVal(95)
+    }
+  }, [qualityOfService])
+
+  useEffect(() => {
     resetReqLimitMarkers(cpuReqVal, memReqVal, memLimitVal)
-  }, [selectedRecommendation])
+  }, [selectedRecommendation, cpuReqVal, memReqVal, memLimitVal])
 
   const updateCPUChart: (val: number) => void = val => {
     const {
@@ -251,7 +259,11 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
 
           <Layout.Horizontal
             border={{
-              left: true
+              left: true,
+              top: true,
+              right: true,
+              color: Color.GREEN_700,
+              width: 2
             }}
           >
             <Text

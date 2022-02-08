@@ -480,6 +480,8 @@ recommendation:
     memoryValueBuffer: '% Buffer to be considered for CPU/Memory values'
     cpuHistogramHeader: 'Number of samples whose CPU Request will be met'
     memoryHistogramHeader: 'Number of samples whose Memory Request and Limit will be met'
+    burstable: 'BURSTABLE'
+    guaranteed: 'GUARANTEED'
   recommendationChart:
     cpuPlaceholder: 'CPU Usage(millicores)'
     noOfSamples: 'Number of samples'

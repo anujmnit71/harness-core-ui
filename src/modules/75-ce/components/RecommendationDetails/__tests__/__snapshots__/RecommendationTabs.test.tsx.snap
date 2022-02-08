@@ -11,29 +11,30 @@ exports[`test cases for recommendation tabs should be able to render recommendat
       <div
         class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText selectedTab"
       >
-        <p
-          class="StyledProps--font StyledProps--main selectedTab StyledProps--font-size-small StyledProps--font-align-center"
+        <div
+          class="Text--withDocsTooltip"
+          data-tooltip-id="costOptimized"
         >
-          ce.recommendation.detailsPage.costOptimized
-        </p>
+          <p
+            class="StyledProps--font StyledProps--main selectedTab StyledProps--font-size-small StyledProps--font-align-center"
+          >
+            ce.recommendation.detailsPage.costOptimized
+          </p>
+        </div>
       </div>
       <div
         class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText"
       >
-        <span
-          class="bp3-popover-wrapper"
+        <div
+          class="Text--withDocsTooltip"
+          data-tooltip-id="performanceOptimized"
         >
-          <span
-            class="bp3-popover-target Text--targetClass"
+          <p
+            class="StyledProps--font StyledProps--main StyledProps--font-size-small StyledProps--font-align-center"
           >
-            <p
-              class="StyledProps--font StyledProps--main StyledProps--font-size-small StyledProps--font-align-center"
-              tabindex="0"
-            >
-              ce.recommendation.detailsPage.performanceOptimized
-            </p>
-          </span>
-        </span>
+            ce.recommendation.detailsPage.performanceOptimized
+          </p>
+        </div>
       </div>
     </div>
   </div>
