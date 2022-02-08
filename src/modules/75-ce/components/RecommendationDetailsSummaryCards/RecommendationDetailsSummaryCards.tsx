@@ -91,7 +91,7 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
             </Text>
             <Layout.Horizontal spacing="xsmall">
               <Text color={Color.GREEN_700} font={{ variation: FontVariation.TINY }}>
-                ${getString('common.with')}
+                {getString('common.with')}
               </Text>
               <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY }}>
                 {getString('ce.recommendation.sideNavText').toLowerCase()}
