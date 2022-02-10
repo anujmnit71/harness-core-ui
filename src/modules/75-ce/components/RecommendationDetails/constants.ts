@@ -30,3 +30,13 @@ export enum ChartColors {
   'GREY' = '#c4c4c4',
   'GREEN_300' = '#d7f4e0'
 }
+
+export enum CostOptimizedReqAndLimitValues {
+  CPU_REQ_VAL = 50,
+  MEM_REQ_VAL = 50
+}
+
+export enum PerformanceOptimizedReqAndLimitValues {
+  CPU_REQ_VAL = 95,
+  MEM_REQ_VAL = 95
+}

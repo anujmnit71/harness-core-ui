@@ -79,7 +79,9 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
           >
             {title}
           </Text>
-          <Text color={Color.GREY_500}>{`(${getString('common.by')} ${spentBy})`}</Text>
+          <Text color={Color.GREY_500}>{`(${getString('ce.recommendation.detailsPage.monthlySpendByDate', {
+            date: spentBy
+          })})`}</Text>
         </Layout.Horizontal>
         <Layout.Horizontal padding={{ left: 'small', right: 'small' }}>
           <Layout.Vertical

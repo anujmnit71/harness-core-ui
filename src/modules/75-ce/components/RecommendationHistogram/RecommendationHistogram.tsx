@@ -5,7 +5,7 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import { Container, Text, Layout, FontVariation } from '@wings-software/uicore'
+import { Container, Text, Layout, FontVariation, Color } from '@wings-software/uicore'
 import React from 'react'
 import type { Point } from 'highcharts'
 
@@ -173,7 +173,12 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
           {getString('ce.recommendation.detailsPage.cpuHistogramHeader')}
         </Text>
         <Container>
-          <Text padding="xsmall" font={{ size: 'normal', align: 'center' }} background="primary1" color="primary5">
+          <Text
+            padding="xsmall"
+            font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}
+            background={Color.PRIMARY_1}
+            color={Color.PRIMARY_5}
+          >
             {getString('delegate.delegateCPU')}
           </Text>
           <CEChart
@@ -343,7 +348,12 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
           {getString('ce.recommendation.detailsPage.memoryHistogramHeader')}
         </Text>
         <Container>
-          <Text padding="xsmall" font={{ size: 'normal', align: 'center' }} background="primary1" color="primary5">
+          <Text
+            padding="xsmall"
+            font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}
+            background={Color.PRIMARY_1}
+            color={Color.PRIMARY_5}
+          >
             {getString('ce.recommendation.recommendationChart.memoryLabel')}
           </Text>
           <CEChart

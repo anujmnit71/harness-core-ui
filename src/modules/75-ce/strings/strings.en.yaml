@@ -482,6 +482,7 @@ recommendation:
     memoryHistogramHeader: 'Number of samples whose Memory Request and Limit will be met'
     burstable: 'BURSTABLE'
     guaranteed: 'GUARANTEED'
+    monthlySpendByDate: 'by {{date}}'
   recommendationChart:
     cpuPlaceholder: 'CPU Usage(millicores)'
     noOfSamples: 'Number of samples'

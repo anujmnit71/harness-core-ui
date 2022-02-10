@@ -10,7 +10,7 @@ import { render } from '@testing-library/react'
 import { TestWrapper } from '@common/utils/testUtils'
 
 import type { RecommendationOverviewStats } from 'services/ce/services'
-import { RecommendationItem, ResourceObject, TimeRange, TimeRangeType } from '@ce/types'
+import { QualityOfService, RecommendationItem, ResourceObject, TimeRange, TimeRangeType } from '@ce/types'
 import RecommendationDetails from '../RecommendationDetails'
 
 import MockHistogramData from './MockHistogramData.json'
@@ -21,7 +21,7 @@ describe('test cases for recommendation details', () => {
       <TestWrapper>
         <RecommendationDetails
           cpuAndMemoryValueBuffer={0}
-          qualityOfService="BURSTABLE"
+          qualityOfService={QualityOfService.BURSTABLE}
           recommendationStats={{ totalMonthlyCost: 49.82, totalMonthlySaving: 19.08 } as RecommendationOverviewStats}
           currentResources={
             {

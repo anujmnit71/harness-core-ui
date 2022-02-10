@@ -67,7 +67,7 @@ export interface YamlDependency {
 
 export type AccessPointScreenMode = 'create' | 'import' | 'edit'
 
-export enum QualityOfSerive {
+export enum QualityOfService {
   BURSTABLE = 'BURSTABLE',
   GUARANTEED = 'GUARANTEED'
 }

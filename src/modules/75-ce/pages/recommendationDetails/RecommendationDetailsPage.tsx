@@ -23,12 +23,12 @@ import {
   PillToggle
 } from '@wings-software/uicore'
 import { Position, Menu, MenuItem, Slider } from '@blueprintjs/core'
+import { NGBreadcrumbs } from '@common/components/NGBreadcrumbs/NGBreadcrumbs'
 import { useStrings } from 'framework/strings'
 import { Page } from '@common/exports'
-import { Breadcrumbs } from '@common/components/Breadcrumbs/Breadcrumbs'
 import routes from '@common/RouteDefinitions'
 import { GET_DATE_RANGE } from '@ce/utils/momentUtils'
-import { QualityOfSerive, RecommendationItem, TimeRangeValue, TimeRange, TimeRangeType } from '@ce/types'
+import { QualityOfService, RecommendationItem, TimeRangeValue, TimeRange, TimeRangeType } from '@ce/types'
 import { ViewTimeRange } from '@ce/components/RecommendationDetails/constants'
 import { RecommendationOverviewStats, ResourceType, useFetchRecommendationQuery } from 'services/ce/services'
 import { useTelemetry } from '@common/hooks/useTelemetry'
@@ -108,8 +108,8 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
             <PillToggle
               selectedView={qualityOfService}
               options={[
-                { label: getString('ce.recommendation.detailsPage.burstable'), value: QualityOfSerive.BURSTABLE },
-                { label: getString('ce.recommendation.detailsPage.guaranteed'), value: QualityOfSerive.GUARANTEED }
+                { label: getString('ce.recommendation.detailsPage.burstable'), value: QualityOfService.BURSTABLE },
+                { label: getString('ce.recommendation.detailsPage.guaranteed'), value: QualityOfService.GUARANTEED }
               ]}
               className={css.pillToggle}
               onChange={val => setQualityOfService(val)}
@@ -168,7 +168,7 @@ const RecommendationDetailsPage: React.FC = () => {
   const history = useHistory()
   const [timeRange, setTimeRange] = useState<TimeRangeValue>({ value: TimeRangeType.LAST_7, label: TimeRange.LAST_7 })
 
-  const [qualityOfService, setQualityOfService] = useState<string>('BURSTABLE')
+  const [qualityOfService, setQualityOfService] = useState<string>(QualityOfService.BURSTABLE)
   const [cpuAndMemoryValueBuffer, setCpuAndMemoryValueBuffer] = useState(0)
 
   useEffect(() => {
@@ -217,7 +217,7 @@ const RecommendationDetailsPage: React.FC = () => {
       <Page.Header
         title={`${getString('ce.recommendation.detailsPage.headerText')} ${recommendationName}`}
         breadcrumbs={
-          <Breadcrumbs
+          <NGBreadcrumbs
             links={[
               {
                 url: routes.toCERecommendations({ accountId }),
@@ -260,10 +260,10 @@ const RecommendationDetailsPage: React.FC = () => {
               }
             >
               <Text
-                color="primary5"
+                color={Color.PRIMARY_5}
                 rightIcon="caret-down"
                 rightIconProps={{
-                  color: 'primary5'
+                  color: Color.PRIMARY_5
                 }}
                 className={css.actionText}
               >

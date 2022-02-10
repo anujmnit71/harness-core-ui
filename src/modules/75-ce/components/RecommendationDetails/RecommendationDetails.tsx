@@ -20,7 +20,7 @@ import {
   getMemoryValueInGBFromExpression,
   getCPUValueInCPUFromExpression
 } from '@ce/utils/formatResourceValue'
-import { RecommendationItem, TimeRangeValue, ResourceObject, QualityOfSerive } from '@ce/types'
+import { RecommendationItem, TimeRangeValue, ResourceObject, QualityOfService } from '@ce/types'
 import type { RecommendationOverviewStats } from 'services/ce/services'
 
 import formatCost from '@ce/utils/formatCost'
@@ -151,7 +151,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
   }
 
   useEffect(() => {
-    if (qualityOfService === QualityOfSerive.GUARANTEED) {
+    if (qualityOfService === QualityOfService.GUARANTEED) {
       setMemLimitVal(memReqVal)
     } else {
       setMemLimitVal(95)
@@ -212,11 +212,10 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
     })
   }
 
+  const addBufferToValue = (value: number, bufferPercentage: number): number => ((100 + bufferPercentage) / 100) * value
+
   return (
     <Container className={css.mainContainer} background="white" padding="large">
-      {/* <Text color="grey800" font="medium">
-        {histogramData.containerName}:
-      </Text> */}
       <Layout.Horizontal spacing="large" padding={{ top: 'large' }}>
         <RecommendationDetailsSpendCard
           withRecommendationAmount={formatCost(
@@ -296,15 +295,15 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           recommendedResources={{
             limits: {
               memory: getMemValueInReadableForm(
-                ((100 + cpuAndMemoryValueBuffer) / 100) * histogramData?.memoryHistogram.precomputed[memLimitVal]
+                addBufferToValue(histogramData?.memoryHistogram.precomputed[memLimitVal], cpuAndMemoryValueBuffer)
               )
             },
             requests: {
               memory: getMemValueInReadableForm(
-                ((100 + cpuAndMemoryValueBuffer) / 100) * histogramData?.memoryHistogram.precomputed[memReqVal]
+                addBufferToValue(histogramData?.memoryHistogram.precomputed[memReqVal], cpuAndMemoryValueBuffer)
               ),
               cpu: getCPUValueInReadableForm(
-                ((100 + cpuAndMemoryValueBuffer) / 100) * histogramData?.cpuHistogram.precomputed[cpuReqVal]
+                addBufferToValue(histogramData?.cpuHistogram.precomputed[cpuReqVal], cpuAndMemoryValueBuffer)
               )
             }
           }}
@@ -400,9 +399,9 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           ) : null}
         </Container>
         <img src={requestLegend} />
-        <Text style={{ fontSize: 14 }}>{getString('ce.recommendation.detailsPage.reqPercentileLegendText')}</Text>
+        <Text>{getString('ce.recommendation.detailsPage.reqPercentileLegendText')}</Text>
         <img src={limitLegend} />
-        <Text style={{ fontSize: 14 }}>{getString('ce.recommendation.detailsPage.limitPercentileLegendText')}</Text>
+        <Text>{getString('ce.recommendation.detailsPage.limitPercentileLegendText')}</Text>
       </Container>
     </Container>
   )
