@@ -24,7 +24,7 @@ import { RecommendationItem, TimeRangeValue, ResourceObject, QualityOfService } 
 import type { RecommendationOverviewStats } from 'services/ce/services'
 
 import formatCost from '@ce/utils/formatCost'
-import { RecommendationType, ChartColors } from './constants'
+import { RecommendationType, ChartColors, PercentileValues } from './constants'
 import RecommendationTabs from './RecommendationTabs'
 import RecommendationDiffViewer from '../RecommendationDiffViewer/RecommendationDiffViewer'
 import RecommendationHistogram, { CustomHighcharts } from '../RecommendationHistogram/RecommendationHistogram'
@@ -56,9 +56,9 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
   timeRangeFilter,
   cpuAndMemoryValueBuffer
 }) => {
-  const [cpuReqVal, setCPUReqVal] = useState(50)
-  const [memReqVal, setMemReqVal] = useState(50)
-  const [memLimitVal, setMemLimitVal] = useState(95)
+  const [cpuReqVal, setCPUReqVal] = useState(PercentileValues.P50)
+  const [memReqVal, setMemReqVal] = useState(PercentileValues.P50)
+  const [memLimitVal, setMemLimitVal] = useState(PercentileValues.P95)
 
   const { cpu: cpuCost, memory: memoryCost } = histogramData.containerRecommendation?.lastDayCost || {}
 
@@ -76,11 +76,11 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
   const memReqValue = Number(histogramData?.memoryHistogram.precomputed[memReqVal])
   const memLimitValue = Number(histogramData?.memoryHistogram.precomputed[memLimitVal])
 
-  const perfCPUReqValue = Number(histogramData?.cpuHistogram.precomputed[95])
-  const perfMemReqValue = Number(histogramData?.memoryHistogram.precomputed[95])
+  const perfCPUReqValue = Number(histogramData?.cpuHistogram.precomputed[PercentileValues.P95])
+  const perfMemReqValue = Number(histogramData?.memoryHistogram.precomputed[PercentileValues.P95])
 
-  const costOptimisedCPUReqValue = Number(histogramData?.cpuHistogram.precomputed[50])
-  const costOptimisedMemReqValue = Number(histogramData?.memoryHistogram.precomputed[50])
+  const costOptimisedCPUReqValue = Number(histogramData?.cpuHistogram.precomputed[PercentileValues.P50])
+  const costOptimisedMemReqValue = Number(histogramData?.memoryHistogram.precomputed[PercentileValues.P50])
 
   const isLastDayCostDefined = cpuCost && memoryCost
 
@@ -137,15 +137,15 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
     recommendation: RecommendationType
   ) => {
     if (recommendation === RecommendationType.CostOptimized) {
-      setCPUReqVal(50)
-      setMemReqVal(50)
-      setMemLimitVal(95)
-      resetReqLimitMarkers(50, 50, 90)
+      setCPUReqVal(PercentileValues.P50)
+      setMemReqVal(PercentileValues.P50)
+      setMemLimitVal(PercentileValues.P95)
+      resetReqLimitMarkers(PercentileValues.P50, PercentileValues.P50, PercentileValues.P90)
     } else if (recommendation === RecommendationType.PerformanceOptimized) {
-      setCPUReqVal(95)
-      setMemReqVal(95)
-      setMemLimitVal(95)
-      resetReqLimitMarkers(95, 95, 95)
+      setCPUReqVal(PercentileValues.P95)
+      setMemReqVal(PercentileValues.P95)
+      setMemLimitVal(PercentileValues.P95)
+      resetReqLimitMarkers(PercentileValues.P95, PercentileValues.P95, PercentileValues.P95)
     }
     setRerenderChart(state => !state)
   }
@@ -154,7 +154,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
     if (qualityOfService === QualityOfService.GUARANTEED) {
       setMemLimitVal(memReqVal)
     } else {
-      setMemLimitVal(95)
+      setMemLimitVal(PercentileValues.P95)
     }
   }, [qualityOfService])
 
