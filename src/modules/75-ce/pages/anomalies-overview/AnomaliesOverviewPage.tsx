@@ -16,17 +16,22 @@ import {
   Layout,
   PageBody,
   PageHeader,
-  TextInput,
   Text,
   Icon,
   TableV2,
-  Color
+  Color,
+  PageSpinner,
+  ExpandingSearchInput,
+  Card,
+  getErrorInfoFromErrorObject,
+  FontVariation
 } from '@wings-software/uicore'
 import { Link, useParams } from 'react-router-dom'
 import type { CellProps, Renderer } from 'react-table'
 import { Classes, Drawer, Menu, MenuItem, Popover, Position } from '@blueprintjs/core'
 import { useModalHook } from '@harness/use-modal'
 import { useStrings } from 'framework/strings'
+import { useToaster } from '@common/components'
 
 import PerspectiveTimeRangePicker from '@ce/components/PerspectiveTimeRangePicker/PerspectiveTimeRangePicker'
 import {
@@ -35,8 +40,9 @@ import {
   DATE_RANGE_SHORTCUTS,
   getTimePeriodString
 } from '@ce/utils/momentUtils'
-import { AnomalyData, useListAnomalies } from 'services/ce'
+import { AnomalyData, useListAnomalies, useReportAnomalyFeedback } from 'services/ce'
 import formatCost from '@ce/utils/formatCost'
+import type { AccountPathProps } from '@common/interfaces/RouteInterfaces'
 import SettingsDrawer from '@ce/components/AnomaliesList/SettingsDrawer'
 import css from './AnomaliesOverviewPage.module.scss'
 
@@ -44,11 +50,9 @@ export interface TimeRange {
   to: string
   from: string
 }
-interface anomalyParams {
-  accountId: string
-}
 
 const AnomalyFilters: React.FC = () => {
+  const { getString } = useStrings()
   const [timeRange, setTimeRange] = useState<TimeRange>({
     to: DATE_RANGE_SHORTCUTS.LAST_30_DAYS[1].format(CE_DATE_FORMAT_INTERNAL),
     from: DATE_RANGE_SHORTCUTS.LAST_30_DAYS[0].format(CE_DATE_FORMAT_INTERNAL)
@@ -58,20 +62,16 @@ const AnomalyFilters: React.FC = () => {
     <Layout.Horizontal spacing="large" className={css.header}>
       <Layout.Horizontal spacing="large" style={{ alignItems: 'center' }}>
         <DropDown
-          placeholder={'GroupBy: Perspectives'}
+          placeholder={getString('ce.anomalyDetection.filters.groupByNonePlaceholder')}
           filterable={false}
-          onChange={option => {
-            alert(option.value)
+          onChange={() => {
+            // alert(option.value)
           }}
           className={css.groupbyFilter}
           items={[
             {
-              label: 'GroupBy: Perspectives',
-              value: 'perspectives'
-            },
-            {
-              label: 'GroupBy: None (Show all anomalies)',
-              value: 'none'
+              label: getString('ce.anomalyDetection.filters.groupByNoneLabel'),
+              value: getString('ce.anomalyDetection.filters.groupByNoneValue')
             }
           ]}
         />
@@ -79,10 +79,10 @@ const AnomalyFilters: React.FC = () => {
       <FlexExpander />
       {/* TODO: Mutiselect DropDown */}
       <DropDown
-        placeholder={'All Perspectives'}
+        placeholder={getString('ce.anomalyDetection.filters.groupByPerspectivePlaceholder')}
         filterable={false}
-        onChange={option => {
-          alert(option.value)
+        onChange={() => {
+          // alert(option.value)
         }}
         items={[
           {
@@ -92,10 +92,10 @@ const AnomalyFilters: React.FC = () => {
         ]}
       />
       <DropDown
-        placeholder={'All Cloud Providers'}
+        placeholder={getString('ce.anomalyDetection.filters.groupByCloudProvidersPlaceholder')}
         filterable={false}
-        onChange={option => {
-          alert(option.value)
+        onChange={() => {
+          // alert(option.value)
         }}
         items={[
           {
@@ -112,23 +112,21 @@ const AnomalyFilters: React.FC = () => {
 }
 
 interface SearchProps {
-  searchText: string
-  onChange: React.Dispatch<React.SetStateAction<string>>
   showModal: any
 }
 
-const AnomaliesSearch: React.FC<SearchProps> = ({ searchText, onChange, showModal }) => {
+const AnomaliesSearch: React.FC<SearchProps> = ({ showModal }) => {
   const { getString } = useStrings()
 
   return (
-    <Layout.Horizontal>
+    <Layout.Horizontal className={css.searchFilterWrapper}>
       {/* TODO: Need to add search icon in searchBox */}
-      <TextInput
-        value={searchText}
-        onChange={(e: any) => {
-          onChange(e.target.value)
+      <ExpandingSearchInput
+        className={css.searchInput}
+        onChange={() => {
+          // TODO: handling of search test in filters
         }}
-        wrapperClassName={css.searchInput}
+        alwaysExpanded={true}
         placeholder={getString('search')}
       />
       <Button
@@ -148,41 +146,36 @@ const AnomaliesOverview: React.FC = () => {
   return (
     <Layout.Horizontal spacing="medium">
       <Layout.Vertical spacing="small">
-        <Container padding="medium" background={Color.GREY_100} border={{ color: Color.GREY_100, radius: 4 }}>
-          <Text color={Color.GREY_600} font={{ weight: 'semi-bold', size: 'small' }}>
+        <Card>
+          <Text color={Color.GREY_600} font={{ variation: FontVariation.SMALL_SEMI }}>
             {getString('ce.anomalyDetection.summary.totalCountText')}
           </Text>
-          <Text font={{ size: 'medium', weight: 'bold' }} intent="danger">
+          <Text font={{ variation: FontVariation.H4 }} intent="danger">
             102
           </Text>
-        </Container>
-        <Container
-          padding="medium"
-          background={Color.RED_100}
-          border={{ color: Color.RED_100, radius: 4 }}
-          intent="danger"
-        >
-          <Text color={Color.RED_500} font={{ weight: 'semi-bold', size: 'small' }}>
+        </Card>
+        <Card>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.RED_500}>
             {getString('ce.anomalyDetection.summary.costImpacted')}
           </Text>
-          <Text font={{ size: 'medium', weight: 'bold' }} intent="danger">
+          <Text font={{ variation: FontVariation.H4 }} intent="danger">
             $17586.99
           </Text>
           <p></p>
-        </Container>
+        </Card>
       </Layout.Vertical>
       <div className={css.summaryCharts}>
-        <Text color={Color.GREY_500} font={{ weight: 'semi-bold', size: 'small' }}>
-          {getString('ce.anomalyDetection.summary.perspectiveWise').toUpperCase()}
+        <Text color={Color.GREY_500} font={{ variation: FontVariation.SMALL_SEMI }}>
+          {getString('ce.anomalyDetection.summary.perspectiveWise')}
         </Text>
       </div>
       <div className={css.summaryCharts}>
-        <Text color={Color.GREY_500} font={{ weight: 'semi-bold', size: 'small' }}>
+        <Text color={Color.GREY_500} font={{ variation: FontVariation.SMALL_SEMI }}>
           {getString('ce.anomalyDetection.summary.cloudProvidersWise')}
         </Text>
       </div>
       <div className={css.summaryCharts}>
-        <Text color={Color.GREY_500} font={{ weight: 'semi-bold', size: 'small' }}>
+        <Text color={Color.GREY_500} font={{ variation: FontVariation.SMALL_SEMI }}>
           {getString('ce.anomalyDetection.summary.statusWise')}
         </Text>
       </div>
@@ -190,13 +183,36 @@ const AnomaliesOverview: React.FC = () => {
   )
 }
 
-interface listProps {
+interface ListProps {
   listData: AnomalyData[]
 }
 
-const AnomaliesMenu = () => {
+interface AnomaliesMenu {
+  anomalyId: string
+}
+
+const AnomaliesMenu: React.FC<AnomaliesMenu> = ({ anomalyId }) => {
   const { getString } = useStrings()
   const [isOpen, setIsOpen] = useState(false)
+  const { accountId } = useParams<AccountPathProps>()
+  const { mutate: updateAnomalyFeedback } = useReportAnomalyFeedback({
+    queryParams: {
+      accountIdentifier: accountId,
+      anomalyId: anomalyId
+    }
+  })
+  const { showError, showSuccess } = useToaster()
+
+  const anomalyFeedback = async () => {
+    try {
+      const response = await updateAnomalyFeedback({
+        feedback: 'FALSE_ANOMALY'
+      })
+      response && showSuccess(getString('ce.anomalyDetection.userFeedbackSuccessMsg'))
+    } catch (error) {
+      showError(getErrorInfoFromErrorObject(error))
+    }
+  }
 
   return (
     <Popover
@@ -228,6 +244,7 @@ const AnomaliesMenu = () => {
           onClick={(e: any) => {
             e.stopPropagation()
             setIsOpen(false)
+            anomalyFeedback()
           }}
         />
       </Menu>
@@ -235,7 +252,7 @@ const AnomaliesMenu = () => {
   )
 }
 
-const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
+const AnomaliesListGridView: React.FC<ListProps> = ({ listData }) => {
   const { getString } = useStrings()
 
   const DateCell: Renderer<CellProps<AnomalyData>> = ({ row }) => {
@@ -244,10 +261,10 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
 
     return (
       <Layout.Vertical spacing="small">
-        <Text color={Color.BLACK} font={{ weight: 'semi-bold', size: 'normal' }}>
+        <Text color={Color.BLACK} font={{ variation: FontVariation.BODY2 }}>
           {getTimePeriodString(timestamp, ANOMALIES_LIST_FORMAT)}
         </Text>
-        <Text color={Color.GREY_600} font={{ size: 'small' }}>
+        <Text color={Color.GREY_600} font={{ variation: FontVariation.SMALL }}>
           {relativeTime}
         </Text>
       </Layout.Vertical>
@@ -260,10 +277,10 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
 
     return (
       <Layout.Horizontal style={{ alignItems: 'baseline' }} spacing="small">
-        <Text font={{ weight: 'semi-bold', size: 'normal' }} color={Color.BLACK}>
+        <Text font={{ variation: FontVariation.BODY2 }} color={Color.BLACK}>
           {formatCost(actualAmount)}
         </Text>
-        {trend ? <Text font={{ size: 'xsmall' }} color={Color.RED_600}>{`(+${trend}%)`}</Text> : null}
+        {trend ? <Text font={{ variation: FontVariation.TINY }} color={Color.RED_600}>{`+${trend}%`}</Text> : null}
       </Layout.Horizontal>
     )
   }
@@ -274,12 +291,11 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
 
     return (
       <Layout.Horizontal style={{ alignItems: 'center' }}>
-        {/* TODO: Need to updated the image based on the cloud provider */}
         <Icon name="app-kubernetes" size={24} />
         <Layout.Vertical spacing="small">
-          <Link to={''}>{resourceName || 'squidward/spongebob/1233445...'}</Link>
-          <Text font={{ size: 'small' }} color={Color.GREY_600}>
-            {resourceInfo || 'cluster/workload'}
+          <Link to={''}>{resourceName}</Link>
+          <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_600}>
+            {resourceInfo}
           </Text>
         </Layout.Vertical>
       </Layout.Horizontal>
@@ -292,18 +308,18 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
 
     return (
       <Layout.Vertical spacing="small">
-        <Text font={{ size: 'normal' }} color={Color.ORANGE_700}>
-          {status || 'Open'}
+        <Text font={{ variation: FontVariation.BODY }} color={Color.ORANGE_700}>
+          {status}
         </Text>
-        <Text font={{ size: 'small' }} color={Color.GREY_600}>
-          {stausRelativeTime || '6 minutes ago'}
+        <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_600}>
+          {stausRelativeTime}
         </Text>
       </Layout.Vertical>
     )
   }
 
-  const MenuCell: Renderer<CellProps<AnomalyData>> = () => {
-    return <AnomaliesMenu />
+  const MenuCell: Renderer<CellProps<AnomalyData>> = ({ row }) => {
+    return <AnomaliesMenu anomalyId={row.original.id || ''} />
   }
 
   if (!listData.length) {
@@ -315,28 +331,53 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
       className={css.tableView}
       columns={[
         {
-          Header: getString('ce.anomalyDetection.tableHeaders.date'),
+          Header: (
+            <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
+              {getString('ce.anomalyDetection.tableHeaders.date')}
+            </Text>
+          ),
           accessor: 'time',
           Cell: DateCell,
-          width: '20%'
+          width: '25%'
         },
         {
-          Header: getString('ce.anomalyDetection.tableHeaders.anomalousSpend'),
+          Header: (
+            <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
+              {getString('ce.anomalyDetection.tableHeaders.anomalousSpend')}
+            </Text>
+          ),
           accessor: 'actualAmount',
           Cell: CostCell,
-          width: '20%'
+          width: '25%'
         },
         {
-          Header: getString('ce.anomalyDetection.tableHeaders.resource'),
+          Header: (
+            <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
+              {getString('ce.anomalyDetection.tableHeaders.resource')}
+            </Text>
+          ),
           accessor: 'resourceName',
           Cell: ResourceCell,
-          width: '35%'
+          width: '25%'
         },
         {
-          Header: getString('ce.anomalyDetection.tableHeaders.status'),
+          Header: (
+            <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
+              {getString('ce.anomalyDetection.tableHeaders.details')}
+            </Text>
+          ),
+          accessor: 'details',
+          width: '25%'
+        },
+        {
+          Header: (
+            <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
+              {getString('ce.anomalyDetection.tableHeaders.status')}
+            </Text>
+          ),
           accessor: 'status',
           Cell: StatusCell,
-          width: '20%'
+          width: '25%'
         },
         {
           Header: ' ',
@@ -346,12 +387,11 @@ const AnomaliesListGridView: React.FC<listProps> = ({ listData }) => {
       ]}
       data={listData}
       pagination={{
-        itemCount: 100,
+        itemCount: listData.length,
         pageCount: 10,
         pageIndex: 0,
         pageSize: 10
       }}
-      sortable
     />
   )
 }
@@ -371,11 +411,10 @@ const drawerProps = {
 
 const AnomaliesOverviewPage: React.FC = () => {
   const { getString } = useStrings()
-  const [searchText, setSearchText] = React.useState('')
-  const { accountId } = useParams<anomalyParams>()
+  const { accountId } = useParams<AccountPathProps>()
   const [listData, setListData] = useState<AnomalyData[]>([])
 
-  const { mutate: getAnomaliesList } = useListAnomalies({
+  const { mutate: getAnomaliesList, loading: isListFetching } = useListAnomalies({
     queryParams: {
       accountIdentifier: accountId
     }
@@ -430,7 +469,7 @@ const AnomaliesOverviewPage: React.FC = () => {
       <PageHeader title={getString('ce.anomalyDetection.sideNavText')} />
       <AnomalyFilters />
       <PageBody>
-        {/* TODO: Add page spinner */}
+        {isListFetching ? <PageSpinner /> : null}
         <Container
           padding={{
             right: 'xxxlarge',
@@ -439,7 +478,7 @@ const AnomaliesOverviewPage: React.FC = () => {
             top: 'medium'
           }}
         >
-          <AnomaliesSearch searchText={searchText} onChange={setSearchText} showModal={showModal} />
+          <AnomaliesSearch showModal={showModal} />
           <AnomaliesOverview />
           <AnomaliesListGridView listData={listData} />
         </Container>
