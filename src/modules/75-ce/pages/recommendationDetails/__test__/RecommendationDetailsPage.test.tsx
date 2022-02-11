@@ -15,6 +15,10 @@ import RecommendationDetailsPage from '../RecommendationDetailsPage'
 import ResponseData from './DetailsData.json'
 
 jest.mock('@ce/components/CEChart/CEChart', () => 'mock')
+jest.mock('@ce/components/RecommendationDetailsSummaryCards/RecommendationDetailsSummaryCards', () => ({
+  RecommendationDetailsSpendCard: () => 'recommendation-details-spend-card-mock',
+  RecommendationDetailsSavingsCard: () => 'recommendation-details-savings-card-mock'
+}))
 
 const params = {
   accountId: 'TEST_ACC',
@@ -37,7 +41,7 @@ describe('test cases for Recommendation details Page', () => {
     expect(container).toMatchSnapshot()
   })
 
-  test('should be able to render the details page and should be able to switch between guaranteed and bustable', async () => {
+  test('should be able to render the details page and should be able to switch between guaranteed and burstable', async () => {
     const responseState = {
       executeQuery: () => fromValue(ResponseData)
     }
