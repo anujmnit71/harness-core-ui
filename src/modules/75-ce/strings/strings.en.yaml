@@ -484,15 +484,16 @@ recommendation:
   recommendationChart:
     cpuPlaceholder: 'CPU Usage(millicores)'
     noOfSamples: 'Number of samples'
-    cpuHistogramHeader: ' {{ $.ce.recommendation.recommendationChart.noOfSamples }} {{ $.common.whose }} {{ $.delegate.delegateCPU }}'
-    memoryHistogramHeader: ' {{ $.ce.recommendation.recommendationChart.noOfSamples }} {{ $.common.whose }} {{ ce.recommendation.recommendationChart.memoryLabel }}'
     memoryLabel: 'MEMORY'
     limitLabel: 'LIMIT'
     memoryLabelRegular: 'Memory'
+    limitLabelRegular: 'Limit'
     and: '{{ $.common.and }}'
     request: '{{ $.common.request }}'
     memoryUsagePlaceholder: 'Memory usage(GBs)'
     willBeMet: 'will be met'
+    cpuHistogramHeader: ' {{ $.ce.recommendation.recommendationChart.noOfSamples }} {{ $.common.whose }} {{ $.delegate.delegateCPU }}'
+    memoryHistogramHeader: ' {{ $.ce.recommendation.recommendationChart.noOfSamples }} {{ $.common.whose }} {{ $.ce.recommendation.recommendationChart.memoryLabelRegular }}'
 savedYamlSuccess: YAML validated successfully
 uploadCertiHeader: Upload a new certificate for the Application Load Balancer
 perspectives:

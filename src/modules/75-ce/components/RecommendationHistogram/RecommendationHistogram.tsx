@@ -41,6 +41,38 @@ export enum ChartColors {
   'GREEN_300' = '#d7f4e0'
 }
 
+interface HistogramHeaderProps {
+  header: string
+}
+
+const HistogramHeader: React.FC<HistogramHeaderProps> = props => (
+  <Text
+    padding="xsmall"
+    font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}
+    background={Color.PRIMARY_1}
+    color={Color.PRIMARY_5}
+  >
+    {props.header}
+  </Text>
+)
+
+interface HistogramDescriptionProps {
+  description: React.ReactNode
+}
+
+const HistogramDescription: React.FC<HistogramDescriptionProps> = props => {
+  const { getString } = useStrings()
+
+  return (
+    <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'xsmall' }}>
+      {props.description}
+      <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+        {getString('ce.recommendation.recommendationChart.willBeMet')}
+      </Text>
+    </Layout.Horizontal>
+  )
+}
+
 interface RecommendationChartProps {
   histogramData: RecommendationItem
   onCPUChartLoad: (chart: CustomHighcharts) => void
@@ -168,26 +200,20 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
   return (
     <Container className={css.chartContainer}>
       <Layout.Vertical>
-        <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'xsmall' }}>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
-            {getString('ce.recommendation.recommendationChart.cpuHistogramHeader')}
-          </Text>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.PRIMARY_7}>
-            {getString('ce.recommendation.recommendationChart.request')}
-          </Text>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
-            {getString('ce.recommendation.recommendationChart.willBeMet')}
-          </Text>
-        </Layout.Horizontal>
+        <HistogramDescription
+          description={
+            <>
+              <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+                {getString('ce.recommendation.recommendationChart.cpuHistogramHeader')}
+              </Text>
+              <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.PRIMARY_7}>
+                {getString('ce.recommendation.recommendationChart.request')}
+              </Text>
+            </>
+          }
+        />
         <Container>
-          <Text
-            padding="xsmall"
-            font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}
-            background={Color.PRIMARY_1}
-            color={Color.PRIMARY_5}
-          >
-            {getString('delegate.delegateCPU')}
-          </Text>
+          <HistogramHeader header={getString('delegate.delegateCPU')} />
           <CEChart
             options={{
               tooltip: {
@@ -351,32 +377,26 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
         </Container>
       </Layout.Vertical>
       <Layout.Vertical>
-        <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'xsmall' }}>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
-            {getString('ce.recommendation.recommendationChart.memoryHistogramHeader')}
-          </Text>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.PRIMARY_7}>
-            {getString('ce.recommendation.recommendationChart.memoryLabelRegular')}
-          </Text>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
-            {getString('ce.recommendation.recommendationChart.and')}
-          </Text>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREEN_500}>
-            {getString('ce.recommendation.recommendationChart.request')}
-          </Text>
-          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
-            {getString('ce.recommendation.recommendationChart.willBeMet')}
-          </Text>
-        </Layout.Horizontal>
+        <HistogramDescription
+          description={
+            <>
+              <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+                {getString('ce.recommendation.recommendationChart.memoryHistogramHeader')}
+              </Text>
+              <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.PRIMARY_7}>
+                {getString('ce.recommendation.recommendationChart.request')}
+              </Text>
+              <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+                {getString('ce.recommendation.recommendationChart.and')}
+              </Text>
+              <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREEN_500}>
+                {getString('ce.recommendation.recommendationChart.limitLabelRegular')}
+              </Text>
+            </>
+          }
+        />
         <Container>
-          <Text
-            padding="xsmall"
-            font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}
-            background={Color.PRIMARY_1}
-            color={Color.PRIMARY_5}
-          >
-            {getString('ce.recommendation.recommendationChart.memoryLabel')}
-          </Text>
+          <HistogramHeader header={getString('ce.recommendation.recommendationChart.memoryLabel')} />
           <CEChart
             options={{
               tooltip: {

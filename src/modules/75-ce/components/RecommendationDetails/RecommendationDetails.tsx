@@ -214,6 +214,9 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
 
   const addBufferToValue = (value: number, bufferPercentage: number): number => ((100 + bufferPercentage) / 100) * value
 
+  const calculateSavingsPercentage = (savings: number, totalCost: number): string =>
+    `(${Math.floor((savings / totalCost) * 100).toString()}%)`
+
   return (
     <Container className={css.mainContainer} background="white" padding="large">
       <Layout.Horizontal spacing="large" padding={{ top: 'large' }}>
@@ -222,16 +225,17 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
             recommendationStats?.totalMonthlyCost - recommendationStats?.totalMonthlySaving
           )}
           withoutRecommendationAmount={formatCost(recommendationStats?.totalMonthlyCost)}
-          title={`${getString('ce.recommendation.listPage.monthlyPotentialCostText')}`}
+          title={getString('ce.recommendation.listPage.monthlyPotentialCostText')}
           spentBy={moment(timeRangeFilter[1]).format('MMM DD')}
         />
         <RecommendationDetailsSavingsCard
           amount={formatCost(recommendationStats?.totalMonthlySaving)}
           title={getString('ce.recommendation.listPage.monthlySavingsText')}
           iconName="money-icon"
-          amountSubTitle={`(${Math.floor(
-            (recommendationStats?.totalMonthlySaving / recommendationStats?.totalMonthlyCost) * 100
-          )}%)`}
+          amountSubTitle={calculateSavingsPercentage(
+            recommendationStats?.totalMonthlySaving,
+            recommendationStats?.totalMonthlyCost
+          )}
           subTitle={`${moment(timeRangeFilter[0]).format('MMM DD')} - ${moment(timeRangeFilter[1]).format('MMM DD')}`}
         />
       </Layout.Horizontal>
