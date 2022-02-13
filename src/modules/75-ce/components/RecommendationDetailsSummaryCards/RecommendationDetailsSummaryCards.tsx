@@ -5,7 +5,7 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import { Card, Layout, Text, IconName, FontVariation, Color, Icon } from '@wings-software/uicore'
+import { Card, Layout, Text, FontVariation, Color, Icon } from '@wings-software/uicore'
 import React from 'react'
 import cx from 'classnames'
 import { useStrings } from 'framework/strings'
@@ -14,13 +14,12 @@ import css from './RecommendationDetailsSummaryCards.module.scss'
 interface RecommendationDetailsSavingsCardProps {
   title: string
   amount: string
-  amountSubTitle?: string
-  subTitle?: string
-  iconName?: IconName
+  amountSubTitle: string
+  subTitle: string
 }
 
 export const RecommendationDetailsSavingsCard: React.FC<RecommendationDetailsSavingsCardProps> = props => {
-  const { title, amount, amountSubTitle, subTitle, iconName } = props
+  const { title, amount, amountSubTitle, subTitle } = props
   const { getString } = useStrings()
 
   return (
@@ -34,24 +33,20 @@ export const RecommendationDetailsSavingsCard: React.FC<RecommendationDetailsSav
           {title}
         </Text>
         <Layout.Horizontal style={{ alignItems: 'baseline' }} spacing="xsmall">
-          {iconName ? <Icon name={iconName} size={28} color={Color.GREEN_700} /> : null}
+          <Icon name="money-icon" size={28} color={Color.GREEN_700} />
           <Text color={Color.GREEN_700} font={{ variation: FontVariation.SMALL_SEMI }}>
             {getString('ce.recommendation.listPage.uptoText')}
           </Text>
           <Text className={css.amount} color={Color.GREEN_600} font={{ variation: FontVariation.H3 }}>
             {amount}
           </Text>
-          {amountSubTitle ? (
-            <Text color={Color.GREEN_700} font={{ variation: FontVariation.BODY2 }}>
-              {amountSubTitle}
-            </Text>
-          ) : null}
-        </Layout.Horizontal>
-        {subTitle ? (
-          <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY }}>
-            {subTitle}
+          <Text color={Color.GREEN_700} font={{ variation: FontVariation.BODY2 }}>
+            {amountSubTitle}
           </Text>
-        ) : null}
+        </Layout.Horizontal>
+        <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY }}>
+          {subTitle}
+        </Text>
       </Layout.Vertical>
     </Card>
   )

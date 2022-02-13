@@ -33,7 +33,6 @@ describe('test cases for recommendation summary cards', () => {
           amount="$98.78"
           title="Potential Monthly Savings"
           amountSubTitle="(73%)"
-          iconName="money-icon"
           subTitle="Feb 07 - Feb 13"
         />
       </TestWrapper>
