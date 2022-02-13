@@ -36,6 +36,7 @@ export interface StringsMap {
   'common.advanced': string
   'common.agent': string
   'common.allErrors': string
+  'common.and': string
   'common.apiKeys': string
   'common.apikey': string
   'common.application': string
@@ -500,6 +501,7 @@ export interface StringsMap {
   'common.reportName': string
   'common.reportNameRequired': string
   'common.repositoryName': string
+  'common.request': string
   'common.resolveConflict': string
   'common.resourceGroupLabel': string
   'common.resourceLabel': string
@@ -675,6 +677,7 @@ export interface StringsMap {
   'common.viewUsage': string
   'common.webhookURL': string
   'common.welcome': string
+  'common.whose': string
   'common.with': string
   'common.without': string
   'common.yearly': string
@@ -3751,7 +3754,6 @@ export interface StringsMap {
   'ce.recommendation.detailsPage.costOptimized': string
   'ce.recommendation.detailsPage.costOptimizedCaps': string
   'ce.recommendation.detailsPage.costOptimizedDetails': string
-  'ce.recommendation.detailsPage.cpuHistogramHeader': string
   'ce.recommendation.detailsPage.currentResources': string
   'ce.recommendation.detailsPage.customDetails': string
   'ce.recommendation.detailsPage.guaranteed': string
@@ -3762,7 +3764,6 @@ export interface StringsMap {
   'ce.recommendation.detailsPage.howItWorks': string
   'ce.recommendation.detailsPage.idleCost': string
   'ce.recommendation.detailsPage.limitPercentileLegendText': string
-  'ce.recommendation.detailsPage.memoryHistogramHeader': string
   'ce.recommendation.detailsPage.memoryValueBuffer': string
   'ce.recommendation.detailsPage.monthlySpendByDate': string
   'ce.recommendation.detailsPage.percentileOfReqAndLimit': string
@@ -3805,11 +3806,17 @@ export interface StringsMap {
   'ce.recommendation.listPage.recommendationTypes.rightSizing': string
   'ce.recommendation.listPage.recommnedationBreakdown': string
   'ce.recommendation.listPage.uptoText': string
+  'ce.recommendation.recommendationChart.and': string
+  'ce.recommendation.recommendationChart.cpuHistogramHeader': string
   'ce.recommendation.recommendationChart.cpuPlaceholder': string
+  'ce.recommendation.recommendationChart.limitLabel': string
+  'ce.recommendation.recommendationChart.memoryHistogramHeader': string
   'ce.recommendation.recommendationChart.memoryLabel': string
   'ce.recommendation.recommendationChart.memoryLabelRegular': string
   'ce.recommendation.recommendationChart.memoryUsagePlaceholder': string
   'ce.recommendation.recommendationChart.noOfSamples': string
+  'ce.recommendation.recommendationChart.request': string
+  'ce.recommendation.recommendationChart.willBeMet': string
   'ce.recommendation.sideNavText': string
   'ce.savedYamlSuccess': string
   'ce.sideNav.perspective': string

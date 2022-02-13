@@ -120,19 +120,27 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
             <Container className={css.sliderContainer}>
               <Text
                 font={{ variation: FontVariation.SMALL_SEMI, align: 'right' }}
-                margin={{ bottom: 'small', top: 'small' }}
+                margin={{ bottom: 'small', top: 'small', right: 'xxlarge' }}
               >
                 {`${cpuAndMemoryValueBuffer}%`}
               </Text>
-              <Slider
-                min={0}
-                max={100}
-                stepSize={1}
-                labelRenderer={false}
-                value={cpuAndMemoryValueBuffer}
-                onChange={val => setCpuAndMemoryValueBuffer(val)}
-                className={css.bufferSlider}
-              />
+              <Layout.Horizontal style={{ alignItems: 'center' }} spacing="medium">
+                <Text font={{ variation: FontVariation.TINY }} color={Color.GREY_600}>
+                  0
+                </Text>
+                <Slider
+                  min={0}
+                  max={100}
+                  stepSize={1}
+                  labelRenderer={false}
+                  value={cpuAndMemoryValueBuffer}
+                  onChange={val => setCpuAndMemoryValueBuffer(val)}
+                  className={css.bufferSlider}
+                />
+                <Text font={{ variation: FontVariation.TINY }} color={Color.GREY_600}>
+                  100
+                </Text>
+              </Layout.Horizontal>
             </Container>
           </Container>
         </Card>

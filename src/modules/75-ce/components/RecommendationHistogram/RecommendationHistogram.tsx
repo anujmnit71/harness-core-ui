@@ -167,11 +167,18 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
 
   return (
     <Container className={css.chartContainer}>
-      {/* <label className={css.sampleText}>Number of Samples</label> */}
       <Layout.Vertical>
-        <Text padding={{ bottom: 'xsmall' }} font={{ variation: FontVariation.SMALL_SEMI }}>
-          {getString('ce.recommendation.detailsPage.cpuHistogramHeader')}
-        </Text>
+        <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'xsmall' }}>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+            {getString('ce.recommendation.recommendationChart.cpuHistogramHeader')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.PRIMARY_7}>
+            {getString('ce.recommendation.recommendationChart.request')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+            {getString('ce.recommendation.recommendationChart.willBeMet')}
+          </Text>
+        </Layout.Horizontal>
         <Container>
           <Text
             padding="xsmall"
@@ -344,9 +351,23 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
         </Container>
       </Layout.Vertical>
       <Layout.Vertical>
-        <Text padding={{ bottom: 'xsmall' }} font={{ variation: FontVariation.SMALL_SEMI }}>
-          {getString('ce.recommendation.detailsPage.memoryHistogramHeader')}
-        </Text>
+        <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'xsmall' }}>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+            {getString('ce.recommendation.recommendationChart.memoryHistogramHeader')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.PRIMARY_7}>
+            {getString('ce.recommendation.recommendationChart.memoryLabelRegular')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+            {getString('ce.recommendation.recommendationChart.and')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREEN_500}>
+            {getString('ce.recommendation.recommendationChart.request')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
+            {getString('ce.recommendation.recommendationChart.willBeMet')}
+          </Text>
+        </Layout.Horizontal>
         <Container>
           <Text
             padding="xsmall"

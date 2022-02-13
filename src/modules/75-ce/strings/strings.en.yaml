@@ -475,20 +475,24 @@ recommendation:
     costOptimizedCaps: 'COST OPTIMIZED'
     performanceOptimizedCaps: 'PERFORMANCE OPTIMIZED'
     tuneRecommendations: Tune Recommendations
-    setQoSAndBuffer: 'Set QoS and Buffer'
+    setQoSAndBuffer: 'Set QoS and Buffer for recommended requests/limits'
     qualityOfService: 'Quality of service'
     memoryValueBuffer: '% Buffer to be considered for CPU/Memory values'
-    cpuHistogramHeader: 'Number of samples whose CPU Request will be met'
-    memoryHistogramHeader: 'Number of samples whose Memory Request and Limit will be met'
     burstable: 'BURSTABLE'
     guaranteed: 'GUARANTEED'
     monthlySpendByDate: 'by {{date}}'
   recommendationChart:
     cpuPlaceholder: 'CPU Usage(millicores)'
     noOfSamples: 'Number of samples'
+    cpuHistogramHeader: ' {{ $.ce.recommendation.recommendationChart.noOfSamples }} {{ $.common.whose }} {{ $.delegate.delegateCPU }}'
+    memoryHistogramHeader: ' {{ $.ce.recommendation.recommendationChart.noOfSamples }} {{ $.common.whose }} {{ ce.recommendation.recommendationChart.memoryLabel }}'
     memoryLabel: 'MEMORY'
+    limitLabel: 'LIMIT'
     memoryLabelRegular: 'Memory'
+    and: '{{ $.common.and }}'
+    request: '{{ $.common.request }}'
     memoryUsagePlaceholder: 'Memory usage(GBs)'
+    willBeMet: 'will be met'
 savedYamlSuccess: YAML validated successfully
 uploadCertiHeader: Upload a new certificate for the Application Load Balancer
 perspectives:

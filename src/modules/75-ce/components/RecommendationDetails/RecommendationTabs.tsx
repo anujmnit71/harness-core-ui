@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { Container, Layout, Text } from '@wings-software/uicore'
+import { Container, Layout, Text, Color } from '@wings-software/uicore'
 import cx from 'classnames'
 
 import { useStrings } from 'framework/strings'
@@ -64,6 +64,11 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
             }}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.CostOptimized })}
             tooltipProps={{ dataTooltipId: 'costOptimized' }}
+            rightIcon="info"
+            rightIconProps={{
+              color: selectedRecommendation === RecommendationType.CostOptimized ? Color.WHITE : Color.GREY_500,
+              size: 12
+            }}
           >
             {getString('ce.recommendation.detailsPage.costOptimized')}
           </Text>
@@ -91,6 +96,11 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
             }}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.PerformanceOptimized })}
             tooltipProps={{ dataTooltipId: 'performanceOptimized' }}
+            rightIcon="info"
+            rightIconProps={{
+              color: selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.GREY_500,
+              size: 12
+            }}
           >
             {getString('ce.recommendation.detailsPage.performanceOptimized')}
           </Text>
