@@ -231,7 +231,6 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
         <RecommendationDetailsSavingsCard
           amount={formatCost(recommendationStats?.totalMonthlySaving)}
           title={getString('ce.recommendation.listPage.monthlySavingsText')}
-          iconName="money-icon"
           amountSubTitle={calculateSavingsPercentage(
             recommendationStats?.totalMonthlySaving,
             recommendationStats?.totalMonthlyCost
