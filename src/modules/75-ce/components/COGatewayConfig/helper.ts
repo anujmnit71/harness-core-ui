@@ -85,7 +85,7 @@ class InstanceData implements InstanceDetails {
   }
 }
 
-export const fromResourceToInstanceDetails = (item: Resource, addMeta: boolean) => {
+export const fromResourceToInstanceDetails = (item: Resource, resourceType: { isAzure: boolean; isGcp: boolean }) => {
   const instanceDetails = new InstanceData()
     .setName(item.name as string)
     .setId(item.id as string)
@@ -95,8 +95,11 @@ export const fromResourceToInstanceDetails = (item: Resource, addMeta: boolean) 
     .setLaunchTime(item.launch_time as string)
     .setStatus(item.status as string)
     .setVpc(item.metadata?.['vpcID'] as string)
-  if (addMeta) {
+  if (resourceType.isAzure) {
     instanceDetails.setMetadata({ resourceGroup: item.metadata?.resourceGroup })
+  }
+  if (resourceType.isGcp) {
+    instanceDetails.setMetadata({ availabilityZone: item.availability_zone })
   }
   return instanceDetails
 }

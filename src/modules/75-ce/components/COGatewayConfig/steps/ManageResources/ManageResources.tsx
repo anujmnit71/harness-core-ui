@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { isEmpty as _isEmpty, omit as _omit } from 'lodash-es'
+import { isEmpty as _isEmpty, omit as _omit, defaultTo as _defaultTo } from 'lodash-es'
 import { Radio, RadioGroup } from '@blueprintjs/core'
 import { Layout, Text } from '@wings-software/uicore'
 import { useModalHook } from '@harness/use-modal'
@@ -51,7 +51,7 @@ interface ManageResourcesProps {
 
 const managedResources = [
   { label: 'EC2 VM(s)', value: RESOURCES.INSTANCES, providers: ['aws'] },
-  { label: 'VM(s)', value: RESOURCES.INSTANCES, providers: ['azure'] },
+  { label: 'VM(s)', value: RESOURCES.INSTANCES, providers: ['azure', 'gcp'] },
   { label: 'Auto scaling groups', value: RESOURCES.ASG, providers: ['aws'] },
   {
     label: 'Kubernetes Cluster',
@@ -82,6 +82,7 @@ const ManageResources: React.FC<ManageResourcesProps> = props => {
 
   const isKubernetesEnabled = useFeatureFlag(FeatureFlag.CE_AS_KUBERNETES_ENABLED)
   const isAzureProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
+  const isGcpProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
   const [featureFlagsMap] = useState<Record<string, boolean>>({ CE_AS_KUBERNETES_ENABLED: isKubernetesEnabled })
 
   const { mutate: getInstances, loading: loadingInstances } = useAllResourcesOfAccount({
@@ -264,10 +265,12 @@ const ManageResources: React.FC<ManageResourcesProps> = props => {
           }
         }
       )
-      const instances =
+      const instances = _defaultTo(
         result?.response
           ?.filter(x => x.status !== 'terminated')
-          .map(item => fromResourceToInstanceDetails(item, isAzureProvider)) || []
+          .map(item => fromResourceToInstanceDetails(item, { isAzure: isAzureProvider, isGcp: isGcpProvider })),
+        []
+      )
       setAllInstances(instances)
     } catch (e) {
       handleErrorDisplay(e, 'ce.refetch.instance.error')
