@@ -177,7 +177,7 @@ const config = {
     new MonacoWebpackPlugin({
       // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
       languages: ['json', 'yaml', 'shell', 'powershell'],
-      publicPath: 'ng/static'
+      publicPath: '/'
     }),
     new GenerateStringTypesPlugin(),
     new RetryChunkLoadPlugin({
