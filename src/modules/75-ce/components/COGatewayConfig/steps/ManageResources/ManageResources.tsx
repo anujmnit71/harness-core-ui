@@ -82,7 +82,7 @@ const ManageResources: React.FC<ManageResourcesProps> = props => {
 
   const isKubernetesEnabled = useFeatureFlag(FeatureFlag.CE_AS_KUBERNETES_ENABLED)
   const isAzureProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
-  const isGcpProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
+  const isGcpProvider = Utils.isProviderGcp(props.gatewayDetails.provider)
   const [featureFlagsMap] = useState<Record<string, boolean>>({ CE_AS_KUBERNETES_ENABLED: isKubernetesEnabled })
 
   const { mutate: getInstances, loading: loadingInstances } = useAllResourcesOfAccount({

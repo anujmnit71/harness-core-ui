@@ -64,7 +64,7 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
   const [filteredInstances, setFilteredInstances] = useState<InstanceDetails[]>([])
   const [selectedInstances, setSelectedInstances] = useState<InstanceDetails[]>(_defaultTo(props.selectedInstances, []))
   const [pageIndex, setPageIndex] = useState<number>(0)
-  const [isLoading, setIsLoading] = useState<boolean>(props.loading)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<SelectOption>()
 
   const isAzureProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
@@ -102,12 +102,12 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
   // }, [selectedResourceGroup])
 
   const onResourceGroupSelect = (selectedRg: SelectOption | null, resourceGroupLoading: boolean) => {
-    setIsLoading(props.loading || resourceGroupLoading)
     if (selectedRg) {
       setSelectedResourceGroup(selectedRg)
       const groupText = _defaultTo(selectedRg.value, '') as string
       props.refresh?.(`resource_groups=['${groupText}']`)
     }
+    setIsLoading(resourceGroupLoading)
   }
 
   // const setResourceGroupDataFromResponse = (response: ResourceGroup[] = []) => {
@@ -226,10 +226,11 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
           <InstancesFilter
             gatewayDetails={props.gatewayDetails}
             onResourceGroupSelectCallback={onResourceGroupSelect}
+            selectedInstances={selectedInstances}
           />
         </Layout.Vertical>
         <InstanceSelectorBody
-          isLoading={isLoading}
+          isLoading={props.loading || isLoading}
           selectedResourceGroup={selectedResourceGroup}
           instances={filteredInstances}
           pageProps={{
@@ -249,13 +250,18 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
 interface InstancesFilterProps {
   gatewayDetails: GatewayDetails
   onResourceGroupSelectCallback: (resourceGroup: SelectOption | null, resourceGroupLoading: boolean) => void
+  selectedInstances: InstanceDetails[]
 }
 
-const InstancesFilter: React.FC<InstancesFilterProps> = ({ gatewayDetails, onResourceGroupSelectCallback }) => {
+const InstancesFilter: React.FC<InstancesFilterProps> = ({
+  gatewayDetails,
+  onResourceGroupSelectCallback,
+  selectedInstances
+}) => {
   const { accountId } = useParams<AccountPathProps>()
   const { getString } = useStrings()
   const isAzureProvider = Utils.isProviderAzure(gatewayDetails.provider)
-  const isGcpProvider = Utils.isProviderAzure(gatewayDetails.provider)
+  const isGcpProvider = Utils.isProviderGcp(gatewayDetails.provider)
 
   const [resourceGroupData, setResourceGroupData] = useState<SelectOption[]>([])
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<SelectOption>()
@@ -274,8 +280,26 @@ const InstancesFilter: React.FC<InstancesFilterProps> = ({ gatewayDetails, onRes
   }, [resourceGroups?.response])
 
   useEffect(() => {
+    if (isAzureProvider) {
+      handleAzureFiltersUpdate()
+    }
+  }, [resourceGroupData])
+
+  useEffect(() => {
     onResourceGroupSelectCallback(_defaultTo(selectedResourceGroup, null), resourceGroupsLoading)
   }, [selectedResourceGroup, resourceGroupsLoading])
+
+  const handleAzureFiltersUpdate = () => {
+    if (!selectedResourceGroup && !_isEmpty(selectedInstances)) {
+      const groupName = selectedInstances?.[0]?.metadata?.resourceGroup?.toLowerCase()
+      const groupToSelect = resourceGroupData.find(d => d.label.toLowerCase() === groupName)
+      setSelectedResourceGroup(groupToSelect)
+    }
+  }
+
+  // const handleGcpFiltersUpdate = () => {
+  //   console.log('GCP')
+  // }
 
   const setResourceGroupDataFromResponse = (response: ResourceGroup[] = []) => {
     const loaded = response.map(r => ({
