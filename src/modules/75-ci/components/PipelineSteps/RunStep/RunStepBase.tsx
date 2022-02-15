@@ -47,7 +47,11 @@ import { useGitScope } from '@pipeline/utils/CIUtils'
 import type { RunStepProps, RunStepData, RunStepDataUI } from './RunStep'
 import { transformValuesFieldsConfig, getEditViewValidateFieldsConfig } from './RunStepFunctionConfigs'
 import { CIStepOptionalConfig, getOptionalSubLabel } from '../CIStep/CIStepOptionalConfig'
-import { useGetPropagatedStageById, validateConnectorRefAndImageDepdendency } from '../CIStep/StepUtils'
+import {
+  AllMultiTypeInputTypes,
+  useGetPropagatedStageById,
+  validateConnectorRefAndImageDepdendency
+} from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const RunStepBase = (
@@ -101,7 +105,7 @@ export const RunStepBase = (
             orgIdentifier={orgIdentifier}
             multiTypeProps={{
               expressions,
-              allowableTypes,
+              allowableTypes: AllMultiTypeInputTypes,
               disabled: readonly
             }}
             gitScope={gitScope}
@@ -132,6 +136,11 @@ export const RunStepBase = (
                 {showOptionalSublabel ? getOptionalSubLabel('image', getString) : null}
               </Layout.Horizontal>
             }
+            multiTextInputProps={{
+              multiTextInputProps: {
+                allowableTypes: AllMultiTypeInputTypes
+              }
+            }}
           />
         </Container>
       </>
@@ -227,7 +236,7 @@ export const RunStepBase = (
                 }
                 defaultValueToReset=""
                 skipRenderValueInExpressionLabel
-                allowedTypes={[MultiTypeInputType.EXPRESSION, MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME]}
+                allowedTypes={AllMultiTypeInputTypes}
                 expressionRender={() => {
                   return (
                     <ShellScriptMonacoField
@@ -280,12 +289,10 @@ export const RunStepBase = (
                         'spec.envVariables': { tooltipId: 'environmentVariables' },
                         'spec.outputVariables': {}
                       }}
-                      allowableTypes={allowableTypes}
                     />
                     <StepCommonFields
                       enableFields={['spec.imagePullPolicy', 'spec.shell']}
                       disabled={readonly}
-                      allowableTypes={allowableTypes}
                       buildInfrastructureType={buildInfrastructureType}
                     />
                   </Container>

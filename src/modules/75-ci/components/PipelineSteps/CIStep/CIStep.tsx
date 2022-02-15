@@ -139,7 +139,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
                   {getString('description')}
                 </Text>
               }
-              multiTypeTextArea={{ expressions, allowableTypes, disabled: readonly }}
+              multiTypeTextArea={{ expressions, allowableTypes: AllMultiTypeInputTypes, disabled: readonly }}
             />
           </>
         ) : null}
@@ -218,7 +218,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             labelKey: 'pipelineSteps.hostLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.hostPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -231,7 +231,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'gcrProjectID',
             labelKey: 'pipelineSteps.projectIDLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -245,7 +245,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             labelKey: 'regionLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.regionPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -307,7 +307,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'ecrAccount',
             labelKey: 'common.accountId',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -320,7 +320,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'imageName',
             labelKey: 'imageNameLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}

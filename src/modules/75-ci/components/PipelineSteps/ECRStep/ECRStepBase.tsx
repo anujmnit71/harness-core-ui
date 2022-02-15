@@ -96,7 +96,6 @@ export const ECRStepBase = (
               isNewStep={isNewStep}
               readonly={readonly}
               stepViewType={stepViewType}
-              allowableTypes={allowableTypes}
               enableFields={{
                 name: {},
                 'spec.imageName': {},
@@ -138,13 +137,8 @@ export const ECRStepBase = (
                         'spec.target': { tooltipId: 'target' },
                         'spec.remoteCacheImage': { shouldHide: buildInfrastructureType === 'VM' }
                       }}
-                      allowableTypes={allowableTypes}
                     />
-                    <StepCommonFields
-                      disabled={readonly}
-                      allowableTypes={allowableTypes}
-                      buildInfrastructureType={buildInfrastructureType}
-                    />
+                    <StepCommonFields disabled={readonly} buildInfrastructureType={buildInfrastructureType} />
                   </Container>
                 }
               />

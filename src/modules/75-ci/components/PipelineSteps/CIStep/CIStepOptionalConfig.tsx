@@ -260,7 +260,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           {renderMultiTypeCheckboxField({
             name: `${prefix}spec.privileged`,
             tooltipId: 'privileged',
-            labelKey: 'ci.privileged'
+            labelKey: 'ci.privileged',
+            allowableTypes: AllMultiTypeInputTypes
           })}
         </div>
       ) : null}
@@ -305,7 +306,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           : renderMultiTypeMap(
               `${prefix}spec.envVariables`,
               'environmentVariables',
-              enableFields['spec.envVariables'].tooltipId
+              enableFields['spec.envVariables'].tooltipId,
+              AllMultiTypeInputTypes
             )
         : null}
       {Object.prototype.hasOwnProperty.call(enableFields, 'spec.outputVariables') ? (
@@ -424,7 +426,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             tooltipId: 'gcrRemoteCache',
             labelKey: 'ci.remoteCacheImage.label',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}

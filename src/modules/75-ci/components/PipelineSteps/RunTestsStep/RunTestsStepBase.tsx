@@ -52,13 +52,18 @@ import {
 import type { RunTestsStepProps, RunTestsStepData, RunTestsStepDataUI } from './RunTestsStep'
 import { transformValuesFieldsConfig, getEditViewValidateFieldsConfig } from './RunTestsStepFunctionConfigs'
 import { CIStepOptionalConfig, getOptionalSubLabel } from '../CIStep/CIStepOptionalConfig'
-import { useGetPropagatedStageById, validateConnectorRefAndImageDepdendency } from '../CIStep/StepUtils'
+import {
+  AllMultiTypeInputTypes,
+  useGetPropagatedStageById,
+  validateConnectorRefAndImageDepdendency
+} from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 interface FieldRenderProps {
   name: string
   fieldLabelKey: keyof StringsMap
   tooltipId: string
+  allowableTypes: MultiTypeInputType[]
   renderOptionalSublabel?: boolean
   selectFieldOptions?: SelectOption[]
   onSelectChange?: (SelectOption: any) => void
@@ -90,7 +95,7 @@ const getBuildToolOptions = (language?: string): SelectOption[] | undefined => {
 }
 
 export const RunTestsStepBase = (
-  { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, allowableTypes, onChange }: RunTestsStepProps,
+  { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, onChange }: RunTestsStepProps,
   formikRef: StepFormikFowardRef<RunTestsStepData>
 ): JSX.Element => {
   const {
@@ -136,7 +141,7 @@ export const RunTestsStepBase = (
   // })
 
   const renderMultiTypeTextField = React.useCallback(
-    ({ name, fieldLabelKey, tooltipId, renderOptionalSublabel = false }: FieldRenderProps) => {
+    ({ name, fieldLabelKey, tooltipId, allowableTypes, renderOptionalSublabel = false }: FieldRenderProps) => {
       return (
         <MultiTypeTextField
           name={name}
@@ -159,7 +164,7 @@ export const RunTestsStepBase = (
             </Layout.Horizontal>
           }
           multiTextInputProps={{
-            multiTextInputProps: { expressions },
+            multiTextInputProps: { expressions, allowableTypes },
             disabled: readonly
           }}
           style={{ marginBottom: 'var(--spacing-small)' }}
@@ -200,36 +205,41 @@ export const RunTestsStepBase = (
     []
   )
 
-  const renderMultiTypeFieldSelector = React.useCallback(({ name, fieldLabelKey, tooltipId }: FieldRenderProps) => {
-    return (
-      <MultiTypeFieldSelector
-        name={name}
-        label={
-          <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
-            <Text
-              className={css.inpLabel}
-              color={Color.GREY_600}
-              font={{ size: 'small', weight: 'semi-bold' }}
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              {getString(fieldLabelKey)}
-            </Text>
-            &nbsp;
-            {getOptionalSubLabel(tooltipId, getString)}
-          </Layout.Horizontal>
-        }
-        defaultValueToReset=""
-        allowedTypes={[MultiTypeInputType.EXPRESSION, MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME]}
-        expressionRender={() => {
-          return <ShellScriptMonacoField name={name} scriptType="Bash" disabled={readonly} expressions={expressions} />
-        }}
-        style={{ flexGrow: 1, marginBottom: 0 }}
-        disableTypeSelection={readonly}
-      >
-        <ShellScriptMonacoField name={name} scriptType="Bash" disabled={readonly} />
-      </MultiTypeFieldSelector>
-    )
-  }, [])
+  const renderMultiTypeFieldSelector = React.useCallback(
+    ({ name, fieldLabelKey, tooltipId, allowableTypes }: FieldRenderProps) => {
+      return (
+        <MultiTypeFieldSelector
+          name={name}
+          label={
+            <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
+              <Text
+                className={css.inpLabel}
+                color={Color.GREY_600}
+                font={{ size: 'small', weight: 'semi-bold' }}
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                {getString(fieldLabelKey)}
+              </Text>
+              &nbsp;
+              {getOptionalSubLabel(tooltipId, getString)}
+            </Layout.Horizontal>
+          }
+          defaultValueToReset=""
+          allowedTypes={allowableTypes}
+          expressionRender={() => {
+            return (
+              <ShellScriptMonacoField name={name} scriptType="Bash" disabled={readonly} expressions={expressions} />
+            )
+          }}
+          style={{ flexGrow: 1, marginBottom: 0 }}
+          disableTypeSelection={readonly}
+        >
+          <ShellScriptMonacoField name={name} scriptType="Bash" disabled={readonly} />
+        </MultiTypeFieldSelector>
+      )
+    },
+    []
+  )
 
   const renderConnectorRefAndImage = React.useCallback(
     (showOptionalSublabel: boolean) => (
@@ -259,7 +269,7 @@ export const RunTestsStepBase = (
             orgIdentifier={orgIdentifier}
             multiTypeProps={{
               expressions,
-              allowableTypes,
+              allowableTypes: AllMultiTypeInputTypes,
               disabled: readonly
             }}
             gitScope={gitScope}
@@ -290,6 +300,11 @@ export const RunTestsStepBase = (
                 {showOptionalSublabel ? getOptionalSubLabel('image', getString) : null}
               </Layout.Horizontal>
             }
+            multiTextInputProps={{
+              multiTextInputProps: {
+                allowableTypes: AllMultiTypeInputTypes
+              }
+            }}
           />
         </Container>
       </>
@@ -384,7 +399,8 @@ export const RunTestsStepBase = (
                     setBuildToolOptions(newBuildToolOptions)
                     formik.setFieldValue('spec.buildTool', '')
                   }
-                }
+                },
+                allowableTypes: AllMultiTypeInputTypes
               })}
             </Container>
             <Container className={cx(css.formGroup, css.lg, css.bottomMargin5)}>
@@ -392,7 +408,8 @@ export const RunTestsStepBase = (
                 name: 'spec.buildTool',
                 fieldLabelKey: 'buildToolLabel',
                 tooltipId: 'runTestsBuildTool',
-                selectFieldOptions: buildToolOptions
+                selectFieldOptions: buildToolOptions,
+                allowableTypes: AllMultiTypeInputTypes
               })}
             </Container>
             {(formik.values?.spec?.language as any)?.value === Language.Java &&
@@ -464,13 +481,19 @@ gradle.projectsEvaluated {
                 </>
               )}
             <Container className={cx(css.formGroup, css.lg, css.bottomMargin5)}>
-              {renderMultiTypeTextField({ name: 'spec.args', fieldLabelKey: 'argsLabel', tooltipId: 'runTestsArgs' })}
+              {renderMultiTypeTextField({
+                name: 'spec.args',
+                fieldLabelKey: 'argsLabel',
+                tooltipId: 'runTestsArgs',
+                allowableTypes: AllMultiTypeInputTypes
+              })}
             </Container>
             <Container className={cx(css.formGroup, css.lg)}>
               {renderMultiTypeTextField({
                 name: 'spec.packages',
                 fieldLabelKey: 'packagesLabel',
-                tooltipId: 'runTestsPackages'
+                tooltipId: 'runTestsPackages',
+                allowableTypes: AllMultiTypeInputTypes
               })}
             </Container>
             <Accordion className={css.accordion}>
@@ -484,7 +507,7 @@ gradle.projectsEvaluated {
                       <FormMultiTypeCheckboxField
                         name="spec.runOnlySelectedTests"
                         label={getString('runOnlySelectedTestsLabel')}
-                        multiTypeTextbox={{ expressions, disabled: readonly }}
+                        multiTypeTextbox={{ expressions, disabled: readonly, allowableTypes: AllMultiTypeInputTypes }}
                         style={{ marginBottom: 'var(--spacing-small)' }}
                         disabled={readonly}
                       />
@@ -494,7 +517,8 @@ gradle.projectsEvaluated {
                         name: 'spec.testAnnotations',
                         fieldLabelKey: 'testAnnotationsLabel',
                         tooltipId: 'runTestsTestAnnotations',
-                        renderOptionalSublabel: true
+                        renderOptionalSublabel: true,
+                        allowableTypes: AllMultiTypeInputTypes
                       })}
                     </Container>
                     <Container className={css.bottomMargin5}>
@@ -505,7 +529,8 @@ gradle.projectsEvaluated {
                         {renderMultiTypeFieldSelector({
                           name: 'spec.preCommand',
                           fieldLabelKey: 'ci.preCommandLabel',
-                          tooltipId: 'runTestsPreCommand'
+                          tooltipId: 'runTestsPreCommand',
+                          allowableTypes: AllMultiTypeInputTypes
                         })}
                         {getMultiTypeFromValue(formik?.values?.spec?.preCommand) === MultiTypeInputType.RUNTIME && (
                           <ConfigureOptions
@@ -530,7 +555,8 @@ gradle.projectsEvaluated {
                         {renderMultiTypeFieldSelector({
                           name: 'spec.postCommand',
                           fieldLabelKey: 'ci.postCommandLabel',
-                          tooltipId: 'runTestsPostCommand'
+                          tooltipId: 'runTestsPostCommand',
+                          allowableTypes: AllMultiTypeInputTypes
                         })}
                         {getMultiTypeFromValue(formik?.values?.spec?.postCommand) === MultiTypeInputType.RUNTIME && (
                           <ConfigureOptions
@@ -555,7 +581,6 @@ gradle.projectsEvaluated {
                         'spec.envVariables': { tooltipId: 'environmentVariables' },
                         'spec.outputVariables': {}
                       }}
-                      allowableTypes={allowableTypes}
                     />
                     <StepCommonFields
                       enableFields={[
@@ -563,7 +588,6 @@ gradle.projectsEvaluated {
                         'spec.imagePullPolicy'
                       ]}
                       disabled={readonly}
-                      allowableTypes={allowableTypes}
                       buildInfrastructureType={buildInfrastructureType}
                     />
                   </Container>
