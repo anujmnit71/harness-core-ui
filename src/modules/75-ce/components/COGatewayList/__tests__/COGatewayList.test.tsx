@@ -173,6 +173,11 @@ jest.mock('services/lw', () => ({
   })),
   useDeleteStaticSchedule: jest.fn().mockImplementation(() => ({
     mutate: jest.fn()
+  })),
+  useRouteDetails: jest.fn().mockImplementation(() => ({
+    data: null,
+    loading: false,
+    refetch: jest.fn()
   }))
 }))
 
