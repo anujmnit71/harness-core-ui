@@ -14,7 +14,8 @@ import {
   PageError,
   TableV2,
   useConfirmationDialog,
-  useToaster
+  useToaster,
+  NoDataCard
 } from '@wings-software/uicore'
 import type { Column, Renderer, CellProps } from 'react-table'
 import { useParams, useHistory } from 'react-router-dom'
@@ -207,7 +208,6 @@ const SwitchAccount: React.FC<SwitchAccountProps> = ({ searchString = '', mock }
     ],
     [accounts]
   )
-
   return (
     <>
       <ReAuthenticationNote accounts={accounts} accountId={accountId} />
@@ -216,8 +216,15 @@ const SwitchAccount: React.FC<SwitchAccountProps> = ({ searchString = '', mock }
         {error ? (
           <PageError message={error.message || getString('somethingWentWrong')} onClick={() => refetch()} />
         ) : null}
-        {!loading && !settingDefault && !error && accounts ? (
+        {!loading && !settingDefault && !error && accounts && accounts.length ? (
           <TableV2 columns={columns} data={accounts} sortable={false} />
+        ) : null}
+        {!loading && !settingDefault && !error && accounts.length === 0 ? (
+          <NoDataCard
+            message={getString('noData')}
+            className={css.noDataCard}
+            containerClassName={css.noDataCardContainer}
+          />
         ) : null}
       </Container>
     </>
