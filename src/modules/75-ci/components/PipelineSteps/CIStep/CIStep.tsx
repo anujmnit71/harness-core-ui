@@ -21,6 +21,7 @@ import { useVariablesExpression } from '@pipeline/components/PipelineStudio/Pipl
 import { FormMultiTypeConnectorField } from '@connectors/components/ConnectorReferenceField/FormMultiTypeConnectorField'
 import { useStrings } from 'framework/strings'
 import type { StringsMap } from 'stringTypes'
+import { AllMultiTypeInputTypes } from './StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 interface CIStepProps {
@@ -83,7 +84,17 @@ export const CIStep: React.FC<CIStepProps> = props => {
   )
 
   const renderMultiTypeList = React.useCallback(
-    ({ name, tooltipId, labelKey }: { name: string; tooltipId: string; labelKey: keyof StringsMap }) => (
+    ({
+      name,
+      tooltipId,
+      labelKey,
+      allowableTypes
+    }: {
+      name: string
+      tooltipId: string
+      labelKey: keyof StringsMap
+      allowableTypes: MultiTypeInputType[]
+    }) => (
       <MultiTypeList
         name={name}
         multiTextInputProps={{ expressions, allowableTypes }}
@@ -154,7 +165,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             orgIdentifier={orgIdentifier}
             multiTypeProps={{
               expressions,
-              allowableTypes: enableFields['spec.connectorRef'].allowableTypes,
+              allowableTypes: AllMultiTypeInputTypes,
               disabled: readonly,
               ...enableFields['spec.connectorRef'].multiTypeProps
             }}
@@ -194,7 +205,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'dockerHubRepository',
             labelKey: 'connectors.docker.dockerRepository',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -272,7 +283,8 @@ export const CIStep: React.FC<CIStepProps> = props => {
           {renderMultiTypeList({
             name: `${prefix}spec.sourcePaths`,
             tooltipId: 'saveCacheSourcePaths',
-            labelKey: 'pipelineSteps.sourcePathsLabel'
+            labelKey: 'pipelineSteps.sourcePathsLabel',
+            allowableTypes: [MultiTypeInputType.FIXED]
           })}
         </Container>
       ) : null}
@@ -320,7 +332,8 @@ export const CIStep: React.FC<CIStepProps> = props => {
           {renderMultiTypeList({
             name: `${prefix}spec.tags`,
             tooltipId: 'tags',
-            labelKey: 'tagsLabel'
+            labelKey: 'tagsLabel',
+            allowableTypes: AllMultiTypeInputTypes
           })}
         </Container>
       ) : null}

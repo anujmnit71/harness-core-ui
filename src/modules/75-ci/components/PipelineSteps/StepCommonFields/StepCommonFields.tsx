@@ -16,6 +16,7 @@ import { MultiTypeSelectField } from '@common/components/MultiTypeSelect/MultiTy
 import { MultiTypeTextField } from '@common/components/MultiTypeText/MultiTypeText'
 import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
 import type { PullOption } from '@pipeline/components/PipelineSteps/Steps/StepsTypes'
+import { AllMultiTypeInputTypes } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export type PullOptions = { label: string; value: PullOption }[]
@@ -57,7 +58,6 @@ interface StepCommonFieldsProps {
   withoutTimeout?: boolean
   disabled?: boolean
   enableFields?: string[]
-  allowableTypes: MultiTypeInputType[]
   buildInfrastructureType: K8sDirectInfraYaml['type']
 }
 
@@ -65,7 +65,6 @@ const StepCommonFields = ({
   withoutTimeout,
   disabled,
   enableFields = [],
-  allowableTypes,
   buildInfrastructureType
 }: StepCommonFieldsProps): JSX.Element => {
   const { getString } = useStrings()
@@ -169,7 +168,7 @@ const StepCommonFields = ({
             }
             name="spec.runAsUser"
             multiTextInputProps={{
-              multiTextInputProps: { expressions },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled,
               placeholder: '1000'
             }}
