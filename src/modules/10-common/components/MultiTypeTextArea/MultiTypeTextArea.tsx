@@ -71,7 +71,6 @@ export const MultiTypeTextArea: React.FC<MultiTypeTextAreaProps> = props => {
       fixedTypeComponentProps={textAreaProps}
       fixedTypeComponent={MultiTypeTextAreaFixedTypeComponent}
       style={{ flexGrow: 1 }}
-      btnClassName={css.multiBtn}
     />
   )
   return (
