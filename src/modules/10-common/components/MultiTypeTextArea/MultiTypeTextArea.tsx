@@ -17,7 +17,8 @@ import {
   DataTooltipInterface,
   HarnessDocTooltip,
   FormError,
-  FormikTooltipContext
+  FormikTooltipContext,
+  Container
 } from '@wings-software/uicore'
 import { connect } from 'formik'
 import { get } from 'lodash-es'
@@ -74,7 +75,7 @@ export const MultiTypeTextArea: React.FC<MultiTypeTextAreaProps> = props => {
     />
   )
   return (
-    <>
+    <Container className={css.multiTypeTextAreaContainer}>
       {enableConfigureOptions ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {expressionAndRuntimeTypeComponent}
@@ -96,7 +97,7 @@ export const MultiTypeTextArea: React.FC<MultiTypeTextAreaProps> = props => {
       ) : (
         expressionAndRuntimeTypeComponent
       )}
-    </>
+    </Container>
   )
 }
 

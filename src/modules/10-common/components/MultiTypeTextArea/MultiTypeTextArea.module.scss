@@ -11,6 +11,25 @@
   resize: vertical;
 }
 
-.multi-btn {
-  height: auto !important;
+.multiTypeTextAreaContainer{
+  :global {
+    .bp3-input {
+      min-height: var(--spacing-12) !important;
+    }
+    .MultiTypeInput--btn.MultiTypeInput--btn {
+      height: var(--spacing-7) !important;
+      width: var(--spacing-7);
+
+      padding: 0;
+      position: absolute;
+      top: var(--spacing-3);
+      right: var(--spacing-3);
+      border: 1px solid var(--form-field-border);
+      border-radius: var(--spacing-2);
+
+      &::before {
+        display: none;
+      }
+    }
+  }
 }
