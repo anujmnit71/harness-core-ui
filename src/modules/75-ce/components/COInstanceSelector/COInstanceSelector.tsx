@@ -37,7 +37,7 @@ interface COInstanceSelectorprops {
   setGatewayDetails: (gatewayDetails: GatewayDetails) => void
   gatewayDetails: GatewayDetails
   onInstancesAddSuccess?: () => void
-  loading?: boolean
+  loading: boolean
   refresh?: (tomlString?: string) => void
 }
 
@@ -59,56 +59,64 @@ function NameCell(tableProps: CellProps<InstanceDetails>): JSX.Element {
 const TOTAL_ITEMS_PER_PAGE = 8
 
 const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
-  const { accountId } = useParams<AccountPathProps>()
   const { trackEvent } = useTelemetry()
   const { getString } = useStrings()
   const [filteredInstances, setFilteredInstances] = useState<InstanceDetails[]>([])
   const [selectedInstances, setSelectedInstances] = useState<InstanceDetails[]>(_defaultTo(props.selectedInstances, []))
   const [pageIndex, setPageIndex] = useState<number>(0)
-  const [resourceGroupData, setResourceGroupData] = useState<SelectOption[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(props.loading)
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<SelectOption>()
 
   const isAzureProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
 
-  const { data: resourceGroups, loading: resourceGroupsLoading } = useAllResourceGroups({
-    account_id: accountId, // eslint-disable-line
-    queryParams: {
-      cloud_account_id: props.gatewayDetails.cloudAccount.id, // eslint-disable-line
-      accountIdentifier: accountId
-    },
-    lazy: !isAzureProvider
-  })
+  // const { data: resourceGroups, loading: resourceGroupsLoading } = useAllResourceGroups({
+  //   account_id: accountId, // eslint-disable-line
+  //   queryParams: {
+  //     cloud_account_id: props.gatewayDetails.cloudAccount.id, // eslint-disable-line
+  //     accountIdentifier: accountId
+  //   },
+  //   lazy: !isAzureProvider
+  // })
 
   useEffect(() => {
     setFilteredInstances(props.instances)
   }, [props.instances])
 
-  useEffect(() => {
-    setResourceGroupDataFromResponse(resourceGroups?.response)
-  }, [resourceGroups?.response])
+  // useEffect(() => {
+  //   setResourceGroupDataFromResponse(resourceGroups?.response)
+  // }, [resourceGroups?.response])
 
-  useEffect(() => {
-    if (!selectedResourceGroup && !_isEmpty(selectedInstances)) {
-      const groupName = selectedInstances?.[0]?.metadata?.resourceGroup?.toLowerCase()
-      const groupToSelect = resourceGroupData.find(d => d.label.toLowerCase() === groupName)
-      setSelectedResourceGroup(groupToSelect)
-    }
-  }, [resourceGroupData])
+  // useEffect(() => {
+  //   if (!selectedResourceGroup && !_isEmpty(selectedInstances)) {
+  //     const groupName = selectedInstances?.[0]?.metadata?.resourceGroup?.toLowerCase()
+  //     const groupToSelect = resourceGroupData.find(d => d.label.toLowerCase() === groupName)
+  //     setSelectedResourceGroup(groupToSelect)
+  //   }
+  // }, [resourceGroupData])
 
-  useEffect(() => {
-    if (selectedResourceGroup) {
-      const groupText = _defaultTo(selectedResourceGroup.value, '') as string
+  // useEffect(() => {
+  //   if (selectedResourceGroup) {
+  //     const groupText = _defaultTo(selectedResourceGroup.value, '') as string
+  //     props.refresh?.(`resource_groups=['${groupText}']`)
+  //   }
+  // }, [selectedResourceGroup])
+
+  const onResourceGroupSelect = (selectedRg: SelectOption | null, resourceGroupLoading: boolean) => {
+    setIsLoading(props.loading || resourceGroupLoading)
+    if (selectedRg) {
+      setSelectedResourceGroup(selectedRg)
+      const groupText = _defaultTo(selectedRg.value, '') as string
       props.refresh?.(`resource_groups=['${groupText}']`)
     }
-  }, [selectedResourceGroup])
-
-  const setResourceGroupDataFromResponse = (response: ResourceGroup[] = []) => {
-    const loaded = response.map(r => ({
-      label: r.name as string,
-      value: r.name as string
-    }))
-    setResourceGroupData(loaded)
   }
+
+  // const setResourceGroupDataFromResponse = (response: ResourceGroup[] = []) => {
+  //   const loaded = response.map(r => ({
+  //     label: r.name as string,
+  //     value: r.name as string
+  //   }))
+  //   setResourceGroupData(loaded)
+  // }
 
   const onCheckboxChange = (e: React.FormEvent<HTMLInputElement>, alreadyChecked: boolean, data: InstanceDetails) => {
     if (e.currentTarget.checked && !alreadyChecked) {
@@ -201,7 +209,7 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
             </Layout.Horizontal>
             <ExpandingSearchInput className={css.search} onChange={handleSearch} />
           </Layout.Horizontal>
-          {isAzureProvider ? (
+          {/* {isAzureProvider ? (
             <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'large'} style={{ maxWidth: '40%' }}>
               <Select
                 disabled={resourceGroupsLoading}
@@ -214,10 +222,14 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
                 name="resourceGroupSelector"
               />
             </Layout.Horizontal>
-          ) : null}
+          ) : null} */}
+          <InstancesFilter
+            gatewayDetails={props.gatewayDetails}
+            onResourceGroupSelectCallback={onResourceGroupSelect}
+          />
         </Layout.Vertical>
         <InstanceSelectorBody
-          isLoading={props.loading || resourceGroupsLoading}
+          isLoading={isLoading}
           selectedResourceGroup={selectedResourceGroup}
           instances={filteredInstances}
           pageProps={{
@@ -232,6 +244,69 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
       </Layout.Vertical>
     </Container>
   )
+}
+
+interface InstancesFilterProps {
+  gatewayDetails: GatewayDetails
+  onResourceGroupSelectCallback: (resourceGroup: SelectOption | null, resourceGroupLoading: boolean) => void
+}
+
+const InstancesFilter: React.FC<InstancesFilterProps> = ({ gatewayDetails, onResourceGroupSelectCallback }) => {
+  const { accountId } = useParams<AccountPathProps>()
+  const { getString } = useStrings()
+  const isAzureProvider = Utils.isProviderAzure(gatewayDetails.provider)
+  const isGcpProvider = Utils.isProviderAzure(gatewayDetails.provider)
+
+  const [resourceGroupData, setResourceGroupData] = useState<SelectOption[]>([])
+  const [selectedResourceGroup, setSelectedResourceGroup] = useState<SelectOption>()
+
+  const { data: resourceGroups, loading: resourceGroupsLoading } = useAllResourceGroups({
+    account_id: accountId, // eslint-disable-line
+    queryParams: {
+      cloud_account_id: gatewayDetails.cloudAccount.id, // eslint-disable-line
+      accountIdentifier: accountId
+    },
+    lazy: !isAzureProvider
+  })
+
+  useEffect(() => {
+    setResourceGroupDataFromResponse(resourceGroups?.response)
+  }, [resourceGroups?.response])
+
+  useEffect(() => {
+    onResourceGroupSelectCallback(_defaultTo(selectedResourceGroup, null), resourceGroupsLoading)
+  }, [selectedResourceGroup, resourceGroupsLoading])
+
+  const setResourceGroupDataFromResponse = (response: ResourceGroup[] = []) => {
+    const loaded = response.map(r => ({
+      label: r.name as string,
+      value: r.name as string
+    }))
+    setResourceGroupData(loaded)
+  }
+
+  if (isAzureProvider) {
+    return (
+      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'large'} style={{ maxWidth: '40%' }}>
+        <Select
+          disabled={resourceGroupsLoading}
+          items={resourceGroupData}
+          onChange={setSelectedResourceGroup}
+          value={selectedResourceGroup}
+          inputProps={{
+            placeholder: getString('ce.co.selectResourceGroupPlaceholder')
+          }}
+          name="resourceGroupSelector"
+        />
+      </Layout.Horizontal>
+    )
+  }
+
+  if (isGcpProvider) {
+    return null
+  }
+
+  return null
 }
 
 interface InstanceSelectorBodyProps {
