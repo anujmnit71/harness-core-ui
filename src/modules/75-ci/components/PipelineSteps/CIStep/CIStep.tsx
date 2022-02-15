@@ -33,12 +33,11 @@ interface CIStepProps {
   }
   formik?: FormikProps<any>
   stepViewType: StepViewType
-  allowableTypes: MultiTypeInputType[]
   path?: string
 }
 
 export const CIStep: React.FC<CIStepProps> = props => {
-  const { isNewStep, readonly, stepLabel, enableFields, stepViewType, allowableTypes, path } = props
+  const { isNewStep, readonly, stepLabel, enableFields, stepViewType, path } = props
   const { accountId, projectIdentifier, orgIdentifier } = useParams<{
     projectIdentifier: string
     orgIdentifier: string
