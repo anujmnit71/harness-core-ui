@@ -191,7 +191,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: enableFields['spec.target'].tooltipId,
             labelKey: 'pipelineSteps.targetLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -258,7 +258,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: enableFields['spec.bucket'].tooltipId,
             labelKey: 'pipelineSteps.bucketLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -271,7 +271,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: enableFields['spec.key'].tooltipId,
             labelKey: 'keyLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -283,7 +283,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             name: `${prefix}spec.sourcePaths`,
             tooltipId: 'saveCacheSourcePaths',
             labelKey: 'pipelineSteps.sourcePathsLabel',
-            allowableTypes: [MultiTypeInputType.FIXED]
+            allowableTypes: AllMultiTypeInputTypes
           })}
         </Container>
       ) : null}
@@ -294,7 +294,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'sourcePath',
             labelKey: 'pipelineSteps.sourcePathLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}

@@ -95,7 +95,6 @@ export const DependencyBase = (
                 readonly={readonly}
                 stepLabel={getString('dependencyNameLabel')}
                 stepViewType={stepViewType}
-                allowableTypes={allowableTypes}
                 formik={formik}
                 enableFields={{
                   name: {},
@@ -147,13 +146,11 @@ export const DependencyBase = (
                           'spec.entrypoint': {},
                           'spec.args': {}
                         }}
-                        allowableTypes={allowableTypes}
                       />
                       <StepCommonFields
                         enableFields={['spec.imagePullPolicy']}
                         withoutTimeout
                         disabled={readonly}
-                        allowableTypes={allowableTypes}
                         buildInfrastructureType={buildInfrastructureType}
                       />
                     </Container>

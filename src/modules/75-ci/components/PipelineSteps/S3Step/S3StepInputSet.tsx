@@ -23,7 +23,6 @@ export const S3StepInputSet: React.FC<S3StepProps> = ({ template, path, readonly
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.spec?.connectorRef) === MultiTypeInputType.RUNTIME && {
             'spec.connectorRef': {
@@ -62,7 +61,6 @@ export const S3StepInputSet: React.FC<S3StepProps> = ({ template, path, readonly
             'spec.target': { tooltipId: 'gcsS3Target' }
           })
         }}
-        allowableTypes={allowableTypes}
         path={path || ''}
       />
       <StepCommonFieldsInputSet

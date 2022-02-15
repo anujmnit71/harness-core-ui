@@ -53,7 +53,6 @@ export const RunStepInputSetBasic: React.FC<RunStepProps> = ({
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.description) === MultiTypeInputType.RUNTIME && { description: {} }),
           ...(getMultiTypeFromValue(template?.spec?.connectorRef) === MultiTypeInputType.RUNTIME && {
@@ -187,7 +186,6 @@ export const RunStepInputSetBasic: React.FC<RunStepProps> = ({
             'spec.envVariables': { tooltipId: 'environmentVariables' }
           })
         }}
-        allowableTypes={allowableTypes}
         path={path || ''}
         formik={formik}
         isInputSetView={true}

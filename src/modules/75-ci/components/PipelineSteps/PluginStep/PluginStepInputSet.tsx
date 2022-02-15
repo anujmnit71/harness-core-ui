@@ -32,7 +32,6 @@ export const PluginStepInputSet: React.FC<PluginStepProps> = ({
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.description) === MultiTypeInputType.RUNTIME && {
             description: {}
@@ -79,7 +78,6 @@ export const PluginStepInputSet: React.FC<PluginStepProps> = ({
             'spec.settings': {}
           })
         }}
-        allowableTypes={allowableTypes}
         stepViewType={stepViewType}
         path={path || ''}
       />

@@ -33,7 +33,6 @@ export const DependencyInputSet: React.FC<DependencyProps> = ({
         stepLabel={getString('dependencyNameLabel')}
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.description as string) === MultiTypeInputType.RUNTIME && {
             'spec.description': {}
@@ -90,7 +89,6 @@ export const DependencyInputSet: React.FC<DependencyProps> = ({
             'spec.args': {}
           })
         }}
-        allowableTypes={allowableTypes}
         path={path || ''}
       />
       <StepCommonFieldsInputSet

@@ -269,7 +269,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
         <Container className={cx(css.formGroup, css.bottomMargin5)}>
           <MultiTypeMap
             name={`${prefix}spec.settings`}
-            valueMultiTextInputProps={{ expressions, allowableTypes }}
+            valueMultiTextInputProps={{ expressions, allowableTypes: AllMultiTypeInputTypes }}
             multiTypeFieldSelectorProps={{
               label: (
                 <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
@@ -292,7 +292,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             placeholderKey: 'pipelineSteps.reportPathsPlaceholder',
             labelKey: 'pipelineSteps.reportPathsLabel',
             tooltipId: 'reportPaths',
-            allowedTypes: allowableTypes.filter(type => type !== MultiTypeInputType.RUNTIME)
+            allowedTypes: [MultiTypeInputType.FIXED]
           })}
         </Container>
       ) : null}
@@ -316,7 +316,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             name: `${prefix}spec.outputVariables`,
             labelKey: 'pipelineSteps.outputVariablesLabel',
             tooltipId: 'outputVariables',
-            allowedTypes: allowableTypes.filter(type => type !== MultiTypeInputType.RUNTIME)
+            allowedTypes: [MultiTypeInputType.FIXED]
           })}
         </Container>
       ) : null}
@@ -398,7 +398,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             labelKey: 'pipelineSteps.endpointLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.endpointPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
               disabled: readonly
             }
           })}
@@ -454,9 +454,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
               selectItems: ArchiveFormatOptions,
               multiTypeInputProps: {
                 expressions,
-                allowableTypes: allowableTypes.filter(
-                  type => type !== MultiTypeInputType.RUNTIME && type !== MultiTypeInputType.EXPRESSION
-                )
+                allowableTypes: AllMultiTypeInputTypes
               },
               disabled: readonly
             }}
@@ -469,7 +467,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           {renderMultiTypeCheckboxField({
             name: `${prefix}spec.override`,
             tooltipId: 'saveCacheOverride',
-            labelKey: 'override'
+            labelKey: 'override',
+            allowableTypes: AllMultiTypeInputTypes
           })}
         </div>
       ) : null}
@@ -478,7 +477,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           {renderMultiTypeCheckboxField({
             name: `${prefix}spec.pathStyle`,
             tooltipId: 'pathStyle',
-            labelKey: 'pathStyle'
+            labelKey: 'pathStyle',
+            allowableTypes: AllMultiTypeInputTypes
           })}
         </div>
       ) : null}
@@ -487,7 +487,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           {renderMultiTypeCheckboxField({
             name: `${prefix}spec.failIfKeyNotFound`,
             tooltipId: 'failIfKeyNotFound',
-            labelKey: 'failIfKeyNotFound'
+            labelKey: 'failIfKeyNotFound',
+            allowableTypes: AllMultiTypeInputTypes
           })}
         </div>
       ) : null}

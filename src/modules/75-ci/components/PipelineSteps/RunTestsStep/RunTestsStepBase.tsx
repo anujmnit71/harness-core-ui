@@ -383,7 +383,7 @@ export const RunTestsStepBase = (
                     {getString('description')}
                   </Text>
                 }
-                multiTypeTextArea={{ expressions, allowableTypes, disabled: readonly }}
+                multiTypeTextArea={{ expressions, allowableTypes: AllMultiTypeInputTypes, disabled: readonly }}
               />
             </Container>
             {buildInfrastructureType !== 'VM' ? <>{renderConnectorRefAndImage(false)}</> : null}

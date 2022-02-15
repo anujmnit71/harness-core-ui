@@ -29,7 +29,6 @@ export const RestoreCacheS3StepInputSet: React.FC<RestoreCacheS3StepProps> = ({
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.spec?.connectorRef) === MultiTypeInputType.RUNTIME && {
             'spec.connectorRef': {
@@ -76,7 +75,6 @@ export const RestoreCacheS3StepInputSet: React.FC<RestoreCacheS3StepProps> = ({
             'spec.endpoint': {}
           })
         }}
-        allowableTypes={allowableTypes}
         path={path || ''}
       />
       <StepCommonFieldsInputSet

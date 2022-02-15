@@ -29,7 +29,6 @@ export const SaveCacheGCSStepInputSet: React.FC<SaveCacheGCSStepProps> = ({
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.spec?.connectorRef) === MultiTypeInputType.RUNTIME && {
             'spec.connectorRef': {
@@ -68,7 +67,6 @@ export const SaveCacheGCSStepInputSet: React.FC<SaveCacheGCSStepProps> = ({
           }),
           ...(getMultiTypeFromValue(template?.spec?.override) === MultiTypeInputType.RUNTIME && { 'spec.override': {} })
         }}
-        allowableTypes={allowableTypes}
         path={path || ''}
       />
       <StepCommonFieldsInputSet

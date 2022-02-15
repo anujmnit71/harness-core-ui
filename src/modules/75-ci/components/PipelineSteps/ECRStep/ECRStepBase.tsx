@@ -30,7 +30,7 @@ import { useGetPropagatedStageById } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const ECRStepBase = (
-  { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, allowableTypes, onChange }: ECRStepProps,
+  { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, onChange }: ECRStepProps,
   formikRef: StepFormikFowardRef<ECRStepData>
 ): JSX.Element => {
   const {

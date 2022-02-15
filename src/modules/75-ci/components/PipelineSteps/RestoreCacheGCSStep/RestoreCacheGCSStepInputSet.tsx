@@ -29,7 +29,6 @@ export const RestoreCacheGCSStepInputSet: React.FC<RestoreCacheGCSStepProps> = (
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.spec?.connectorRef) === MultiTypeInputType.RUNTIME && {
             'spec.connectorRef': {
@@ -66,7 +65,6 @@ export const RestoreCacheGCSStepInputSet: React.FC<RestoreCacheGCSStepProps> = (
             'spec.failIfKeyNotFound': {}
           })
         }}
-        allowableTypes={allowableTypes}
         stepViewType={stepViewType}
         path={path || ''}
       />

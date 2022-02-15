@@ -28,7 +28,6 @@ export const JFrogArtifactoryStepInputSet: React.FC<JFrogArtifactoryStepProps> =
       <CIStep
         readonly={readonly}
         stepViewType={stepViewType}
-        allowableTypes={allowableTypes}
         enableFields={{
           ...(getMultiTypeFromValue(template?.description) === MultiTypeInputType.RUNTIME && {
             description: {}
