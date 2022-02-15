@@ -154,7 +154,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             orgIdentifier={orgIdentifier}
             multiTypeProps={{
               expressions,
-              allowableTypes,
+              allowableTypes: enableFields['spec.connectorRef'].allowableTypes,
               disabled: readonly,
               ...enableFields['spec.connectorRef'].multiTypeProps
             }}
