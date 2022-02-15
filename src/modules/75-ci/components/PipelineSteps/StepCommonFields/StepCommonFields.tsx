@@ -208,7 +208,7 @@ const StepCommonFields = ({
               multiTextInputProps={{
                 multiTextInputProps: {
                   expressions,
-                  allowableTypes: allowableTypes.filter(type => type !== MultiTypeInputType.RUNTIME)
+                  allowableTypes: AllMultiTypeInputTypes
                 },
                 disabled
               }}
@@ -235,7 +235,7 @@ const StepCommonFields = ({
                 </Layout.Horizontal>
               }
               multiTextInputProps={{
-                multiTextInputProps: { expressions },
+                multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
                 disabled
               }}
               configureOptionsProps={{ variableName: 'spec.limit.cpu' }}
@@ -249,7 +249,7 @@ const StepCommonFields = ({
           <FormMultiTypeDurationField
             className={css.removeBpLabelMargin}
             name="timeout"
-            multiTypeDurationProps={{ expressions, allowableTypes }}
+            multiTypeDurationProps={{ expressions, allowableTypes: [MultiTypeInputType.FIXED] }}
             label={
               <Layout.Horizontal style={{ display: 'flex', alignItems: 'baseline' }}>
                 <Text className={css.inpLabel} color={Color.GREY_600} font={{ size: 'small', weight: 'semi-bold' }}>
