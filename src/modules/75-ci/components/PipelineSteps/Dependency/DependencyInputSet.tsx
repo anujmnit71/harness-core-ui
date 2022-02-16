@@ -71,6 +71,7 @@ export const DependencyInputSet: React.FC<DependencyProps> = ({
           })
         }}
         path={path || ''}
+        isInputSetView={true}
       />
       <CIStepOptionalConfig
         stepViewType={stepViewType}

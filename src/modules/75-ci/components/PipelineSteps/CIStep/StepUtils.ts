@@ -58,8 +58,10 @@ export const shouldRenderRunTimeInputView = (value: any): boolean => {
   return false
 }
 
-export const AllMultiTypeInputTypes = [
+export const AllMultiTypeInputTypesForStep = [
   MultiTypeInputType.FIXED,
   MultiTypeInputType.EXPRESSION,
   MultiTypeInputType.RUNTIME
 ]
+
+export const AllMultiTypeInputTypesForInputSet = [MultiTypeInputType.FIXED, MultiTypeInputType.EXPRESSION]

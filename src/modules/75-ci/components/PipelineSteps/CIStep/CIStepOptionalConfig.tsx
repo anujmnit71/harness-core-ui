@@ -21,7 +21,7 @@ import { useVariablesExpression } from '@pipeline/components/PipelineStudio/Pipl
 import { StepViewType } from '@pipeline/components/AbstractSteps/Step'
 import { MultiTypeSelectField } from '@common/components/MultiTypeSelect/MultiTypeSelect'
 import { ArchiveFormatOptions } from '../../../constants/Constants'
-import { AllMultiTypeInputTypes } from './StepUtils'
+import { AllMultiTypeInputTypesForStep } from './StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 interface CIStepOptionalConfigProps {
@@ -261,7 +261,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             name: `${prefix}spec.privileged`,
             tooltipId: 'privileged',
             labelKey: 'ci.privileged',
-            allowableTypes: AllMultiTypeInputTypes
+            allowableTypes: AllMultiTypeInputTypesForStep
           })}
         </div>
       ) : null}
@@ -269,7 +269,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
         <Container className={cx(css.formGroup, css.bottomMargin5)}>
           <MultiTypeMap
             name={`${prefix}spec.settings`}
-            valueMultiTextInputProps={{ expressions, allowableTypes: AllMultiTypeInputTypes }}
+            valueMultiTextInputProps={{ expressions, allowableTypes: AllMultiTypeInputTypesForStep }}
             multiTypeFieldSelectorProps={{
               label: (
                 <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
@@ -307,7 +307,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
               `${prefix}spec.envVariables`,
               'environmentVariables',
               enableFields['spec.envVariables'].tooltipId,
-              AllMultiTypeInputTypes
+              AllMultiTypeInputTypesForStep
             )
         : null}
       {Object.prototype.hasOwnProperty.call(enableFields, 'spec.outputVariables') ? (
@@ -345,7 +345,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             name: `${prefix}spec.optimize`,
             tooltipId: 'optimize',
             labelKey: 'ci.optimize',
-            allowableTypes: AllMultiTypeInputTypes
+            allowableTypes: AllMultiTypeInputTypesForStep
           })}
         </div>
       ) : null}
@@ -356,7 +356,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             tooltipId: 'dockerfile',
             labelKey: 'pipelineSteps.dockerfileLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled: readonly
             }
           })}
@@ -369,7 +369,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             tooltipId: 'context',
             labelKey: 'pipelineSteps.contextLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled: readonly
             }
           })}
@@ -378,7 +378,12 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
       {Object.prototype.hasOwnProperty.call(enableFields, 'spec.labels')
         ? isInputSetView
           ? renderMultiTypeMapInputSet(`${prefix}spec.labels`, 'pipelineSteps.labelsLabel', 'labels')
-          : renderMultiTypeMap(`${prefix}spec.labels`, 'pipelineSteps.labelsLabel', 'labels', AllMultiTypeInputTypes)
+          : renderMultiTypeMap(
+              `${prefix}spec.labels`,
+              'pipelineSteps.labelsLabel',
+              'labels',
+              AllMultiTypeInputTypesForStep
+            )
         : null}
       {Object.prototype.hasOwnProperty.call(enableFields, 'spec.buildArgs')
         ? isInputSetView
@@ -387,7 +392,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
               `${prefix}spec.buildArgs`,
               'pipelineSteps.buildArgsLabel',
               'buildArgs',
-              AllMultiTypeInputTypes
+              AllMultiTypeInputTypesForStep
             )
         : null}
       {Object.prototype.hasOwnProperty.call(enableFields, 'spec.endpoint') ? (
@@ -398,7 +403,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             labelKey: 'pipelineSteps.endpointLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.endpointPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled: readonly
             }
           })}
@@ -412,7 +417,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             labelKey: 'pipelineSteps.targetLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.artifactsTargetPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled: readonly
             }
           })}
@@ -426,7 +431,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             tooltipId: 'gcrRemoteCache',
             labelKey: 'ci.remoteCacheImage.label',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled: readonly
             }
           })}
@@ -454,7 +459,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
               selectItems: ArchiveFormatOptions,
               multiTypeInputProps: {
                 expressions,
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               },
               disabled: readonly
             }}
@@ -468,7 +473,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             name: `${prefix}spec.override`,
             tooltipId: 'saveCacheOverride',
             labelKey: 'override',
-            allowableTypes: AllMultiTypeInputTypes
+            allowableTypes: AllMultiTypeInputTypesForStep
           })}
         </div>
       ) : null}
@@ -478,7 +483,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             name: `${prefix}spec.pathStyle`,
             tooltipId: 'pathStyle',
             labelKey: 'pathStyle',
-            allowableTypes: AllMultiTypeInputTypes
+            allowableTypes: AllMultiTypeInputTypesForStep
           })}
         </div>
       ) : null}
@@ -488,7 +493,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             name: `${prefix}spec.failIfKeyNotFound`,
             tooltipId: 'failIfKeyNotFound',
             labelKey: 'failIfKeyNotFound',
-            allowableTypes: AllMultiTypeInputTypes
+            allowableTypes: AllMultiTypeInputTypesForStep
           })}
         </div>
       ) : null}
@@ -500,7 +505,7 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
             tooltipId: 'dockerHubRemoteCache',
             labelKey: 'ci.remoteCacheRepository.label',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled: readonly
             }
           })}

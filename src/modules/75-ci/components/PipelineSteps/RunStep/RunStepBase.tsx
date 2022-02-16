@@ -48,7 +48,7 @@ import type { RunStepProps, RunStepData, RunStepDataUI } from './RunStep'
 import { transformValuesFieldsConfig, getEditViewValidateFieldsConfig } from './RunStepFunctionConfigs'
 import { CIStepOptionalConfig, getOptionalSubLabel } from '../CIStep/CIStepOptionalConfig'
 import {
-  AllMultiTypeInputTypes,
+  AllMultiTypeInputTypesForStep,
   useGetPropagatedStageById,
   validateConnectorRefAndImageDepdendency
 } from '../CIStep/StepUtils'
@@ -105,7 +105,7 @@ export const RunStepBase = (
             orgIdentifier={orgIdentifier}
             multiTypeProps={{
               expressions,
-              allowableTypes: AllMultiTypeInputTypes,
+              allowableTypes: AllMultiTypeInputTypesForStep,
               disabled: readonly
             }}
             gitScope={gitScope}
@@ -138,7 +138,7 @@ export const RunStepBase = (
             }
             multiTextInputProps={{
               multiTextInputProps: {
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               }
             }}
           />
@@ -236,7 +236,7 @@ export const RunStepBase = (
                 }
                 defaultValueToReset=""
                 skipRenderValueInExpressionLabel
-                allowedTypes={AllMultiTypeInputTypes}
+                allowedTypes={AllMultiTypeInputTypesForStep}
                 expressionRender={() => {
                   return (
                     <ShellScriptMonacoField

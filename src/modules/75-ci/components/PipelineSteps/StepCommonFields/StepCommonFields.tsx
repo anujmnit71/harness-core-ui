@@ -16,7 +16,7 @@ import { MultiTypeSelectField } from '@common/components/MultiTypeSelect/MultiTy
 import { MultiTypeTextField } from '@common/components/MultiTypeText/MultiTypeText'
 import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
 import type { PullOption } from '@pipeline/components/PipelineSteps/Steps/StepsTypes'
-import { AllMultiTypeInputTypes } from '../CIStep/StepUtils'
+import { AllMultiTypeInputTypesForStep } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export type PullOptions = { label: string; value: PullOption }[]
@@ -101,7 +101,7 @@ const StepCommonFields = ({
               multiTypeInputProps: {
                 expressions,
                 selectProps: { addClearBtn: true, items: GetImagePullPolicyOptions() },
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               },
               disabled
             }}
@@ -137,7 +137,7 @@ const StepCommonFields = ({
               multiTypeInputProps: {
                 expressions,
                 selectProps: { addClearBtn: true, items: GetShellOptions(buildInfrastructureType) },
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               },
               disabled
             }}
@@ -168,7 +168,7 @@ const StepCommonFields = ({
             }
             name="spec.runAsUser"
             multiTextInputProps={{
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
               disabled,
               placeholder: '1000'
             }}
@@ -208,7 +208,7 @@ const StepCommonFields = ({
               multiTextInputProps={{
                 multiTextInputProps: {
                   expressions,
-                  allowableTypes: AllMultiTypeInputTypes
+                  allowableTypes: AllMultiTypeInputTypesForStep
                 },
                 disabled
               }}
@@ -235,7 +235,7 @@ const StepCommonFields = ({
                 </Layout.Horizontal>
               }
               multiTextInputProps={{
-                multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+                multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
                 disabled
               }}
               configureOptionsProps={{ variableName: 'spec.limit.cpu' }}

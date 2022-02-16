@@ -53,7 +53,7 @@ import type { RunTestsStepProps, RunTestsStepData, RunTestsStepDataUI } from './
 import { transformValuesFieldsConfig, getEditViewValidateFieldsConfig } from './RunTestsStepFunctionConfigs'
 import { CIStepOptionalConfig, getOptionalSubLabel } from '../CIStep/CIStepOptionalConfig'
 import {
-  AllMultiTypeInputTypes,
+  AllMultiTypeInputTypesForStep,
   useGetPropagatedStageById,
   validateConnectorRefAndImageDepdendency
 } from '../CIStep/StepUtils'
@@ -269,7 +269,7 @@ export const RunTestsStepBase = (
             orgIdentifier={orgIdentifier}
             multiTypeProps={{
               expressions,
-              allowableTypes: AllMultiTypeInputTypes,
+              allowableTypes: AllMultiTypeInputTypesForStep,
               disabled: readonly
             }}
             gitScope={gitScope}
@@ -302,7 +302,7 @@ export const RunTestsStepBase = (
             }
             multiTextInputProps={{
               multiTextInputProps: {
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               }
             }}
           />
@@ -383,7 +383,7 @@ export const RunTestsStepBase = (
                     {getString('description')}
                   </Text>
                 }
-                multiTypeTextArea={{ expressions, allowableTypes: AllMultiTypeInputTypes, disabled: readonly }}
+                multiTypeTextArea={{ expressions, allowableTypes: AllMultiTypeInputTypesForStep, disabled: readonly }}
               />
             </Container>
             {buildInfrastructureType !== 'VM' ? <>{renderConnectorRefAndImage(false)}</> : null}
@@ -400,7 +400,7 @@ export const RunTestsStepBase = (
                     formik.setFieldValue('spec.buildTool', '')
                   }
                 },
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               })}
             </Container>
             <Container className={cx(css.formGroup, css.lg, css.bottomMargin5)}>
@@ -409,7 +409,7 @@ export const RunTestsStepBase = (
                 fieldLabelKey: 'buildToolLabel',
                 tooltipId: 'runTestsBuildTool',
                 selectFieldOptions: buildToolOptions,
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               })}
             </Container>
             {(formik.values?.spec?.language as any)?.value === Language.Java &&
@@ -485,7 +485,7 @@ gradle.projectsEvaluated {
                 name: 'spec.args',
                 fieldLabelKey: 'argsLabel',
                 tooltipId: 'runTestsArgs',
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               })}
             </Container>
             <Container className={cx(css.formGroup, css.lg)}>
@@ -493,7 +493,7 @@ gradle.projectsEvaluated {
                 name: 'spec.packages',
                 fieldLabelKey: 'packagesLabel',
                 tooltipId: 'runTestsPackages',
-                allowableTypes: AllMultiTypeInputTypes
+                allowableTypes: AllMultiTypeInputTypesForStep
               })}
             </Container>
             <Accordion className={css.accordion}>
@@ -507,7 +507,11 @@ gradle.projectsEvaluated {
                       <FormMultiTypeCheckboxField
                         name="spec.runOnlySelectedTests"
                         label={getString('runOnlySelectedTestsLabel')}
-                        multiTypeTextbox={{ expressions, disabled: readonly, allowableTypes: AllMultiTypeInputTypes }}
+                        multiTypeTextbox={{
+                          expressions,
+                          disabled: readonly,
+                          allowableTypes: AllMultiTypeInputTypesForStep
+                        }}
                         style={{ marginBottom: 'var(--spacing-small)' }}
                         disabled={readonly}
                       />
@@ -518,7 +522,7 @@ gradle.projectsEvaluated {
                         fieldLabelKey: 'testAnnotationsLabel',
                         tooltipId: 'runTestsTestAnnotations',
                         renderOptionalSublabel: true,
-                        allowableTypes: AllMultiTypeInputTypes
+                        allowableTypes: AllMultiTypeInputTypesForStep
                       })}
                     </Container>
                     <Container className={css.bottomMargin5}>
@@ -530,7 +534,7 @@ gradle.projectsEvaluated {
                           name: 'spec.preCommand',
                           fieldLabelKey: 'ci.preCommandLabel',
                           tooltipId: 'runTestsPreCommand',
-                          allowableTypes: AllMultiTypeInputTypes
+                          allowableTypes: AllMultiTypeInputTypesForStep
                         })}
                         {getMultiTypeFromValue(formik?.values?.spec?.preCommand) === MultiTypeInputType.RUNTIME && (
                           <ConfigureOptions
@@ -556,7 +560,7 @@ gradle.projectsEvaluated {
                           name: 'spec.postCommand',
                           fieldLabelKey: 'ci.postCommandLabel',
                           tooltipId: 'runTestsPostCommand',
-                          allowableTypes: AllMultiTypeInputTypes
+                          allowableTypes: AllMultiTypeInputTypesForStep
                         })}
                         {getMultiTypeFromValue(formik?.values?.spec?.postCommand) === MultiTypeInputType.RUNTIME && (
                           <ConfigureOptions

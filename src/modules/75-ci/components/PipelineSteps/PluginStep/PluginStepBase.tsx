@@ -28,7 +28,7 @@ import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './Plu
 import type { PluginStepProps, PluginStepData, PluginStepDataUI } from './PluginStep'
 import { CIStep } from '../CIStep/CIStep'
 import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
-import { AllMultiTypeInputTypes, useGetPropagatedStageById } from '../CIStep/StepUtils'
+import { AllMultiTypeInputTypesForStep, useGetPropagatedStageById } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const PluginStepBase = (
@@ -113,7 +113,7 @@ export const PluginStepBase = (
                   tooltipId: 'pluginImageInfo',
                   multiTextInputProps: {
                     placeholder: getString('pluginImagePlaceholder'),
-                    multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypes },
+                    multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
                     disabled: readonly
                   }
                 }

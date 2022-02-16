@@ -26,7 +26,7 @@ import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './Doc
 import type { DockerHubStepProps, DockerHubStepData, DockerHubStepDataUI } from './DockerHubStep'
 import { CIStep } from '../CIStep/CIStep'
 import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
-import { AllMultiTypeInputTypes, useGetPropagatedStageById } from '../CIStep/StepUtils'
+import { AllMultiTypeInputTypesForStep, useGetPropagatedStageById } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const DockerHubStepBase = (
@@ -111,7 +111,7 @@ export const DockerHubStepBase = (
                     </Text>
                   ),
                   type: Connectors.DOCKER,
-                  allowableTypes: AllMultiTypeInputTypes
+                  allowableTypes: AllMultiTypeInputTypesForStep
                 },
                 'spec.repo': {},
                 'spec.tags': {}
