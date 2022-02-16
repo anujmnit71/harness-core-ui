@@ -6,7 +6,6 @@
  */
 
 import React, { FormEvent } from 'react'
-import { useParams } from 'react-router-dom'
 import {
   Text,
   Formik,
@@ -25,7 +24,6 @@ import type { FormikProps } from 'formik'
 import get from 'lodash/get'
 import cx from 'classnames'
 import type { K8sDirectInfraYaml } from 'services/ci'
-import { Connectors } from '@connectors/constants'
 import { StepFormikFowardRef, setFormikRef } from '@pipeline/components/AbstractSteps/Step'
 import MultiTypeFieldSelector from '@common/components/MultiTypeFieldSelector/MultiTypeFieldSelector'
 import { ConfigureOptions } from '@common/components/ConfigureOptions/ConfigureOptions'
@@ -34,11 +32,9 @@ import { MultiTypeSelectField } from '@common/components/MultiTypeSelect/MultiTy
 import { FormMultiTypeCheckboxField } from '@common/components'
 import { usePipelineContext } from '@pipeline/components/PipelineStudio/PipelineContext/PipelineContext'
 import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
-import { useGitScope } from '@pipeline/utils/CIUtils'
 import { useStrings } from 'framework/strings'
 import type { StringsMap } from 'stringTypes'
 import { MultiTypeTextField } from '@common/components/MultiTypeText/MultiTypeText'
-import { FormMultiTypeConnectorField } from '@connectors/components/ConnectorReferenceField/FormMultiTypeConnectorField'
 import StepCommonFields, {
   GetImagePullPolicyOptions,
   GetShellOptions /*,{ /*usePullOptions }*/
@@ -57,6 +53,7 @@ import {
   validateConnectorRefAndImageDepdendency
 } from '../CIStep/StepUtils'
 import { CIStep } from '../CIStep/CIStep'
+import { AWSVMBuildInfraCommon } from '../CIStep/AWSVMBuildInfraCommon'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 interface FieldRenderProps {
@@ -123,12 +120,6 @@ export const RunTestsStepBase = (
   )
 
   const { getString } = useStrings()
-  const gitScope = useGitScope()
-  const { accountId, projectIdentifier, orgIdentifier } = useParams<{
-    projectIdentifier: string
-    orgIdentifier: string
-    accountId: string
-  }>()
 
   const { expressions } = useVariablesExpression()
 
@@ -241,77 +232,6 @@ export const RunTestsStepBase = (
     []
   )
 
-  const renderConnectorRefAndImage = React.useCallback(
-    (showOptionalSublabel: boolean) => (
-      <>
-        <Container className={css.bottomMargin3}>
-          <FormMultiTypeConnectorField
-            label={
-              <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
-                <Text
-                  className={css.inpLabel}
-                  color={Color.GREY_600}
-                  font={{ size: 'small', weight: 'semi-bold' }}
-                  style={{ display: 'flex', alignItems: 'center' }}
-                >
-                  {getString('pipelineSteps.connectorLabel')}
-                </Text>
-                &nbsp;
-                {showOptionalSublabel ? getOptionalSubLabel('', getString) : null}
-              </Layout.Horizontal>
-            }
-            type={[Connectors.GCP, Connectors.AWS, Connectors.DOCKER]}
-            width={385}
-            name={`spec.connectorRef`}
-            placeholder={getString('select')}
-            accountIdentifier={accountId}
-            projectIdentifier={projectIdentifier}
-            orgIdentifier={orgIdentifier}
-            multiTypeProps={{
-              expressions,
-              allowableTypes: AllMultiTypeInputTypesForStep,
-              disabled: readonly
-            }}
-            gitScope={gitScope}
-            setRefValue
-          />
-        </Container>
-        <Container className={cx(css.formGroup, css.lg, css.bottomMargin5)}>
-          <MultiTypeTextField
-            name={`spec.image`}
-            label={
-              <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
-                <Text
-                  className={css.inpLabel}
-                  color={Color.GREY_600}
-                  font={{ size: 'small', weight: 'semi-bold' }}
-                  tooltipProps={
-                    showOptionalSublabel
-                      ? {}
-                      : {
-                          dataTooltipId: 'image'
-                        }
-                  }
-                  placeholder={getString('imagePlaceholder')}
-                >
-                  {getString('imageLabel')}
-                </Text>
-                &nbsp;
-                {showOptionalSublabel ? getOptionalSubLabel('image', getString) : null}
-              </Layout.Horizontal>
-            }
-            multiTextInputProps={{
-              multiTextInputProps: {
-                allowableTypes: AllMultiTypeInputTypesForStep
-              }
-            }}
-          />
-        </Container>
-      </>
-    ),
-    []
-  )
-
   return (
     <Formik
       initialValues={getInitialValuesInCorrectFormat<RunTestsStepData, RunTestsStepDataUI>(
@@ -374,7 +294,7 @@ export const RunTestsStepBase = (
                 description: {}
               }}
             />
-            {buildInfrastructureType !== 'VM' ? <>{renderConnectorRefAndImage(false)}</> : null}
+            {buildInfrastructureType !== 'VM' ? <AWSVMBuildInfraCommon showOptionalSublabel={false} /> : null}
             <Container className={cx(css.formGroup, css.lg, css.bottomMargin5)}>
               {renderMultiTypeSelectField({
                 name: 'spec.language',
@@ -490,7 +410,7 @@ gradle.projectsEvaluated {
                 summary={getString('common.optionalConfig')}
                 details={
                   <Container margin={{ top: 'medium' }}>
-                    {buildInfrastructureType === 'VM' ? renderConnectorRefAndImage(true) : null}
+                    {buildInfrastructureType === 'VM' ? <AWSVMBuildInfraCommon showOptionalSublabel={true} /> : null}
                     <Container className={cx(css.formGroup, css.sm, css.bottomMargin5)}>
                       <FormMultiTypeCheckboxField
                         name="spec.runOnlySelectedTests"
