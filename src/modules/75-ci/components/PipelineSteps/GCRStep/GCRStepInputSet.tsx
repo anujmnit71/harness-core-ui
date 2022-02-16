@@ -68,13 +68,7 @@ export const GCRStepInputSetBasic: React.FC<GCRStepProps> = ({
         formik={formik}
         artifactConnectorType={Connectors.GCP}
       />
-      <StepCommonFieldsInputSet
-        path={path}
-        readonly={readonly}
-        template={template}
-        allowableTypes={allowableTypes}
-        stepViewType={stepViewType}
-      />
+      <StepCommonFieldsInputSet path={path} readonly={readonly} template={template} stepViewType={stepViewType} />
     </FormikForm>
   )
 }

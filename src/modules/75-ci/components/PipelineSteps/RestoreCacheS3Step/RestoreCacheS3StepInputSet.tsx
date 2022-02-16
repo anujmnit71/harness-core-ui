@@ -19,8 +19,7 @@ export const RestoreCacheS3StepInputSet: React.FC<RestoreCacheS3StepProps> = ({
   template,
   path,
   readonly,
-  stepViewType,
-  allowableTypes
+  stepViewType
 }) => {
   const { getString } = useStrings()
 
@@ -77,13 +76,7 @@ export const RestoreCacheS3StepInputSet: React.FC<RestoreCacheS3StepProps> = ({
         }}
         path={path || ''}
       />
-      <StepCommonFieldsInputSet
-        path={path}
-        readonly={readonly}
-        template={template}
-        allowableTypes={allowableTypes}
-        stepViewType={stepViewType}
-      />
+      <StepCommonFieldsInputSet path={path} readonly={readonly} template={template} stepViewType={stepViewType} />
     </FormikForm>
   )
 }

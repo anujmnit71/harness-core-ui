@@ -190,13 +190,7 @@ export const RunStepInputSetBasic: React.FC<RunStepProps> = ({
         formik={formik}
         isInputSetView={true}
       />
-      <StepCommonFieldsInputSet
-        path={path}
-        readonly={readonly}
-        template={template}
-        allowableTypes={allowableTypes}
-        stepViewType={stepViewType}
-      />
+      <StepCommonFieldsInputSet path={path} readonly={readonly} template={template} stepViewType={stepViewType} />
     </FormikForm>
   )
 }

@@ -18,8 +18,7 @@ export const JFrogArtifactoryStepInputSet: React.FC<JFrogArtifactoryStepProps> =
   template,
   path,
   readonly,
-  stepViewType,
-  allowableTypes
+  stepViewType
 }) => {
   const { getString } = useStrings()
 
@@ -57,13 +56,7 @@ export const JFrogArtifactoryStepInputSet: React.FC<JFrogArtifactoryStepProps> =
         }}
         path={path || ''}
       />
-      <StepCommonFieldsInputSet
-        path={path}
-        readonly={readonly}
-        template={template}
-        allowableTypes={allowableTypes}
-        stepViewType={stepViewType}
-      />
+      <StepCommonFieldsInputSet path={path} readonly={readonly} template={template} stepViewType={stepViewType} />
     </FormikForm>
   )
 }

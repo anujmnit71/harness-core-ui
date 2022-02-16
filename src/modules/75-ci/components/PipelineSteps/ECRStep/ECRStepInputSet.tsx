@@ -68,13 +68,7 @@ export const ECRStepInputSetBasic: React.FC<ECRStepProps> = ({
         formik={formik}
         artifactConnectorType={Connectors.AWS}
       />
-      <StepCommonFieldsInputSet
-        path={path}
-        readonly={readonly}
-        template={template}
-        allowableTypes={allowableTypes}
-        stepViewType={stepViewType}
-      />
+      <StepCommonFieldsInputSet path={path} readonly={readonly} template={template} stepViewType={stepViewType} />
     </FormikForm>
   )
 }

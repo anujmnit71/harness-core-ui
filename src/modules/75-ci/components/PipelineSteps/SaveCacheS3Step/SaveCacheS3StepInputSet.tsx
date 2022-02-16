@@ -15,13 +15,7 @@ import { CIStep } from '../CIStep/CIStep'
 import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
-export const SaveCacheS3StepInputSet: React.FC<SaveCacheS3StepProps> = ({
-  template,
-  path,
-  readonly,
-  stepViewType,
-  allowableTypes
-}) => {
+export const SaveCacheS3StepInputSet: React.FC<SaveCacheS3StepProps> = ({ template, path, readonly, stepViewType }) => {
   const { getString } = useStrings()
 
   return (
@@ -80,13 +74,7 @@ export const SaveCacheS3StepInputSet: React.FC<SaveCacheS3StepProps> = ({
         }}
         path={path || ''}
       />
-      <StepCommonFieldsInputSet
-        path={path}
-        readonly={readonly}
-        template={template}
-        allowableTypes={allowableTypes}
-        stepViewType={stepViewType}
-      />
+      <StepCommonFieldsInputSet path={path} readonly={readonly} template={template} stepViewType={stepViewType} />
     </FormikForm>
   )
 }

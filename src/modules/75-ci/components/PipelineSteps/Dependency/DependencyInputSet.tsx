@@ -97,7 +97,6 @@ export const DependencyInputSet: React.FC<DependencyProps> = ({
         readonly={readonly}
         template={template}
         withoutTimeout
-        allowableTypes={allowableTypes}
         stepViewType={stepViewType}
       />
     </FormikForm>
