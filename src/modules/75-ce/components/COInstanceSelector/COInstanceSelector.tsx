@@ -84,7 +84,7 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
   const onResourceGroupSelect = (selectedRg: SelectOption | null, resourceGroupLoading: boolean) => {
     if (selectedRg) {
       setSelectedResourceGroup(selectedRg)
-      const groupText = _defaultTo(selectedRg.value, '') as string
+      const groupText = _defaultTo(selectedRg.label, '')
       props.refresh?.(`resource_groups=['${groupText}']`)
     }
     setIsLoading(resourceGroupLoading)
@@ -141,7 +141,13 @@ const COInstanceSelector: React.FC<COInstanceSelectorprops> = props => {
 
   const handleRefresh = () => {
     refreshPageParams()
-    props.refresh?.()
+    if (isAzureProvider && selectedResourceGroup) {
+      props.refresh?.(`resource_groups=['${selectedResourceGroup.label}']`)
+    } else if (isGcpProvider && gcpFilters?.zone) {
+      props.refresh?.(`regions=['${gcpFilters.zone.label}']`)
+    } else {
+      props.refresh?.()
+    }
   }
 
   const hasSelectedInstances = !_isEmpty(selectedInstances)

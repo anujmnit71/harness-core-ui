@@ -81,6 +81,7 @@ const COGatewayAccess: React.FC<COGatewayAccessProps> = props => {
   })
 
   const isK8sRule = Utils.isK8sRule(props.gatewayDetails)
+  const isGcpProvider = Utils.isProviderGcp(props.gatewayDetails.provider)
 
   useEffect(() => {
     trackEvent(USER_JOURNEY_EVENTS.RULE_CREATION_STEP_2, {})
@@ -158,6 +159,7 @@ const COGatewayAccess: React.FC<COGatewayAccessProps> = props => {
   const tooltipId = Utils.getConditionalResult(isAwsProvider, 'awsSetupAccess', 'azureSetupAccess')
 
   const shouldShowSshOption = _isEmpty(props.gatewayDetails.routing.container_svc)
+  const shouldShowDnsLinkOption = !isGcpProvider
 
   if (serviceDataLoading) {
     return (
@@ -261,16 +263,18 @@ const COGatewayAccess: React.FC<COGatewayAccessProps> = props => {
             </Layout.Horizontal>
             <Layout.Horizontal spacing="xxxlarge">
               <Layout.Vertical spacing="medium" style={{ paddingLeft: 'var(--spacing-small)' }}>
-                <Checkbox
-                  id="DNSLink"
-                  label="DNS Link"
-                  onChange={val => {
-                    setAccessDetails({ ...accessDetails, dnsLink: { selected: val.currentTarget.checked } })
-                  }}
-                  className={css.checkbox}
-                  defaultChecked={accessDetails.dnsLink.selected}
-                  disabled={isEditFlow}
-                />
+                {shouldShowDnsLinkOption && (
+                  <Checkbox
+                    id="DNSLink"
+                    label="DNS Link"
+                    onChange={val => {
+                      setAccessDetails({ ...accessDetails, dnsLink: { selected: val.currentTarget.checked } })
+                    }}
+                    className={css.checkbox}
+                    defaultChecked={accessDetails.dnsLink.selected}
+                    disabled={isEditFlow}
+                  />
+                )}
                 {shouldShowSshOption && (
                   <Checkbox
                     label="SSH / RDP"
