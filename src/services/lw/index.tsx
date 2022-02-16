@@ -157,6 +157,10 @@ export interface AllVPCsResponse {
   response?: Vpc[]
 }
 
+export interface AllZonesResponse {
+  response?: string[]
+}
+
 export interface AppIdResponse {
   response?: {
     app_id?: string
@@ -3101,6 +3105,49 @@ export type UseAllVPCsProps = Omit<UseGetProps<AllVPCsResponse, void, AllVPCsQue
 export const useAllVPCs = ({ account_id, ...props }: UseAllVPCsProps) =>
   useGet<AllVPCsResponse, void, AllVPCsQueryParams, AllVPCsPathParams>(
     (paramsInPath: AllVPCsPathParams) => `/accounts/${paramsInPath.account_id}/virtual_networks`,
+    { base: getConfig('lw/api'), pathParams: { account_id }, ...props }
+  )
+
+export interface AllZonesQueryParams {
+  accountIdentifier: string
+  cloud_account_id: string
+  region: string
+}
+
+export interface AllZonesPathParams {
+  account_id: string
+}
+
+export type AllZonesProps = Omit<GetProps<AllZonesResponse, void, AllZonesQueryParams, AllZonesPathParams>, 'path'> &
+  AllZonesPathParams
+
+/**
+ * Lists all zones for a cloud account
+ *
+ * Lists all zones for a cloud account
+ */
+export const AllZones = ({ account_id, ...props }: AllZonesProps) => (
+  <Get<AllZonesResponse, void, AllZonesQueryParams, AllZonesPathParams>
+    path={`/accounts/${account_id}/zones`}
+    base={getConfig('lw/api')}
+    {...props}
+  />
+)
+
+export type UseAllZonesProps = Omit<
+  UseGetProps<AllZonesResponse, void, AllZonesQueryParams, AllZonesPathParams>,
+  'path'
+> &
+  AllZonesPathParams
+
+/**
+ * Lists all zones for a cloud account
+ *
+ * Lists all zones for a cloud account
+ */
+export const useAllZones = ({ account_id, ...props }: UseAllZonesProps) =>
+  useGet<AllZonesResponse, void, AllZonesQueryParams, AllZonesPathParams>(
+    (paramsInPath: AllZonesPathParams) => `/accounts/${paramsInPath.account_id}/zones`,
     { base: getConfig('lw/api'), pathParams: { account_id }, ...props }
   )
 

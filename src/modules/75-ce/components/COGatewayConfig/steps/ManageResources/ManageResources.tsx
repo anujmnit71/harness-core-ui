@@ -81,6 +81,7 @@ const ManageResources: React.FC<ManageResourcesProps> = props => {
   const [selectedConnector, setSelectedConnector] = useState<ConnectorResponse | undefined>()
 
   const isKubernetesEnabled = useFeatureFlag(FeatureFlag.CE_AS_KUBERNETES_ENABLED)
+  const isAwsProvider = Utils.isProviderAws(props.gatewayDetails.provider)
   const isAzureProvider = Utils.isProviderAzure(props.gatewayDetails.provider)
   const isGcpProvider = Utils.isProviderGcp(props.gatewayDetails.provider)
   const [featureFlagsMap] = useState<Record<string, boolean>>({ CE_AS_KUBERNETES_ENABLED: isKubernetesEnabled })
@@ -116,7 +117,7 @@ const ManageResources: React.FC<ManageResourcesProps> = props => {
       return
     }
     const resourcesFetchMap: Record<string, () => void> = {
-      [RESOURCES.INSTANCES]: Utils.getConditionalResult(!isAzureProvider, refreshInstances, undefined),
+      [RESOURCES.INSTANCES]: Utils.getConditionalResult(isAwsProvider, refreshInstances, undefined),
       [RESOURCES.ASG]: fetchAndSetAsgItems,
       [RESOURCES.KUBERNETES]: fetchAndSetConnectors
     }
