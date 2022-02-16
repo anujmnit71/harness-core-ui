@@ -28,7 +28,7 @@ import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './Dep
 import type { DependencyProps, DependencyData, DependencyDataUI } from './Dependency'
 import { CIStep } from '../CIStep/CIStep'
 import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
-import { useGetPropagatedStageById } from '../CIStep/StepUtils'
+import { AllMultiTypeInputTypes, useGetPropagatedStageById } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const DependencyBase = (
@@ -124,7 +124,8 @@ export const DependencyBase = (
                         expressions,
                         textProps: {
                           autoComplete: 'off'
-                        }
+                        },
+                        allowableTypes: AllMultiTypeInputTypes
                       }
                     }
                   }
