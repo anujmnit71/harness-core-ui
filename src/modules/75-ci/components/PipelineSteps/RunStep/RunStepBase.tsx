@@ -17,7 +17,6 @@ import {
   Accordion,
   Color,
   Container,
-  FormInput,
   Layout
 } from '@wings-software/uicore'
 import type { FormikProps } from 'formik'
@@ -25,14 +24,13 @@ import get from 'lodash/get'
 import type { K8sDirectInfraYaml } from 'services/ci'
 import { Connectors } from '@connectors/constants'
 import { FormMultiTypeConnectorField } from '@connectors/components/ConnectorReferenceField/FormMultiTypeConnectorField'
-import { StepFormikFowardRef, StepViewType, setFormikRef } from '@pipeline/components/AbstractSteps/Step'
+import { StepFormikFowardRef, setFormikRef } from '@pipeline/components/AbstractSteps/Step'
 import MultiTypeFieldSelector from '@common/components/MultiTypeFieldSelector/MultiTypeFieldSelector'
 import { usePipelineContext } from '@pipeline/components/PipelineStudio/PipelineContext/PipelineContext'
 import { useStrings } from 'framework/strings'
 import { ConfigureOptions } from '@common/components/ConfigureOptions/ConfigureOptions'
 import { ShellScriptMonacoField } from '@common/components/ShellScriptMonaco/ShellScriptMonaco'
 import { MultiTypeTextField } from '@common/components/MultiTypeText/MultiTypeText'
-import { FormMultiTypeTextAreaField } from '@common/components'
 import StepCommonFields, {
   GetImagePullPolicyOptions,
   GetShellOptions
@@ -52,10 +50,11 @@ import {
   useGetPropagatedStageById,
   validateConnectorRefAndImageDepdendency
 } from '../CIStep/StepUtils'
+import { CIStep } from '../CIStep/CIStep'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const RunStepBase = (
-  { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, allowableTypes, onChange }: RunStepProps,
+  { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, onChange }: RunStepProps,
   formikRef: StepFormikFowardRef<RunStepData>
 ): JSX.Element => {
   const {
@@ -197,28 +196,16 @@ export const RunStepBase = (
 
         return (
           <FormikForm>
-            {stepViewType !== StepViewType.Template ? (
-              <Container className={cx(css.formGroup, css.lg, css.nameIdLabel)}>
-                <FormInput.InputWithIdentifier
-                  inputName="name"
-                  idName="identifier"
-                  isIdentifierEditable={isNewStep && !readonly}
-                  inputGroupProps={{ disabled: readonly }}
-                  inputLabel={getString('pipelineSteps.stepNameLabel')}
-                />
-              </Container>
-            ) : null}
-            <Container className={cx(css.formGroup, css.lg)}>
-              <FormMultiTypeTextAreaField
-                name={`description`}
-                label={
-                  <Text color={Color.GREY_600} font={{ size: 'small', weight: 'semi-bold' }}>
-                    {getString('description')}
-                  </Text>
-                }
-                multiTypeTextArea={{ expressions, allowableTypes, disabled: readonly }}
-              />
-            </Container>
+            <CIStep
+              isNewStep={isNewStep}
+              readonly={readonly}
+              stepViewType={stepViewType}
+              formik={formik}
+              enableFields={{
+                name: {},
+                description: {}
+              }}
+            />
             {buildInfrastructureType !== 'VM' ? <>{renderConnectorRefAndImage(false)}</> : null}
             <div className={cx(css.fieldsGroup, css.withoutSpacing, css.topPadding3, css.bottomPadding3)}>
               <MultiTypeFieldSelector
