@@ -32,7 +32,7 @@ import { useGetPropagatedStageById } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const DependencyBase = (
-  { initialValues, onUpdate, isNewStep, readonly, stepViewType, allowableTypes, onChange }: DependencyProps,
+  { initialValues, onUpdate, isNewStep, readonly, stepViewType, onChange }: DependencyProps,
   formikRef: StepFormikFowardRef<DependencyData>
 ): JSX.Element => {
   const {
@@ -122,7 +122,6 @@ export const DependencyBase = (
                       disabled: readonly,
                       multiTextInputProps: {
                         expressions,
-                        allowableTypes,
                         textProps: {
                           autoComplete: 'off'
                         }
