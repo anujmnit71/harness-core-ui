@@ -142,11 +142,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
               }
               multiTypeTextArea={{
                 expressions,
-                allowableTypes: isInputSetView
-                  ? AllMultiTypeInputTypesForInputSet
-                  : isInputSetView
-                  ? AllMultiTypeInputTypesForInputSet
-                  : AllMultiTypeInputTypesForStep,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep,
                 disabled: readonly
               }}
             />
