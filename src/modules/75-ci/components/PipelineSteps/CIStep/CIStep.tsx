@@ -142,7 +142,11 @@ export const CIStep: React.FC<CIStepProps> = props => {
               }
               multiTypeTextArea={{
                 expressions,
-                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep,
+                allowableTypes: isInputSetView
+                  ? AllMultiTypeInputTypesForInputSet
+                  : isInputSetView
+                  ? AllMultiTypeInputTypesForInputSet
+                  : AllMultiTypeInputTypesForStep,
                 disabled: readonly
               }}
             />
@@ -196,7 +200,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: enableFields['spec.target'].tooltipId,
             labelKey: 'pipelineSteps.targetLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -209,7 +216,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'dockerHubRepository',
             labelKey: 'connectors.docker.dockerRepository',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -223,7 +233,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             labelKey: 'pipelineSteps.hostLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.hostPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -236,7 +249,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'gcrProjectID',
             labelKey: 'pipelineSteps.projectIDLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -250,7 +266,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             labelKey: 'regionLabel',
             inputProps: {
               placeholder: getString('pipelineSteps.regionPlaceholder'),
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -263,7 +282,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: enableFields['spec.bucket'].tooltipId,
             labelKey: 'pipelineSteps.bucketLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -276,7 +298,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: enableFields['spec.key'].tooltipId,
             labelKey: 'keyLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -288,7 +313,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             name: `${prefix}spec.sourcePaths`,
             tooltipId: 'saveCacheSourcePaths',
             labelKey: 'pipelineSteps.sourcePathsLabel',
-            allowableTypes: AllMultiTypeInputTypesForStep
+            allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
           })}
         </Container>
       ) : null}
@@ -299,7 +324,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'sourcePath',
             labelKey: 'pipelineSteps.sourcePathLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -312,7 +340,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'ecrAccount',
             labelKey: 'common.accountId',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -325,7 +356,10 @@ export const CIStep: React.FC<CIStepProps> = props => {
             tooltipId: 'imageName',
             labelKey: 'imageNameLabel',
             inputProps: {
-              multiTextInputProps: { expressions, allowableTypes: AllMultiTypeInputTypesForStep },
+              multiTextInputProps: {
+                expressions,
+                allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
+              },
               disabled: readonly
             }
           })}
@@ -337,7 +371,7 @@ export const CIStep: React.FC<CIStepProps> = props => {
             name: `${prefix}spec.tags`,
             tooltipId: 'tags',
             labelKey: 'tagsLabel',
-            allowableTypes: AllMultiTypeInputTypesForStep
+            allowableTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
           })}
         </Container>
       ) : null}
