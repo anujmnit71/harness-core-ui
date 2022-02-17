@@ -9,7 +9,6 @@ import React from 'react'
 import { Text, getMultiTypeFromValue, MultiTypeInputType, FormikForm, Color } from '@wings-software/uicore'
 import { useStrings } from 'framework/strings'
 import StepCommonFieldsInputSet from '@ci/components/PipelineSteps/StepCommonFields/StepCommonFieldsInputSet'
-import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
 import { Connectors } from '@connectors/constants'
 import { CIStep } from '@ci/components/PipelineSteps/CIStep/CIStep'
 import { CIStepOptionalConfig } from '@ci/components/PipelineSteps/CIStep/CIStepOptionalConfig'
@@ -24,8 +23,6 @@ export const ZeroNorthStepInputSet: React.FC<ZeroNorthStepProps> = ({
   allowableTypes
 }) => {
   const { getString } = useStrings()
-
-  const { expressions } = useVariablesExpression()
 
   return (
     <FormikForm className={css.removeBpPopoverWrapperTopMargin}>
@@ -51,19 +48,6 @@ export const ZeroNorthStepInputSet: React.FC<ZeroNorthStepProps> = ({
                 </Text>
               ),
               type: [Connectors.GCP, Connectors.AWS, Connectors.DOCKER]
-            }
-          }),
-          ...(getMultiTypeFromValue(template?.spec?.image) === MultiTypeInputType.RUNTIME && {
-            'spec.image': {
-              tooltipId: 'zeroNorthImageInfo',
-              multiTextInputProps: {
-                placeholder: getString('stoSteps.zeroNorthImagePlaceholder'),
-                disabled: readonly,
-                multiTextInputProps: {
-                  expressions,
-                  allowableTypes: [MultiTypeInputType.EXPRESSION, MultiTypeInputType.FIXED]
-                }
-              }
             }
           })
         }}

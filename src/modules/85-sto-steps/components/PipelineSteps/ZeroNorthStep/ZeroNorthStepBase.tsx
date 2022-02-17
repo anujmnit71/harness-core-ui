@@ -18,7 +18,6 @@ import { useStrings } from 'framework/strings'
 import StepCommonFields, {
   GetImagePullPolicyOptions
 } from '@ci/components/PipelineSteps/StepCommonFields/StepCommonFields'
-import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
 import {
   getInitialValuesInCorrectFormat,
   getFormValuesInCorrectFormat
@@ -42,7 +41,6 @@ export const ZeroNorthStepBase = (
   } = usePipelineContext()
 
   const { getString } = useStrings()
-  const { expressions } = useVariablesExpression()
 
   const currentStage = useGetPropagatedStageById(selectedStageId || '')
 
@@ -80,12 +78,6 @@ export const ZeroNorthStepBase = (
           transformValuesFieldsConfig
         )
 
-        // Set the proper values for running the ZeroNorth Integration Container
-        // schemaValues.spec.privileged = true
-        // schemaValues.spec.image = ''
-        // schemaValues.spec.connectorRef = '' // FIXME
-        // schemaValues.spec.imagePullPolicy = 'Always' // TODO: change to 'IfNotPresent' once versioned tags in place
-
         onUpdate?.(schemaValues)
       }}
     >
@@ -116,14 +108,6 @@ export const ZeroNorthStepBase = (
                     </Text>
                   ),
                   type: [Connectors.GCP, Connectors.AWS, Connectors.DOCKER]
-                },
-                'spec.image': {
-                  tooltipId: 'zeroNorthImageInfo',
-                  multiTextInputProps: {
-                    placeholder: getString('stoSteps.zeroNorthImagePlaceholder'),
-                    multiTextInputProps: { expressions },
-                    disabled: readonly
-                  }
                 }
               }}
               formik={formik}

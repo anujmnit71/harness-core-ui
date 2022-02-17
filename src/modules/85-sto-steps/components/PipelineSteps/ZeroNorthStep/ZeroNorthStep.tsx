@@ -20,8 +20,7 @@ import type {
   MultiTypeMapUIType,
   MultiTypeConnectorRef,
   Resources,
-  MultiTypeListUIType,
-  MultiTypeListType
+  MultiTypeListUIType
 } from '@pipeline/components/PipelineSteps/Steps/StepsTypes'
 import type { StringsMap } from 'stringTypes'
 import { ZeroNorthStepBaseWithRef } from './ZeroNorthStepBase'
@@ -31,14 +30,7 @@ import { getInputSetViewValidateFieldsConfig, transformValuesFieldsConfig } from
 
 export interface ZeroNorthStepSpec {
   connectorRef: string
-  image: string
   privileged?: boolean
-  reports?: {
-    type: 'JUnit'
-    spec: {
-      paths: MultiTypeListType
-    }
-  }
   settings?: MultiTypeMapType
   imagePullPolicy?: MultiTypeSelectOption
   runAsUser?: string
@@ -102,16 +94,12 @@ export class ZeroNorthStep extends PipelineStep<ZeroNorthStepData> {
     type: StepType.ZeroNorth as string,
     spec: {
       connectorRef: 'harnessImage',
-      image: 'registry.gitlab.com/zeronorth/registry/images/sto_plugin:dev',
-      imagePullPolicy: 'Always', // TODO - IfNotPresent?
       privileged: true,
       settings: {
         policy_type: 'orchestratedScan',
         scan_type: 'repository',
         product_name: '',
-        product_config_name: '',
-        repository_project: '<+pipeline.properties.ci.__encodedValue.codebase.repoName>',
-        repository_branch: '<+codebase.branch>'
+        product_config_name: ''
       }
     }
   }
