@@ -7,7 +7,6 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { defaultTo } from 'lodash-es'
 import type { SelectOption } from '@harness/uicore'
 import { Region, useAllRegions, UseAllRegionsProps } from 'services/lw'
 import type { AccountPathProps } from '@common/interfaces/RouteInterfaces'
@@ -44,10 +43,7 @@ const useRegionsForSelection = ({
   }, [data?.response])
 
   const setRegionsForSelection = (response: Region[] = []) => {
-    const loaded = defaultTo(
-      response?.map(r => ({ label: r.label as string, value: r.name as string })),
-      []
-    )
+    const loaded = response.map(r => ({ label: r.label as string, value: r.name as string }))
     setRegionsData(loaded)
   }
 
