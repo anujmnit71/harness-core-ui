@@ -10,6 +10,7 @@ import { Container, Layout, Text, Button, Icon, Popover, FontVariation, Color } 
 import copy from 'copy-to-clipboard'
 import { PopoverInteractionKind, Position } from '@blueprintjs/core'
 import moment from 'moment'
+import cx from 'classnames'
 import { useStrings } from 'framework/strings'
 
 import { convertNumberToFixedDecimalPlaces } from '@ce/utils/convertNumberToFixedDecimalPlaces'
@@ -219,24 +220,28 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
 
   return (
     <Container className={css.mainContainer} background="white" padding="large">
-      <Layout.Horizontal spacing="large" padding={{ top: 'large' }}>
-        <RecommendationDetailsSpendCard
-          withRecommendationAmount={formatCost(
-            recommendationStats?.totalMonthlyCost - recommendationStats?.totalMonthlySaving
-          )}
-          withoutRecommendationAmount={formatCost(recommendationStats?.totalMonthlyCost)}
-          title={getString('ce.recommendation.listPage.monthlyPotentialCostText')}
-          spentBy={moment(timeRangeFilter[1]).format('MMM DD')}
-        />
-        <RecommendationDetailsSavingsCard
-          amount={formatCost(recommendationStats?.totalMonthlySaving)}
-          title={getString('ce.recommendation.listPage.monthlySavingsText')}
-          amountSubTitle={calculateSavingsPercentage(
-            recommendationStats?.totalMonthlySaving,
-            recommendationStats?.totalMonthlyCost
-          )}
-          subTitle={`${moment(timeRangeFilter[0]).format('MMM DD')} - ${moment(timeRangeFilter[1]).format('MMM DD')}`}
-        />
+      <Layout.Horizontal padding={{ top: 'large' }}>
+        <Container width="100%">
+          <RecommendationDetailsSpendCard
+            withRecommendationAmount={formatCost(
+              recommendationStats?.totalMonthlyCost - recommendationStats?.totalMonthlySaving
+            )}
+            withoutRecommendationAmount={formatCost(recommendationStats?.totalMonthlyCost)}
+            title={getString('ce.recommendation.listPage.monthlyPotentialCostText')}
+            spentBy={moment(timeRangeFilter[1]).format('MMM DD')}
+          />
+        </Container>
+        <Container width="100%">
+          <RecommendationDetailsSavingsCard
+            amount={formatCost(recommendationStats?.totalMonthlySaving)}
+            title={getString('ce.recommendation.listPage.monthlySavingsText')}
+            amountSubTitle={calculateSavingsPercentage(
+              recommendationStats?.totalMonthlySaving,
+              recommendationStats?.totalMonthlyCost
+            )}
+            subTitle={`${moment(timeRangeFilter[0]).format('MMM DD')} - ${moment(timeRangeFilter[1]).format('MMM DD')}`}
+          />
+        </Container>
       </Layout.Horizontal>
       <RecommendationTabs
         costOptimizedSavings={costOptimizedSavings}
@@ -255,31 +260,16 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           {getString('ce.recommendation.detailsPage.resourceChanges')}
         </Text>
         <section className={css.diffHeader}>
-          <Text padding={{ left: 'small' }} className={css.heading} color="grey800" font={{ size: 'small' }}>
-            {getString('ce.recommendation.detailsPage.currentResources')}
-          </Text>
-
-          <Layout.Horizontal
-            border={{
-              left: true,
-              top: true,
-              right: true,
-              color: Color.GREEN_700,
-              width: 2
-            }}
-          >
-            <Text
-              padding={{ left: 'small' }}
-              font={{ size: 'small' }}
-              className={css.heading}
-              color="grey800"
-              style={{
-                flex: 1
-              }}
-            >
-              {getString('ce.recommendation.detailsPage.recommendedResources', {
-                recommendationType: selectedRecommendation
-              })}
+          <Layout.Horizontal className={css.heading} spacing="xsmall">
+            <Text font={{ variation: FontVariation.SMALL_SEMI }}>{getString('common.current')}</Text>
+            <Text font={{ variation: FontVariation.SMALL }}>
+              {getString('ce.recommendation.detailsPage.recommendedResources')}
+            </Text>
+          </Layout.Horizontal>
+          <Layout.Horizontal className={cx(css.optimizedHeader, css.heading)} spacing="xsmall">
+            <Text font={{ variation: FontVariation.SMALL_SEMI }}>{selectedRecommendation}</Text>
+            <Text font={{ variation: FontVariation.SMALL }}>
+              {getString('ce.recommendation.detailsPage.recommendedResources')}
             </Text>
             <Icon
               name="duplicate"
@@ -316,18 +306,15 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
       </section>
       <Container className={css.timeframeContainer}>
         <Layout.Horizontal
-          background="grey100"
+          background={Color.GREY_100}
+          padding="xsmall"
           style={{
             alignItems: 'baseline',
             justifyContent: 'center'
           }}
+          spacing="xsmall"
         >
-          <Text
-            margin={{
-              right: 'xsmall'
-            }}
-            font={{ variation: FontVariation.TABLE_HEADERS }}
-          >
+          <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
             {selectedRecommendation === RecommendationType.CostOptimized
               ? getString('ce.recommendation.detailsPage.costOptimizedCaps')
               : getString('ce.recommendation.detailsPage.performanceOptimizedCaps')}
@@ -362,7 +349,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
               {getString('ce.recommendation.detailsPage.histogramText')}
             </Text>
           </Popover>
-          <Text padding="xsmall" font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}>
+          <Text font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}>
             {getString('ce.recommendation.detailsPage.timeChangeText')}
           </Text>
           <Text font={{ variation: FontVariation.TABLE_HEADERS }} className={css.actionText}>
@@ -394,6 +381,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
               icon="reset-icon"
               withoutBoxShadow={true}
               intent="none"
+              className={css.resetButton}
             >
               {getString('ce.recommendation.detailsPage.resetRecommendationText', {
                 recommendationType: selectedRecommendation
@@ -402,9 +390,13 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           ) : null}
         </Container>
         <img src={requestLegend} />
-        <Text>{getString('ce.recommendation.detailsPage.reqPercentileLegendText')}</Text>
+        <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY_SEMI }}>
+          {getString('ce.recommendation.detailsPage.reqPercentileLegendText')}
+        </Text>
         <img src={limitLegend} />
-        <Text>{getString('ce.recommendation.detailsPage.limitPercentileLegendText')}</Text>
+        <Text color={Color.GREY_500} font={{ variation: FontVariation.TINY_SEMI }}>
+          {getString('ce.recommendation.detailsPage.limitPercentileLegendText')}
+        </Text>
       </Container>
     </Container>
   )

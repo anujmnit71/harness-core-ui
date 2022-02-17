@@ -6,8 +6,9 @@
  */
 
 .savingsCard {
-  padding: var(--padding-xlarge) var(--padding-xlarge);
+  padding: var(--spacing-large) var(--spacing-xlarge) !important;
   width: 229px;
+  height: 120px;
   background-color: var(--primary-1);
 
   .amount {
@@ -17,5 +18,7 @@
 }
 
 .potentialSpendCard {
+  padding: var(--spacing-large) var(--spacing-xlarge) !important;
   width: 348px;
+  height: 120px;
 }

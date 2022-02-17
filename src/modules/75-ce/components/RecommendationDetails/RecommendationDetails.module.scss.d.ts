@@ -19,11 +19,13 @@ declare const styles: {
   readonly legendContainer: string
   readonly limitHandle: string
   readonly mainContainer: string
+  readonly optimizedHeader: string
   readonly recommendationCost: string
   readonly recommendationTypeContainer: string
   readonly recommendationTypeText: string
   readonly recommendations: string
   readonly requestHandle: string
+  readonly resetButton: string
   readonly selectedTab: string
   readonly selectedTabCost: string
   readonly sliderContainer: string

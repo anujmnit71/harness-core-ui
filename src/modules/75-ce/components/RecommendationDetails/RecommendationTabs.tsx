@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { Container, Layout, Text, Color } from '@wings-software/uicore'
+import { Container, Layout, Text, Color, FontVariation } from '@wings-software/uicore'
 import cx from 'classnames'
 
 import { useStrings } from 'framework/strings'
@@ -58,15 +58,13 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
           }}
         >
           <Text
-            font={{
-              size: 'small',
-              align: 'center'
-            }}
+            font={{ variation: FontVariation.SMALL_BOLD, align: 'center' }}
+            color={selectedRecommendation === RecommendationType.CostOptimized ? Color.WHITE : Color.PRIMARY_9}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.CostOptimized })}
             tooltipProps={{ dataTooltipId: 'costOptimized' }}
             rightIcon="info"
             rightIconProps={{
-              color: selectedRecommendation === RecommendationType.CostOptimized ? Color.WHITE : Color.GREY_500,
+              color: selectedRecommendation === RecommendationType.CostOptimized ? Color.WHITE : Color.PRIMARY_9,
               size: 12
             }}
           >
@@ -78,6 +76,7 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
           className={cx(css.recommendationTypeText, {
             [css.selectedTab]: selectedRecommendation === RecommendationType.PerformanceOptimized
           })}
+          color={selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.PRIMARY_9}
           spacing="xsmall"
           onClick={() => {
             trackEvent(USER_JOURNEY_EVENTS.RECOMMENDATION_COST_PERFORMANCE_OPTIMISED_CLICK, {
@@ -90,15 +89,13 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
           }}
         >
           <Text
-            font={{
-              size: 'small',
-              align: 'center'
-            }}
+            font={{ variation: FontVariation.SMALL_BOLD, align: 'center' }}
+            color={selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.PRIMARY_9}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.PerformanceOptimized })}
             tooltipProps={{ dataTooltipId: 'performanceOptimized' }}
             rightIcon="info"
             rightIconProps={{
-              color: selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.GREY_500,
+              color: selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.PRIMARY_9,
               size: 12
             }}
           >

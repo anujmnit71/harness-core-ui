@@ -266,7 +266,7 @@ exports[`test cases for recommendation summary cards should be able to render re
       class="Layout--vertical Layout--layout-spacing-small StyledProps--main"
     >
       <div
-        class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main"
+        class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-small"
         style="align-items: baseline;"
       >
         <div
@@ -289,7 +289,7 @@ exports[`test cases for recommendation summary cards should be able to render re
         class="Layout--horizontal StyledProps--main StyledProps--padding-left-small StyledProps--padding-right-small"
       >
         <div
-          class="Layout--vertical StyledProps--main StyledProps--padding-top-medium StyledProps--padding-right-medium StyledProps--flex StyledProps--flex-justifyContent-space-between StyledProps--flex-alignItems-start"
+          class="Layout--vertical StyledProps--main StyledProps--padding-right-medium StyledProps--flex StyledProps--flex-justifyContent-space-between StyledProps--flex-alignItems-start"
         >
           <p
             class="StyledProps--font StyledProps--main amount StyledProps--font-variation-h3"
@@ -312,10 +312,14 @@ exports[`test cases for recommendation summary cards should be able to render re
           </div>
         </div>
         <div
-          class="Layout--vertical StyledProps--main StyledProps--padding-top-large StyledProps--flex StyledProps--flex-justifyContent-space-between StyledProps--flex-alignItems-start"
+          class="StyledProps--font StyledProps--main StyledProps--margin-left-medium StyledProps--margin-right-medium"
+          style="height: 52px;"
+        />
+        <div
+          class="Layout--vertical StyledProps--main StyledProps--flex StyledProps--flex-justifyContent-space-between StyledProps--flex-alignItems-start"
         >
           <p
-            class="StyledProps--font StyledProps--main amount StyledProps--font-variation-h6"
+            class="StyledProps--font StyledProps--main amount StyledProps--font-variation-h6 StyledProps--padding-top-xsmall"
           >
             $135.17
           </p>

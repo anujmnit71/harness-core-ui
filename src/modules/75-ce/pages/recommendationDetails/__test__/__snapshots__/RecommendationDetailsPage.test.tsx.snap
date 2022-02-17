@@ -140,7 +140,7 @@ exports[`test cases for Recommendation details Page should be able to render the
       style="width: 100%;"
     >
       <div
-        class="Layout--horizontal Layout--layout-spacing-medium StyledProps--main"
+        class="Layout--horizontal Layout--layout-spacing-small StyledProps--main"
       >
         <p
           class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey800 StyledProps--font-weight-semi-bold"
@@ -192,10 +192,20 @@ exports[`test cases for Recommendation details Page should be able to render the
           class="StyledProps--font StyledProps--main mainContainer StyledProps--background-white StyledProps--padding-large"
         >
           <div
-            class="Layout--horizontal Layout--layout-spacing-large StyledProps--main StyledProps--padding-top-large"
+            class="Layout--horizontal StyledProps--main StyledProps--padding-top-large"
           >
-            recommendation-details-spend-card-mock
-            recommendation-details-savings-card-mock
+            <div
+              class="StyledProps--font StyledProps--main"
+              style="width: 100%;"
+            >
+              recommendation-details-spend-card-mock
+            </div>
+            <div
+              class="StyledProps--font StyledProps--main"
+              style="width: 100%;"
+            >
+              recommendation-details-savings-card-mock
+            </div>
           </div>
           <div
             class="StyledProps--font StyledProps--main recommendationTypeContainer StyledProps--padding-small"
@@ -211,7 +221,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                   data-tooltip-id="costOptimized"
                 >
                   <p
-                    class="StyledProps--font StyledProps--main selectedTab StyledProps--font-size-small StyledProps--font-align-center"
+                    class="StyledProps--font StyledProps--main selectedTab StyledProps--font-variation-small-bold StyledProps--font-align-center StyledProps--color StyledProps--color-white"
                     style="display: flex; align-items: center;"
                   >
                     ce.recommendation.detailsPage.costOptimized
@@ -236,19 +246,19 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </div>
               </div>
               <div
-                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText"
+                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText StyledProps--color StyledProps--color-primary9"
               >
                 <div
                   class="Text--withDocsTooltip"
                   data-tooltip-id="performanceOptimized"
                 >
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--font-size-small StyledProps--font-align-center"
+                    class="StyledProps--font StyledProps--main StyledProps--font-variation-small-bold StyledProps--font-align-center StyledProps--color StyledProps--color-primary9"
                     style="display: flex; align-items: center;"
                   >
                     ce.recommendation.detailsPage.performanceOptimized
                     <span
-                      class="bp3-icon StyledProps--main Text--icon StyledProps--padding-left-xsmall StyledProps--color StyledProps--color-grey500"
+                      class="bp3-icon StyledProps--main Text--icon StyledProps--padding-left-xsmall StyledProps--color StyledProps--color-primary9"
                       data-icon="info"
                     >
                       <svg
@@ -280,17 +290,30 @@ exports[`test cases for Recommendation details Page should be able to render the
             <section
               class="diffHeader"
             >
-              <p
-                class="StyledProps--font StyledProps--main heading StyledProps--padding-left-small StyledProps--color StyledProps--color-grey800 StyledProps--font-size-small"
-              >
-                ce.recommendation.detailsPage.currentResources
-              </p>
               <div
-                class="Layout--horizontal StyledProps--main StyledProps--border StyledProps--border-left StyledProps--border-top StyledProps--border-right StyledProps--border-color-green700"
+                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main heading"
               >
                 <p
-                  class="StyledProps--font StyledProps--main heading StyledProps--padding-left-small StyledProps--font-size-small StyledProps--color StyledProps--color-grey800"
-                  style="flex: 1;"
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
+                >
+                  common.current
+                </p>
+                <p
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
+                >
+                  ce.recommendation.detailsPage.recommendedResources
+                </p>
+              </div>
+              <div
+                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main optimizedHeader heading"
+              >
+                <p
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
+                >
+                  Cost Optimized
+                </p>
+                <p
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
                 >
                   ce.recommendation.detailsPage.recommendedResources
                 </p>
@@ -336,7 +359,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-small"
                     data-testid="undefined-memVal"
                   >
                     4Gi
@@ -351,7 +374,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     cpu:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-xsmall"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-xsmall"
                     data-testid="undefined-cpuVal"
                   >
                     1
@@ -359,7 +382,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </div>
               </div>
               <div
-                class="StyledProps--font StyledProps--main StyledProps--background-green100 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small StyledProps--border StyledProps--border-left StyledProps--border-right StyledProps--border-color-green700"
+                class="StyledProps--font StyledProps--main borderLeft borderRight StyledProps--background-green100 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small"
               >
                 <p
                   class="StyledProps--font StyledProps--main monospace"
@@ -376,7 +399,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--padding-left-small"
                     data-testid="limitsId-memVal"
                   >
                     4.4Gi
@@ -401,7 +424,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-small"
                     data-testid="undefined-memVal"
                   >
                     4Gi
@@ -416,7 +439,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     cpu:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-xsmall"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-xsmall"
                     data-testid="undefined-cpuVal"
                   >
                     1
@@ -424,7 +447,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </div>
               </div>
               <div
-                class="StyledProps--font StyledProps--main StyledProps--background-primary1 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small StyledProps--border StyledProps--border-left StyledProps--border-right StyledProps--border-bottom StyledProps--border-color-green700"
+                class="StyledProps--font StyledProps--main borderLeft borderRight borderBottom StyledProps--background-primary1 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small"
               >
                 <p
                   class="StyledProps--font StyledProps--main monospace"
@@ -441,7 +464,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--padding-left-small"
                     data-testid="requestId-memVal"
                   >
                     3.5Gi
@@ -456,7 +479,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     cpu:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green500 StyledProps--padding-left-xsmall"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--padding-left-xsmall"
                     data-testid="requestId-cpuVal"
                   >
                     44m
@@ -469,11 +492,11 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="StyledProps--font StyledProps--main timeframeContainer"
           >
             <div
-              class="Layout--horizontal StyledProps--main StyledProps--background-grey100"
+              class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--background-grey100 StyledProps--padding-xsmall"
               style="align-items: baseline; justify-content: center;"
             >
               <p
-                class="StyledProps--font StyledProps--main StyledProps--margin-right-xsmall StyledProps--font-variation-table-headers"
+                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers"
               >
                 ce.recommendation.detailsPage.costOptimizedCaps
               </p>
@@ -492,7 +515,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </span>
               </span>
               <p
-                class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-variation-table-headers StyledProps--font-align-center"
+                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers StyledProps--font-align-center"
               >
                 ce.recommendation.detailsPage.timeChangeText
               </p>
@@ -513,7 +536,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 class="Layout--vertical StyledProps--main"
               >
                 <div
-                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-xsmall"
+                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-small"
                 >
                   <p
                     class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
@@ -548,7 +571,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 class="Layout--vertical StyledProps--main"
               >
                 <div
-                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-xsmall"
+                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-small"
                 >
                   <p
                     class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
@@ -601,7 +624,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               src="test-file-stub"
             />
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500 StyledProps--font-variation-tiny-semi"
             >
               ce.recommendation.detailsPage.reqPercentileLegendText
             </p>
@@ -609,7 +632,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               src="test-file-stub"
             />
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500 StyledProps--font-variation-tiny-semi"
             >
               ce.recommendation.detailsPage.limitPercentileLegendText
             </p>
@@ -620,7 +643,7 @@ exports[`test cases for Recommendation details Page should be able to render the
         class="StyledProps--font StyledProps--main StyledProps--padding-xlarge"
       >
         <div
-          class="Layout--vertical Layout--layout-spacing-large StyledProps--main"
+          class="Layout--vertical Layout--layout-spacing-medium StyledProps--main"
         >
           <div
             class="Layout--horizontal StyledProps--main StyledProps--margin-bottom-medium StyledProps--flex StyledProps--flex-justifyContent-space-between"
@@ -681,7 +704,7 @@ exports[`test cases for Recommendation details Page should be able to render the
           </div>
           <div
             class="bp3-card bp3-elevation-0 Card--card"
-            style="padding: 0px;"
+            style="padding: 0px; border: 0px;"
           >
             <div
               class="StyledProps--font StyledProps--main StyledProps--padding-medium"
@@ -698,7 +721,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               </div>
             </div>
             <div
-              class="StyledProps--font StyledProps--main StyledProps--padding-medium StyledProps--background-primary1"
+              class="StyledProps--font StyledProps--main tuneRecomContainer StyledProps--padding-medium StyledProps--background-primary1"
             >
               <p
                 class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--margin-bottom-small"
@@ -791,7 +814,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               class="Layout--horizontal StyledProps--main"
             >
               <p
-                class="StyledProps--font StyledProps--main StyledProps--font-variation-small StyledProps--padding-right-small"
+                class="StyledProps--font StyledProps--main infoText StyledProps--font-variation-small StyledProps--padding-right-small"
                 style="display: flex; align-items: center;"
               >
                 <span
@@ -979,7 +1002,7 @@ exports[`test cases for Recommendation details Page should be able to render the
       style="width: 100%;"
     >
       <div
-        class="Layout--horizontal Layout--layout-spacing-medium StyledProps--main"
+        class="Layout--horizontal Layout--layout-spacing-small StyledProps--main"
       >
         <p
           class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey800 StyledProps--font-weight-semi-bold"
@@ -1031,10 +1054,20 @@ exports[`test cases for Recommendation details Page should be able to render the
           class="StyledProps--font StyledProps--main mainContainer StyledProps--background-white StyledProps--padding-large"
         >
           <div
-            class="Layout--horizontal Layout--layout-spacing-large StyledProps--main StyledProps--padding-top-large"
+            class="Layout--horizontal StyledProps--main StyledProps--padding-top-large"
           >
-            recommendation-details-spend-card-mock
-            recommendation-details-savings-card-mock
+            <div
+              class="StyledProps--font StyledProps--main"
+              style="width: 100%;"
+            >
+              recommendation-details-spend-card-mock
+            </div>
+            <div
+              class="StyledProps--font StyledProps--main"
+              style="width: 100%;"
+            >
+              recommendation-details-savings-card-mock
+            </div>
           </div>
           <div
             class="StyledProps--font StyledProps--main recommendationTypeContainer StyledProps--padding-small"
@@ -1050,7 +1083,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                   data-tooltip-id="costOptimized"
                 >
                   <p
-                    class="StyledProps--font StyledProps--main selectedTab StyledProps--font-size-small StyledProps--font-align-center"
+                    class="StyledProps--font StyledProps--main selectedTab StyledProps--font-variation-small-bold StyledProps--font-align-center StyledProps--color StyledProps--color-white"
                     style="display: flex; align-items: center;"
                   >
                     ce.recommendation.detailsPage.costOptimized
@@ -1075,19 +1108,19 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </div>
               </div>
               <div
-                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText"
+                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main recommendationTypeText StyledProps--color StyledProps--color-primary9"
               >
                 <div
                   class="Text--withDocsTooltip"
                   data-tooltip-id="performanceOptimized"
                 >
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--font-size-small StyledProps--font-align-center"
+                    class="StyledProps--font StyledProps--main StyledProps--font-variation-small-bold StyledProps--font-align-center StyledProps--color StyledProps--color-primary9"
                     style="display: flex; align-items: center;"
                   >
                     ce.recommendation.detailsPage.performanceOptimized
                     <span
-                      class="bp3-icon StyledProps--main Text--icon StyledProps--padding-left-xsmall StyledProps--color StyledProps--color-grey500"
+                      class="bp3-icon StyledProps--main Text--icon StyledProps--padding-left-xsmall StyledProps--color StyledProps--color-primary9"
                       data-icon="info"
                     >
                       <svg
@@ -1119,17 +1152,30 @@ exports[`test cases for Recommendation details Page should be able to render the
             <section
               class="diffHeader"
             >
-              <p
-                class="StyledProps--font StyledProps--main heading StyledProps--padding-left-small StyledProps--color StyledProps--color-grey800 StyledProps--font-size-small"
-              >
-                ce.recommendation.detailsPage.currentResources
-              </p>
               <div
-                class="Layout--horizontal StyledProps--main StyledProps--border StyledProps--border-left StyledProps--border-top StyledProps--border-right StyledProps--border-color-green700"
+                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main heading"
               >
                 <p
-                  class="StyledProps--font StyledProps--main heading StyledProps--padding-left-small StyledProps--font-size-small StyledProps--color StyledProps--color-grey800"
-                  style="flex: 1;"
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
+                >
+                  common.current
+                </p>
+                <p
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
+                >
+                  ce.recommendation.detailsPage.recommendedResources
+                </p>
+              </div>
+              <div
+                class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main optimizedHeader heading"
+              >
+                <p
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
+                >
+                  Cost Optimized
+                </p>
+                <p
+                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
                 >
                   ce.recommendation.detailsPage.recommendedResources
                 </p>
@@ -1175,7 +1221,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-small"
                     data-testid="undefined-memVal"
                   >
                     4Gi
@@ -1190,7 +1236,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     cpu:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-xsmall"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-xsmall"
                     data-testid="undefined-cpuVal"
                   >
                     1
@@ -1198,7 +1244,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </div>
               </div>
               <div
-                class="StyledProps--font StyledProps--main StyledProps--background-green100 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small StyledProps--border StyledProps--border-left StyledProps--border-right StyledProps--border-color-green700"
+                class="StyledProps--font StyledProps--main borderLeft borderRight StyledProps--background-green100 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small"
               >
                 <p
                   class="StyledProps--font StyledProps--main monospace"
@@ -1215,7 +1261,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--padding-left-small"
                     data-testid="limitsId-memVal"
                   >
                     4.4Gi
@@ -1240,7 +1286,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-small"
                     data-testid="undefined-memVal"
                   >
                     4Gi
@@ -1255,7 +1301,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     cpu:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red500 StyledProps--padding-left-xsmall"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-red700 StyledProps--padding-left-xsmall"
                     data-testid="undefined-cpuVal"
                   >
                     1
@@ -1263,7 +1309,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </div>
               </div>
               <div
-                class="StyledProps--font StyledProps--main StyledProps--background-primary1 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small StyledProps--border StyledProps--border-left StyledProps--border-right StyledProps--border-bottom StyledProps--border-color-green700"
+                class="StyledProps--font StyledProps--main borderLeft borderRight borderBottom StyledProps--background-primary1 StyledProps--padding-left-xxlarge StyledProps--padding-top-small StyledProps--padding-bottom-small"
               >
                 <p
                   class="StyledProps--font StyledProps--main monospace"
@@ -1280,7 +1326,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     memory:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green500 StyledProps--padding-left-small"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--padding-left-small"
                     data-testid="requestId-memVal"
                   >
                     3.5Gi
@@ -1295,7 +1341,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                     cpu:
                   </p>
                   <p
-                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green500 StyledProps--padding-left-xsmall"
+                    class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-green700 StyledProps--padding-left-xsmall"
                     data-testid="requestId-cpuVal"
                   >
                     44m
@@ -1308,11 +1354,11 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="StyledProps--font StyledProps--main timeframeContainer"
           >
             <div
-              class="Layout--horizontal StyledProps--main StyledProps--background-grey100"
+              class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--background-grey100 StyledProps--padding-xsmall"
               style="align-items: baseline; justify-content: center;"
             >
               <p
-                class="StyledProps--font StyledProps--main StyledProps--margin-right-xsmall StyledProps--font-variation-table-headers"
+                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers"
               >
                 ce.recommendation.detailsPage.costOptimizedCaps
               </p>
@@ -1331,7 +1377,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </span>
               </span>
               <p
-                class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-variation-table-headers StyledProps--font-align-center"
+                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers StyledProps--font-align-center"
               >
                 ce.recommendation.detailsPage.timeChangeText
               </p>
@@ -1352,7 +1398,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 class="Layout--vertical StyledProps--main"
               >
                 <div
-                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-xsmall"
+                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-small"
                 >
                   <p
                     class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
@@ -1387,7 +1433,7 @@ exports[`test cases for Recommendation details Page should be able to render the
                 class="Layout--vertical StyledProps--main"
               >
                 <div
-                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-xsmall"
+                  class="Layout--horizontal Layout--layout-spacing-xsmall StyledProps--main StyledProps--padding-bottom-small"
                 >
                   <p
                     class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi"
@@ -1440,7 +1486,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               src="test-file-stub"
             />
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500 StyledProps--font-variation-tiny-semi"
             >
               ce.recommendation.detailsPage.reqPercentileLegendText
             </p>
@@ -1448,7 +1494,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               src="test-file-stub"
             />
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey500 StyledProps--font-variation-tiny-semi"
             >
               ce.recommendation.detailsPage.limitPercentileLegendText
             </p>
@@ -1459,7 +1505,7 @@ exports[`test cases for Recommendation details Page should be able to render the
         class="StyledProps--font StyledProps--main StyledProps--padding-xlarge"
       >
         <div
-          class="Layout--vertical Layout--layout-spacing-large StyledProps--main"
+          class="Layout--vertical Layout--layout-spacing-medium StyledProps--main"
         >
           <div
             class="Layout--horizontal StyledProps--main StyledProps--margin-bottom-medium StyledProps--flex StyledProps--flex-justifyContent-space-between"
@@ -1520,7 +1566,7 @@ exports[`test cases for Recommendation details Page should be able to render the
           </div>
           <div
             class="bp3-card bp3-elevation-0 Card--card"
-            style="padding: 0px;"
+            style="padding: 0px; border: 0px;"
           >
             <div
               class="StyledProps--font StyledProps--main StyledProps--padding-medium"
@@ -1537,7 +1583,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               </div>
             </div>
             <div
-              class="StyledProps--font StyledProps--main StyledProps--padding-medium StyledProps--background-primary1"
+              class="StyledProps--font StyledProps--main tuneRecomContainer StyledProps--padding-medium StyledProps--background-primary1"
             >
               <p
                 class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--margin-bottom-small"
@@ -1630,7 +1676,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               class="Layout--horizontal StyledProps--main"
             >
               <p
-                class="StyledProps--font StyledProps--main StyledProps--font-variation-small StyledProps--padding-right-small"
+                class="StyledProps--font StyledProps--main infoText StyledProps--font-variation-small StyledProps--padding-right-small"
                 style="display: flex; align-items: center;"
               >
                 <span

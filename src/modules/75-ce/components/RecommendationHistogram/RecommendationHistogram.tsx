@@ -64,7 +64,7 @@ const HistogramDescription: React.FC<HistogramDescriptionProps> = props => {
   const { getString } = useStrings()
 
   return (
-    <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'xsmall' }}>
+    <Layout.Horizontal spacing="xsmall" padding={{ bottom: 'small' }}>
       {props.description}
       <Text font={{ variation: FontVariation.SMALL_SEMI }}>
         {getString('ce.recommendation.recommendationChart.willBeMet')}

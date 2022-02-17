@@ -8,6 +8,8 @@
 .mainContainer {
   position: relative;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+
   .diffContainer {
     margin-top: 20px;
     height: 150px;
@@ -21,12 +23,13 @@
       color: var(--grey-800);
 
       .heading {
-        padding: var(--spacing-xsmall);
+        padding: var(--spacing-xsmall) var(--spacing-medium);
       }
 
       .copyIcon {
         padding: var(--spacing-xsmall) var(--spacing-xsmall) 0 0;
         cursor: pointer;
+        margin-left: auto !important;
       }
     }
 
@@ -49,7 +52,7 @@
   }
 
   .histogramContainer {
-    margin-top: var(--spacing-large) !important;
+    margin-top: var(--spacing-medium) !important;
   }
 
   .sliderContainer {
@@ -108,7 +111,6 @@
       .selectedTab {
         background-color: #0a3364;
         border-radius: 8px;
-        color: var(--grey-100) !important;
       }
     }
   }
@@ -139,6 +141,15 @@
   .legendContainer {
     display: grid;
     grid-template-columns: 1fr 20px 180px 20px 180px;
-    margin-top: var(--spacing-medium) !important;
   }
+}
+
+.optimizedHeader {
+  border-left: 2px solid var(--green-700);
+  border-right: 2px solid var(--green-700);
+  border-top: 2px solid var(--green-700);
+}
+
+.resetButton {
+  padding: 5px 12px !important;
 }

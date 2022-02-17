@@ -75,7 +75,7 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
 
   return (
     <Container padding="xlarge">
-      <Layout.Vertical spacing="large">
+      <Layout.Vertical spacing="medium">
         <Layout.Horizontal margin={{ bottom: 'medium' }} flex={{ justifyContent: 'space-between' }}>
           <Text font={{ variation: FontVariation.H5 }}>
             {getString('ce.perspectives.workloadDetails.workloadDetailsText')}
@@ -95,13 +95,13 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
         <Text font={{ variation: FontVariation.H5 }} tooltipProps={{ dataTooltipId: 'tuneRecommendations' }}>
           {getString('ce.recommendation.detailsPage.tuneRecommendations')}
         </Text>
-        <Card style={{ padding: 0 }}>
+        <Card style={{ padding: 0, border: 0 }}>
           <Container padding="medium">
             <Text font={{ variation: FontVariation.H6 }} tooltipProps={{ dataTooltipId: 'setQoSAndBuffer' }}>
               {getString('ce.recommendation.detailsPage.setQoSAndBuffer')}
             </Text>
           </Container>
-          <Container padding="medium" background={Color.PRIMARY_1}>
+          <Container padding="medium" background={Color.PRIMARY_1} className={css.tuneRecomContainer}>
             <Text font={{ variation: FontVariation.SMALL_SEMI }} margin={{ bottom: 'small' }}>
               {getString('ce.recommendation.detailsPage.qualityOfService')}
             </Text>
@@ -144,10 +144,14 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
             </Container>
           </Container>
         </Card>
-
         <Container padding="medium" background={Color.BLUE_50}>
           <Layout.Horizontal>
-            <Text icon="info-messaging" font={{ variation: FontVariation.SMALL }} padding={{ right: 'small' }}>
+            <Text
+              icon="info-messaging"
+              font={{ variation: FontVariation.SMALL }}
+              padding={{ right: 'small' }}
+              className={css.infoText}
+            >
               {getString('ce.recommendation.detailsPage.customDetails')}
             </Text>
             <img className={css.customImage} src={CustomizeRecommendationsImg} alt="custom-recommendation-img" />
@@ -241,7 +245,7 @@ const RecommendationDetailsPage: React.FC = () => {
       />
       <PageBody loading={fetching}>
         <Card style={{ width: '100%' }}>
-          <Layout.Horizontal spacing="medium">
+          <Layout.Horizontal spacing="small">
             <Text color={Color.GREY_800} font={{ weight: 'semi-bold' }}>
               {getString('ce.recommendation.detailsPage.utilizationDataComputation')}
             </Text>

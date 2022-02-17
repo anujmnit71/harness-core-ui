@@ -13,12 +13,14 @@ declare const styles: {
   readonly costContainer: string
   readonly customImage: string
   readonly detailsContainer: string
+  readonly infoText: string
   readonly mainContainer: string
   readonly pageBody: string
   readonly pillToggle: string
   readonly savingsContainer: string
   readonly sliderContainer: string
   readonly subText: string
+  readonly tuneRecomContainer: string
   readonly viewDetailsButton: string
 }
 export default styles

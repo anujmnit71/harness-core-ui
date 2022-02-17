@@ -5,7 +5,7 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import { Card, Layout, Text, FontVariation, Color, Icon } from '@wings-software/uicore'
+import { Card, Layout, Text, FontVariation, Color, Icon, Container } from '@wings-software/uicore'
 import React from 'react'
 import cx from 'classnames'
 import { useStrings } from 'framework/strings'
@@ -66,7 +66,7 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
   return (
     <Card className={cx(css.potentialSpendCard)} elevation={1}>
       <Layout.Vertical spacing="small">
-        <Layout.Horizontal style={{ alignItems: 'baseline' }} spacing="xsmall">
+        <Layout.Horizontal style={{ alignItems: 'baseline' }} padding={{ bottom: 'small' }} spacing="xsmall">
           <Text
             font={{ variation: FontVariation.H6 }}
             color={Color.GREY_500}
@@ -80,7 +80,7 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
         </Layout.Horizontal>
         <Layout.Horizontal padding={{ left: 'small', right: 'small' }}>
           <Layout.Vertical
-            padding={{ top: 'medium', right: 'medium' }}
+            padding={{ right: 'medium' }}
             flex={{ justifyContent: 'space-between', alignItems: 'start' }}
           >
             <Text className={css.amount} font={{ variation: FontVariation.H3 }}>
@@ -95,8 +95,12 @@ export const RecommendationDetailsSpendCard: React.FC<RecommendationDetailsSpend
               </Text>
             </Layout.Horizontal>
           </Layout.Vertical>
-          <Layout.Vertical padding={{ top: 'large' }} flex={{ justifyContent: 'space-between', alignItems: 'start' }}>
-            <Text className={css.amount} font={{ variation: FontVariation.H6 }}>
+          <Container
+            margin={{ left: 'medium', right: 'medium' }}
+            style={{ borderLeft: '1px solid var(--grey-300)', height: 52 }}
+          />
+          <Layout.Vertical flex={{ justifyContent: 'space-between', alignItems: 'start' }}>
+            <Text className={css.amount} font={{ variation: FontVariation.H6 }} padding={{ top: 'xsmall' }}>
               {withoutRecommendationAmount}
             </Text>
             <Layout.Horizontal spacing="xsmall">

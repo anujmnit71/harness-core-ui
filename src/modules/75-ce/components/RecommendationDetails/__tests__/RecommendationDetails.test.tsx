@@ -17,7 +17,7 @@ import MockHistogramData from './MockHistogramData.json'
 
 describe('test cases for recommendation details', () => {
   test('should be able to render recommendation details', async () => {
-    const { getByText } = render(
+    const { getByText, getAllByText } = render(
       <TestWrapper>
         <RecommendationDetails
           cpuAndMemoryValueBuffer={0}
@@ -37,7 +37,7 @@ describe('test cases for recommendation details', () => {
       </TestWrapper>
     )
 
-    expect(getByText('ce.recommendation.detailsPage.currentResources')).toBeDefined()
-    expect(getByText('ce.recommendation.detailsPage.recommendedResources')).toBeDefined()
+    expect(getByText('ce.recommendation.detailsPage.resourceChanges')).toBeDefined()
+    expect(getAllByText('ce.recommendation.detailsPage.recommendedResources')).toBeDefined()
   })
 })

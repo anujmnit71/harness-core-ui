@@ -55,9 +55,15 @@
   background-color: var(--white);
   border: 1px solid var(--primary-2) !important;
 
+  > div[class*='PillToggle--item'] {
+    color: var(--primary-7);
+  }
+
   > div[class*='selected'] {
     background-color: var(--primary-7);
+    color: var(--white);
   }
+
   > div[data-name^='toggle-option'] {
     width: 85px;
     padding: 2px 0px;
@@ -71,6 +77,12 @@
 div[class*='bp3-slider'] {
   display: flex;
   align-items: center;
+}
+
+.tuneRecomContainer {
+  border: 1px solid #cdf4fe;
+  box-sizing: border-box;
+  border-radius: 3px;
 }
 
 .bufferSlider {
@@ -87,12 +99,12 @@ div[class*='bp3-slider'] {
     background-color: var(--white);
     top: 7px;
   }
-
-  > div[class*='bp3-slider-progress'] {
-    background-color: var(--white);
-  }
 }
 
 .sliderContainer {
   width: 212px;
+}
+
+.infoText {
+  align-items: flex-start !important;
 }

@@ -8,6 +8,7 @@
 import React from 'react'
 import { Container, Layout, Text, Color } from '@wings-software/uicore'
 import type { BorderProps } from '@harness/uicore/dist/styled-props/border/BorderProps'
+import cx from 'classnames'
 import { QualityOfService, ResourceDetails, ResourceObject } from '@ce/types'
 
 import css from './RecommendationDiffViewer.module.scss'
@@ -60,7 +61,11 @@ const DiffBlock: React.FC<DiffBlockProps> = ({
         top: 'small',
         bottom: 'small'
       }}
-      border={{ ...border, color: Color.GREEN_700, width: 2 }}
+      className={cx(
+        { [css.borderLeft]: border.left },
+        { [css.borderRight]: border.right },
+        { [css.borderBottom]: border.bottom }
+      )}
     >
       {innerElement}
     </Container>
@@ -91,25 +96,30 @@ const RecommendationDiffViewer: React.FC<RecommendationDiffViewerProps> = ({
 }) => {
   return (
     <Container className={css.diffContainer}>
-      <DiffBlock resources={currentResources.limits} text="limits" color="green100" textColor="red500" />
+      <DiffBlock resources={currentResources.limits} text="limits" color={Color.GREEN_100} textColor={Color.RED_700} />
       <DiffBlock
         resources={
           qualityOfService === QualityOfService.GUARANTEED ? recommendedResources.requests : recommendedResources.limits
         }
         text="limits"
-        color="green100"
+        color={Color.GREEN_100}
         border={{ left: true, right: true }}
-        textColor="green500"
+        textColor={Color.GREEN_700}
         qualityOfService={qualityOfService}
         dataTestId="limitsId"
       />
-      <DiffBlock resources={currentResources.requests} text="request" color="primary1" textColor="red500" />
+      <DiffBlock
+        resources={currentResources.requests}
+        text="request"
+        color={Color.PRIMARY_1}
+        textColor={Color.RED_700}
+      />
       <DiffBlock
         resources={recommendedResources.requests}
         text="request"
-        color="primary1"
+        color={Color.PRIMARY_1}
         border={{ left: true, right: true, bottom: true }}
-        textColor="green500"
+        textColor={Color.GREEN_700}
         dataTestId="requestId"
       />
     </Container>

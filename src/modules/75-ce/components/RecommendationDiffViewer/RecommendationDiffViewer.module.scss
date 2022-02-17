@@ -12,4 +12,18 @@
 
 .monospace {
   font-family: 'Roboto Mono', monospace !important;
+  font-weight: 400 !important;
+  color: var(--grey-600) !important;
+}
+
+.borderLeft {
+  border-left: 2px solid var(--green-700);
+}
+
+.borderRight {
+  border-right: 2px solid var(--green-700);
+}
+
+.borderBottom {
+  border-bottom: 2px solid var(--green-700);
 }
