@@ -9,6 +9,7 @@ import React from 'react'
 import { Route, useParams, Redirect, Switch } from 'react-router-dom'
 import { createClient, Provider, dedupExchange, cacheExchange, fetchExchange } from 'urql'
 import { requestPolicyExchange } from '@urql/exchange-request-policy'
+import { get } from 'lodash-es'
 import routes from '@common/RouteDefinitions'
 import type { SidebarContext } from '@common/navigation/SidebarProvider'
 import { accountPathProps, projectPathProps } from '@common/utils/routeUtils'
@@ -22,6 +23,10 @@ import CESideNav from '@ce/components/CESideNav/CESideNav'
 import { ModuleName } from 'framework/types/ModuleName'
 import { getConfig } from 'services/config'
 import { LicenseRedirectProps, LICENSE_STATE_NAMES } from 'framework/LicenseStore/LicenseStoreContext'
+import featureFactory from 'framework/featureStore/FeaturesFactory'
+import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
+import { BannerType } from '@common/layouts/Constants'
+import { FEATURE_USAGE_WARNING_LIMIT } from '@common/layouts/FeatureBanner'
 import CEHomePage from './pages/home/CEHomePage'
 import CECODashboardPage from './pages/co-dashboard/CECODashboardPage'
 import CECOCreateGatewayPage from './pages/co-create-gateway/CECOCreateGatewayPage'
@@ -40,6 +45,53 @@ import OverviewPage from './pages/overview/OverviewPage'
 import NodeRecommendationDetailsPage from './pages/node-recommendation-details/NodeRecommendationDetailsPage'
 import BudgetDetails from './pages/budget-details/BudgetDetails'
 import NodeDetailsPage from './pages/node-details/NodeDetailsPage'
+import AnomaliesOverviewPage from './pages/anomalies-overview/AnomaliesOverviewPage'
+import formatCost from './utils/formatCost'
+
+featureFactory.registerFeaturesByModule('ce', {
+  features: [FeatureIdentifier.PERSPECTIVES],
+  renderMessage: (_, getString, additionalLicenseProps, usageAndLimitInfo) => {
+    const { isFreeEdition } = additionalLicenseProps || {}
+    const { limitData, usageData } = usageAndLimitInfo || {}
+
+    const usageCost = get(usageData, 'usage.ccm.activeSpend.count', 0)
+    const limitCost = get(limitData, 'limit.ccm.totalSpendLimit', 1)
+
+    const usagePercentage = (usageCost / limitCost) * 100
+
+    if (usageCost >= limitCost) {
+      const message = isFreeEdition
+        ? getString('ce.enforcementMessage.exceededSpendLimitFreePlan', {
+            usage: formatCost(Number(usageCost), {
+              shortFormat: true
+            }),
+            limit: formatCost(Number(limitCost), {
+              shortFormat: true
+            })
+          })
+        : getString('ce.enforcementMessage.exceededSpendLimit')
+      return {
+        message: () => message,
+        bannerType: BannerType.LEVEL_UP
+      }
+    }
+
+    if (usagePercentage > FEATURE_USAGE_WARNING_LIMIT) {
+      return {
+        message: () =>
+          getString('ce.enforcementMessage.usageInfo', {
+            percentage: Math.ceil(usagePercentage)
+          }),
+        bannerType: BannerType.INFO
+      }
+    }
+
+    return {
+      message: () => '',
+      bannerType: BannerType.LEVEL_UP
+    }
+  }
+})
 
 const CESideNavProps: SidebarContext = {
   navComponent: CESideNav,
@@ -102,7 +154,7 @@ const CERoutes: React.FC = () => {
   const token = SessionToken.getToken()
   const { accountId } = useParams<AccountPathProps>()
 
-  const getRequestOptions = React.useCallback((): Partial<RequestInit> => {
+  const getRequestOptions = React.useMemo((): Partial<RequestInit> => {
     const headers: RequestInit['headers'] = {}
 
     if (token && token.length > 0) {
@@ -112,7 +164,7 @@ const CERoutes: React.FC = () => {
     return { headers }
   }, [token])
 
-  const urqlClient = React.useCallback(() => {
+  const urqlClient = React.useMemo(() => {
     const url = getConfig(`ccm/api/graphql?accountIdentifier=${accountId}&routingId=${accountId}`)
 
     // if (url.startsWith('/')) {
@@ -121,7 +173,7 @@ const CERoutes: React.FC = () => {
     return createClient({
       url: url,
       fetchOptions: () => {
-        return getRequestOptions()
+        return getRequestOptions
       },
       exchanges: [dedupExchange, requestPolicyExchange({}), cacheExchange, fetchExchange],
       requestPolicy: 'cache-first'
@@ -129,7 +181,7 @@ const CERoutes: React.FC = () => {
   }, [token, accountId])
 
   return (
-    <Provider value={urqlClient()}>
+    <Provider value={urqlClient}>
       <Switch>
         <RouteWithLayout
           layout={MinimalLayout}
@@ -330,6 +382,16 @@ const CERoutes: React.FC = () => {
           exact
         >
           <NodeDetailsPage />
+        </RouteWithLayout>
+        <RouteWithLayout
+          licenseRedirectData={licenseRedirectData}
+          sidebarProps={CESideNavProps}
+          path={routes.toCEAnomalyDetection({
+            ...accountPathProps
+          })}
+          exact
+        >
+          <AnomaliesOverviewPage />
         </RouteWithLayout>
         <RouteWithLayout
           licenseRedirectData={licenseRedirectData}

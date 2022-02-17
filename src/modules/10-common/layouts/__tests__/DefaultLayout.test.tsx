@@ -20,6 +20,22 @@ jest.mock('@common/hooks/useFeatures', () => ({
   useFeatures: jest.fn(() => ({}))
 }))
 
+jest.mock('@common/hooks/useGetUsageAndLimit', () => {
+  return {
+    useGetUsageAndLimit: () => {
+      return useGetUsageAndLimitReturnMock
+    }
+  }
+})
+const useGetUsageAndLimitReturnMock = {
+  limitData: {
+    limit: {}
+  },
+  usageData: {
+    usage: {}
+  }
+}
+
 jest.mock('@common/hooks/useFeatureFlag', () => ({
   useFeatureFlag: jest.fn(() => true),
   useFeatureFlags: jest.fn(() => {
@@ -104,6 +120,45 @@ describe('<DefaultLayout /> tests', () => {
       fireEvent.click(toCD)
 
       expect(() => getByText(BANNER_TEXT)).toThrow()
+    })
+
+    test('Overuse banner', () => {
+      featuresFactory.registerFeaturesByModule('cd', {
+        features: [],
+        renderMessage: () => {
+          return {
+            message: () => BANNER_TEXT,
+            bannerType: BannerType.OVERUSE
+          }
+        }
+      })
+      const { container, getByText } = render(
+        <TestWrapper path={TEST_PATH} pathParams={{ module: 'cd' }}>
+          <DefaultLayout />
+        </TestWrapper>
+      )
+
+      expect(getByText('common.overuse')).toBeInTheDocument()
+      expect(container).toMatchSnapshot()
+    })
+
+    test('Level up banner', () => {
+      featuresFactory.registerFeaturesByModule('cd', {
+        features: [],
+        renderMessage: () => {
+          return {
+            message: () => BANNER_TEXT,
+            bannerType: BannerType.LEVEL_UP
+          }
+        }
+      })
+      const { container, getByText } = render(
+        <TestWrapper path={TEST_PATH} pathParams={{ module: 'cd' }}>
+          <DefaultLayout />
+        </TestWrapper>
+      )
+      expect(getByText('common.levelUp')).toBeInTheDocument()
+      expect(container).toMatchSnapshot()
     })
   })
 })

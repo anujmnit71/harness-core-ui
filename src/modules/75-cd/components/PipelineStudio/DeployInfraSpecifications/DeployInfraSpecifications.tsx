@@ -78,7 +78,7 @@ export default function DeployInfraSpecifications(props: React.PropsWithChildren
   const { stage } = getStageFromPipeline<DeploymentStageElementConfig>(selectedStageId || '')
 
   useEffect(() => {
-    if (!stage?.stage?.spec?.infrastructure?.infrastructureDefinition && stage?.stage?.type === StageType.DEPLOY) {
+    if (isEmpty(stage?.stage?.spec?.infrastructure) && stage?.stage?.type === StageType.DEPLOY) {
       const stageData = produce(stage, draft => {
         if (draft) {
           set(draft, 'stage.spec', {
@@ -357,10 +357,9 @@ export default function DeployInfraSpecifications(props: React.PropsWithChildren
     },
     [stage, debounceUpdateStage, stage?.stage?.spec?.infrastructure?.infrastructureDefinition]
   )
-
   return (
     <div className={stageCss.serviceOverrides} key="1">
-      <DeployServiceErrors />
+      <DeployServiceErrors domRef={scrollRef as React.MutableRefObject<HTMLElement | undefined>} />
       <div className={stageCss.contentSection} ref={scrollRef}>
         <div className={stageCss.tabHeading} id="environment">
           {getString('environment')}

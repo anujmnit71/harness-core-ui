@@ -22,7 +22,11 @@ import {
   getBuildDetailsForGcrPromise,
   getBuildDetailsForEcrPromise
 } from 'services/cd-ng'
-import { ArtifactToConnectorMap, ENABLED_ARTIFACT_TYPES } from '@pipeline/components/ArtifactsSelection/ArtifactHelper'
+import {
+  allowedArtifactTypes,
+  ArtifactToConnectorMap,
+  ENABLED_ARTIFACT_TYPES
+} from '@pipeline/components/ArtifactsSelection/ArtifactHelper'
 
 import { loggerFor } from 'framework/logging/logging'
 import { ModuleName } from 'framework/types/ModuleName'
@@ -30,10 +34,9 @@ import type { CompletionItemInterface } from '@common/interfaces/YAMLBuilderProp
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import { getConnectorName, getConnectorValue } from '@pipeline/pages/triggers/utils/TriggersWizardPageUtils'
 import { K8sServiceSpecVariablesForm, K8sServiceSpecVariablesFormProps } from './K8sServiceSpecVariablesForm'
-import { KubernetesServiceSpecInputForm } from './K8sServiceSpecForms/KubernetesServiceSpecInputForm'
 import type { K8SDirectServiceStep } from './K8sServiceSpecInterface'
-import { ArtifactConnectorTypes } from './K8sServiceSpecHelper'
 import KubernetesServiceSpecEditable from './K8sServiceSpecForms/KubernetesServiceSpecEditable'
+import { KubernetesServiceSpecInputSetMode } from './KubernetesServiceSpecInputSetMode'
 
 const logger = loggerFor(ModuleName.CD)
 const tagExists = (value: unknown): boolean => typeof value === 'number' || !isEmpty(value)
@@ -130,7 +133,7 @@ export class KubernetesServiceSpec extends Step<ServiceSpec> {
     }
     if (pipelineObj) {
       const obj = get(pipelineObj, path.replace('.spec.connectorRef', ''))
-      if (ArtifactConnectorTypes.includes(obj.type)) {
+      if (allowedArtifactTypes.includes(obj.type)) {
         return getConnectorListV2Promise({
           queryParams: {
             accountIdentifier: accountId,
@@ -177,7 +180,7 @@ export class KubernetesServiceSpec extends Step<ServiceSpec> {
     }
     if (pipelineObj) {
       const obj = get(pipelineObj, path.replace('.spec.connectorRef', ''))
-      if (ArtifactConnectorTypes.includes(obj.type)) {
+      if (allowedArtifactTypes.includes(obj.type)) {
         return getConnectorListV2Promise({
           queryParams: {
             accountIdentifier: accountId,
@@ -225,7 +228,7 @@ export class KubernetesServiceSpec extends Step<ServiceSpec> {
     }
     if (pipelineObj) {
       const obj = get(pipelineObj, path.replace('.spec.tag', ''))
-      if (ArtifactConnectorTypes.includes(obj.type)) {
+      if (allowedArtifactTypes.includes(obj.type)) {
         switch (obj.type) {
           case ENABLED_ARTIFACT_TYPES.DockerRegistry: {
             return getBuildDetailsForDockerPromise({
@@ -468,7 +471,7 @@ export class KubernetesServiceSpec extends Step<ServiceSpec> {
 
     if (stepViewType === StepViewType.InputSet || stepViewType === StepViewType.DeploymentForm) {
       return (
-        <KubernetesServiceSpecInputForm
+        <KubernetesServiceSpecInputSetMode
           {...(customStepProps as K8sServiceSpecVariablesFormProps)}
           initialValues={initialValues}
           onUpdate={onUpdate}
@@ -481,26 +484,6 @@ export class KubernetesServiceSpec extends Step<ServiceSpec> {
         />
       )
     }
-
-    // To be used when we pick up the K8 refactoring
-    // if (
-    //   (stepViewType === StepViewType.InputSet || stepViewType === StepViewType.DeploymentForm) &&
-    //   localStorage.getItem('k8refactor')
-    // ) {
-    //   return (
-    //     <KubernetesServiceSpecInputSetMode
-    //       {...(customStepProps as K8sServiceSpecVariablesFormProps)}
-    //       initialValues={initialValues}
-    //       onUpdate={onUpdate}
-    //       stepViewType={stepViewType}
-    //       template={inputSetData?.template}
-    //       path={inputSetData?.path}
-    //       readonly={inputSetData?.readonly || readonly}
-    //       factory={factory}
-    //       allowableTypes={allowableTypes}
-    //     />
-    //   )
-    // }
 
     return (
       <KubernetesServiceSpecEditable

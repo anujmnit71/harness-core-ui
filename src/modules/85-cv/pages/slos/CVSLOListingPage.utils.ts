@@ -109,14 +109,14 @@ const getDateUnitAndInterval = (serviceLevelObjective: SLODashboardWidget): { un
   const timeline = serviceLevelObjective.currentPeriodLengthDays - serviceLevelObjective.timeRemainingDays
 
   if (timeline <= 1) {
-    return { unit: 'MMM D hh:m A', interval: (MILLISECONDS_PER_SIX_HOURS * 4) / 3 }
+    return { unit: 'Do MMM hh:mm A', interval: (MILLISECONDS_PER_SIX_HOURS * 4) / 3 }
   }
 
   if (timeline <= 3) {
-    return { unit: 'MMM D hh:m A', interval: MILLISECONDS_PER_SIX_HOURS * timeline * 2 }
+    return { unit: 'Do MMM hh:mm A', interval: MILLISECONDS_PER_SIX_HOURS * timeline * 2 }
   }
 
-  return { unit: 'MMM D', interval: MILLISECONDS_PER_SIX_HOURS * timeline }
+  return { unit: 'Do MMM', interval: MILLISECONDS_PER_SIX_HOURS * timeline }
 }
 
 export const getSLOAndErrorBudgetGraphOptions = ({
@@ -156,7 +156,7 @@ export const getSLOAndErrorBudgetGraphOptions = ({
       tickInterval: interval,
       labels: {
         formatter: function () {
-          return moment(this.value).format(unit)
+          return moment(new Date(this.value)).format(unit)
         }
       }
     },
@@ -165,8 +165,11 @@ export const getSLOAndErrorBudgetGraphOptions = ({
       max: maxXLimit,
       plotLines: type === SLOCardToggleViews.SLO ? plotLines : undefined
     },
-    plotOptions:
-      type === SLOCardToggleViews.ERROR_BUDGET ? { area: { color: Utils.getRealCSSColor(Color.RED_400) } } : undefined
+    plotOptions: {
+      area: {
+        color: type === SLOCardToggleViews.ERROR_BUDGET ? Utils.getRealCSSColor(Color.RED_400) : undefined
+      }
+    }
   }
 }
 

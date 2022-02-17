@@ -14,7 +14,6 @@ import isEmpty from 'lodash/isEmpty'
 import { PageSpinner } from '@harness/uicore'
 import { useDeepCompareEffect } from '@common/hooks'
 import { useAppStore } from 'framework/AppStore/AppStoreContext'
-import type { Module } from '@common/interfaces/RouteInterfaces'
 
 import {
   getLastModifiedTimeForAllModuleTypesPromise,
@@ -23,6 +22,7 @@ import {
   useGetLastModifiedTimeForAllModuleTypes
 } from 'services/cd-ng'
 import { ModuleName } from 'framework/types/ModuleName'
+import type { Module } from '@common/interfaces/RouteInterfaces'
 import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import GenericErrorPage, { GENERIC_ERROR_CODES } from '@common/pages/GenericError/GenericErrorPage'
 import { Editions } from '@common/constants/SubscriptionTypes'
@@ -370,4 +370,25 @@ export const isCDCommunity = (
   license: { [p: string]: ModuleLicenseDTO } | undefined | Record<string, undefined>
 ): boolean => {
   return license?.CD?.edition === Editions.COMMUNITY
+}
+
+export const isFreePlan = (
+  license: { [p: string]: ModuleLicenseDTO } | undefined | Record<string, undefined>,
+  moduleName: ModuleName
+): boolean => {
+  return license?.[moduleName]?.edition === Editions.FREE
+}
+
+export const isEnterprisePlan = (
+  license: { [p: string]: ModuleLicenseDTO } | undefined | Record<string, undefined>,
+  moduleName: ModuleName
+): boolean => {
+  return license?.[moduleName]?.edition === Editions.ENTERPRISE
+}
+
+export const isTeamPlan = (
+  license: { [p: string]: ModuleLicenseDTO } | undefined | Record<string, undefined>,
+  moduleName: ModuleName
+): boolean => {
+  return license?.[moduleName]?.edition === Editions.TEAM
 }

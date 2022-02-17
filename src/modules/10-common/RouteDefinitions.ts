@@ -41,7 +41,8 @@ import type {
   ServicePathProps,
   TemplateStudioPathProps,
   TemplateStudioQueryParams,
-  GovernancePathProps
+  GovernancePathProps,
+  PipelineLogsPathProps
 } from '@common/interfaces/RouteInterfaces'
 
 const CV_HOME = `/cv/home`
@@ -674,6 +675,18 @@ const routes = {
   toPipelineDetail: withAccountId(
     ({ orgIdentifier, projectIdentifier, pipelineIdentifier, module }: PipelineType<PipelinePathProps>) =>
       `/${module}/orgs/${orgIdentifier}/projects/${projectIdentifier}/pipelines/${pipelineIdentifier}`
+  ),
+  toPipelineLogs: withAccountId(
+    ({
+      orgIdentifier,
+      projectIdentifier,
+      pipelineIdentifier,
+      module,
+      executionIdentifier,
+      stageIdentifier,
+      stepIndentifier: stepIndenitifer
+    }: PipelineType<PipelineLogsPathProps>) =>
+      `/${module}/orgs/${orgIdentifier}/projects/${projectIdentifier}/pipelines/${pipelineIdentifier}/execution/${executionIdentifier}/logs/${stageIdentifier}/${stepIndenitifer}`
   ),
   toInputSetList: withAccountId(
     ({
@@ -1372,17 +1385,18 @@ const routes = {
   ),
   toCEOverview: withAccountId(() => '/ce/overview'),
   toCEPerspectiveDashboard: withAccountId(() => `/ce/perspective`),
+  toCEAnomalyDetection: withAccountId(() => `/ce/anomaly-detection`),
   /********************************************************************************************************************/
-  toCustomDashboard: withAccountId(() => '/dashboards'),
+  toCustomDashboard: withAccountId(() => '/home/dashboards'),
   toCustomDashboardHome: withAccountId(
-    ({ folderId }: { folderId?: string }) => `/dashboards/folder/${folderId ? folderId : 'shared'}`
+    ({ folderId }: { folderId?: string }) => `/home/dashboards/folder/${folderId ? folderId : 'shared'}`
   ),
   toViewCustomDashboard: withAccountId(
     ({ viewId, folderId }: { viewId: string; folderId: string }) =>
-      `/dashboards/folder/${folderId ? folderId : 'shared'}/view/${viewId}`
+      `/home/dashboards/folder/${folderId ? folderId : 'shared'}/view/${viewId}`
   ),
-  toCustomFolderHome: withAccountId(() => '/dashboards/folders'),
-  toViewCustomFolder: withAccountId(({ viewId }: { viewId: string }) => `/dashboards/folder/view/${viewId}`)
+  toCustomFolderHome: withAccountId(() => '/home/dashboards/folders'),
+  toViewCustomFolder: withAccountId(({ folderId }: { folderId: string }) => `/home/dashboards/folder/view/${folderId}`)
 
   /****************** Secret Usage************************************************************************************/
 }

@@ -2,6 +2,7 @@ createNewConnector: Create New Connector
 confirmDeleteTitle: Delete Connector
 editConnector: Edit the Connector
 confirmDelete: Are you sure you want to delete the Connector
+deletedSuccssMessage: 'Connector {{name}} deleted'
 testInProgress: Test in progress
 artifactRepository: ' Artifact {{ $.repository }}'
 artifactRepoType: 'Artifact {{$.repositoryType}}'
@@ -221,6 +222,9 @@ hashiCorpVault:
   saveInProgress: Saving Connector Details
   manuallyConfigureEngine: Manually Configure Engine
   vaultAgent: Vault Agent
+  awsAuth: AWS Auth
+  serverIdHeader: Server Id Header
+  serverIdHeaderRequired: Server Id Header is required
   root: '/(Root)'
   sinkPath: Sink Path
   sinkPathIsRequired: Sink Path is required
