@@ -96,8 +96,8 @@ module.exports = {
     target: process.env.GITOPS_URL || 'https://localhost:8183'
   },
   '/et': {
-    // pathRewrite: { '^/overops': '' },
-    target: process.env.OVEROPS_URL || 'http://localhost:9191'
+    // pathRewrite: { '^/et': '' },
+    target: process.env.ERROR_TRACKING_URL || 'http://localhost:9191'
   },
   '/audit/api': {
     pathRewrite: { '^/ng/api': '' },
