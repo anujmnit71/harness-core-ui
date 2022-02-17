@@ -6,11 +6,10 @@
  */
 
 import React from 'react'
-import { Text, Formik, FormikForm, Color } from '@wings-software/uicore'
+import { Formik, FormikForm } from '@wings-software/uicore'
 import type { FormikProps } from 'formik'
 import get from 'lodash/get'
 import type { K8sDirectInfraYaml } from 'services/ci'
-import { Connectors } from '@connectors/constants'
 import type { StepFormikFowardRef } from '@pipeline/components/AbstractSteps/Step'
 import { setFormikRef } from '@pipeline/components/AbstractSteps/Step'
 import { usePipelineContext } from '@pipeline/components/PipelineStudio/PipelineContext/PipelineContext'
@@ -28,7 +27,6 @@ import { CIStepOptionalConfig } from '@ci/components/PipelineSteps/CIStep/CIStep
 import { useGetPropagatedStageById } from '@ci/components/PipelineSteps/CIStep/StepUtils'
 import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './ZeroNorthStepFunctionConfigs'
 import type { ZeroNorthStepProps, ZeroNorthStepData, ZeroNorthStepDataUI } from './ZeroNorthStep'
-import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 export const ZeroNorthStepBase = (
   { initialValues, onUpdate, isNewStep = true, readonly, stepViewType, allowableTypes, onChange }: ZeroNorthStepProps,
@@ -94,21 +92,7 @@ export const ZeroNorthStepBase = (
               allowableTypes={allowableTypes}
               enableFields={{
                 name: {},
-                description: {},
-                'spec.connectorRef': {
-                  label: (
-                    <Text
-                      className={css.inpLabel}
-                      color={Color.GREY_600}
-                      font={{ size: 'small', weight: 'semi-bold' }}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                      tooltipProps={{ dataTooltipId: 'connector' }}
-                    >
-                      {getString('pipelineSteps.connectorLabel')}
-                    </Text>
-                  ),
-                  type: [Connectors.GCP, Connectors.AWS, Connectors.DOCKER]
-                }
+                description: {}
               }}
               formik={formik}
             />

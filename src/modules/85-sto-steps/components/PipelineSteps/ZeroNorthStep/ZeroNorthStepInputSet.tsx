@@ -6,10 +6,8 @@
  */
 
 import React from 'react'
-import { Text, getMultiTypeFromValue, MultiTypeInputType, FormikForm, Color } from '@wings-software/uicore'
-import { useStrings } from 'framework/strings'
+import { getMultiTypeFromValue, MultiTypeInputType, FormikForm } from '@wings-software/uicore'
 import StepCommonFieldsInputSet from '@ci/components/PipelineSteps/StepCommonFields/StepCommonFieldsInputSet'
-import { Connectors } from '@connectors/constants'
 import { CIStep } from '@ci/components/PipelineSteps/CIStep/CIStep'
 import { CIStepOptionalConfig } from '@ci/components/PipelineSteps/CIStep/CIStepOptionalConfig'
 import type { ZeroNorthStepProps } from './ZeroNorthStep'
@@ -22,8 +20,6 @@ export const ZeroNorthStepInputSet: React.FC<ZeroNorthStepProps> = ({
   stepViewType,
   allowableTypes
 }) => {
-  const { getString } = useStrings()
-
   return (
     <FormikForm className={css.removeBpPopoverWrapperTopMargin}>
       <CIStep
@@ -33,22 +29,6 @@ export const ZeroNorthStepInputSet: React.FC<ZeroNorthStepProps> = ({
         enableFields={{
           ...(getMultiTypeFromValue(template?.description) === MultiTypeInputType.RUNTIME && {
             description: {}
-          }),
-          ...(getMultiTypeFromValue(template?.spec?.connectorRef) === MultiTypeInputType.RUNTIME && {
-            'spec.connectorRef': {
-              label: (
-                <Text
-                  className={css.inpLabel}
-                  color={Color.GREY_600}
-                  font={{ size: 'small', weight: 'semi-bold' }}
-                  style={{ display: 'flex', alignItems: 'center' }}
-                  tooltipProps={{ dataTooltipId: 'connector' }}
-                >
-                  {getString('pipelineSteps.connectorLabel')}
-                </Text>
-              ),
-              type: [Connectors.GCP, Connectors.AWS, Connectors.DOCKER]
-            }
           })
         }}
         path={path || ''}

@@ -93,7 +93,7 @@ export class ZeroNorthStep extends PipelineStep<ZeroNorthStepData> {
     identifier: '',
     type: StepType.ZeroNorth as string,
     spec: {
-      connectorRef: 'harnessImage',
+      connectorRef: 'account.harnessImage',
       privileged: true,
       settings: {
         policy_type: 'orchestratedScan',
@@ -115,7 +115,7 @@ export class ZeroNorthStep extends PipelineStep<ZeroNorthStepData> {
     getString,
     viewType
   }: ValidateInputSetProps<ZeroNorthStepData>): FormikErrors<ZeroNorthStepData> {
-    const isRequired = viewType === StepViewType.DeploymentForm
+    const isRequired = viewType === StepViewType.DeploymentForm || viewType === StepViewType.TriggerForm
     if (getString) {
       return validateInputSet(data, template, getInputSetViewValidateFieldsConfig(isRequired), { getString }, viewType)
     }

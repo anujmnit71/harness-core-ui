@@ -9,7 +9,6 @@ import { Types as TransformValuesTypes } from '@pipeline/components/PipelineStep
 import { Types as ValidationFieldTypes } from '@pipeline/components/PipelineSteps/Steps/StepsValidateUtils'
 
 const specConnectorRef = 'spec.connectorRef'
-const specImage = 'spec.image'
 const specPrivileged = 'spec.privileged'
 const specSettings = 'spec.settings'
 const specRunAsUser = 'spec.runAsUser'
@@ -32,16 +31,8 @@ export const transformValuesFieldsConfig = [
     type: TransformValuesTypes.Text
   },
   {
-    name: specImage,
-    type: TransformValuesTypes.Text
-  },
-  {
     name: specPrivileged,
     type: TransformValuesTypes.Boolean
-  },
-  {
-    name: 'spec.reportPaths',
-    type: TransformValuesTypes.ReportPaths
   },
   {
     name: specSettings,
@@ -89,12 +80,6 @@ export const editViewValidateFieldsConfig = [
     isRequired: true
   },
   {
-    name: specImage,
-    type: ValidationFieldTypes.Text,
-    label: 'imageLabel',
-    isRequired: true
-  },
-  {
     name: specPrivileged,
     type: ValidationFieldTypes.Boolean
   },
@@ -129,12 +114,6 @@ export function getInputSetViewValidateFieldsConfig(
       name: specConnectorRef,
       type: ValidationFieldTypes.Text,
       label: 'pipelineSteps.connectorLabel',
-      isRequired
-    },
-    {
-      name: specImage,
-      type: ValidationFieldTypes.Text,
-      label: 'imageLabel',
       isRequired
     },
     {
