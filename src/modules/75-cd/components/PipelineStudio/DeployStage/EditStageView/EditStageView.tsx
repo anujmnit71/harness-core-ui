@@ -121,6 +121,7 @@ export const EditStageView: React.FC<EditStageViewProps> = ({
   const formikRef = React.useRef<FormikProps<unknown> | null>(null)
 
   React.useEffect(() => {
+    /* istanbul ignore else */
     if (errorMap.size > 0) {
       submitFormsForTab(DeployTabs.OVERVIEW)
     }
@@ -155,6 +156,7 @@ export const EditStageView: React.FC<EditStageViewProps> = ({
   )
 
   const handleSubmit = (values: Values): void => {
+    /* istanbul ignore else */
     if (data?.stage) {
       if (template) {
         if (template.identifier && template.childType) {
@@ -168,6 +170,7 @@ export const EditStageView: React.FC<EditStageViewProps> = ({
         if (values.description) {
           data.stage.description = values.description
         }
+        /* istanbul ignore else */
         if (values.tags) {
           data.stage.tags = values.tags
         }
@@ -184,7 +187,7 @@ export const EditStageView: React.FC<EditStageViewProps> = ({
 
   return (
     <div className={stageCss.serviceOverrides}>
-      <DeployServiceErrors />
+      <DeployServiceErrors domRef={scrollRef as React.MutableRefObject<HTMLElement | undefined>} />
       <div className={context ? stageCss.contentSection : css.contentSection} ref={scrollRef}>
         {context ? (
           <div className={stageCss.tabHeading} id="stageOverview">

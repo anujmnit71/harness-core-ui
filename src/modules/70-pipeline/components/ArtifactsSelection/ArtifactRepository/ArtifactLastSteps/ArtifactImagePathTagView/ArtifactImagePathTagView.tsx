@@ -15,7 +15,7 @@ import {
   SelectOption,
   Text
 } from '@wings-software/uicore'
-import { get, isNil, memoize } from 'lodash-es'
+import { isNil, get, memoize } from 'lodash-es'
 import type { GetDataError } from 'restful-react'
 import { ConfigureOptions } from '@common/components/ConfigureOptions/ConfigureOptions'
 import { useStrings } from 'framework/strings'
@@ -50,7 +50,8 @@ const ArtifactImagePathTagView = ({
   isReadonly,
   connectorIdValue,
   fetchTags,
-  tagError
+  tagError,
+  tagDisabled
 }: ArtifactImagePathTagViewProps): React.ReactElement => {
   const { getString } = useStrings()
 
@@ -127,7 +128,7 @@ const ArtifactImagePathTagView = ({
         <div className={css.imagePathContainer}>
           <FormInput.MultiTypeInput
             selectItems={tags}
-            disabled={!formik.values?.imagePath?.length}
+            disabled={tagDisabled}
             helperText={
               getMultiTypeFromValue(formik.values?.tag) === MultiTypeInputType.FIXED &&
               getHelpeTextForTags(helperTextData(selectedArtifact, formik, connectorIdValue), getString)

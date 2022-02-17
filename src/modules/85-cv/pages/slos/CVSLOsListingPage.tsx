@@ -19,6 +19,8 @@ import {
   FlexExpander,
   Container
 } from '@wings-software/uicore'
+import noData from '@cv/assets/noData.svg'
+import slosEmptyState from '@cv/assets/slosEmptyState.svg'
 import { Page } from '@common/exports'
 import routes from '@common/RouteDefinitions'
 import { useStrings } from 'framework/strings'
@@ -170,10 +172,13 @@ const CVSLOsListingPage: React.FC<CVSLOsListingPageProps> = ({ monitoredService 
   const getAddSLOButton = (): JSX.Element => (
     <RbacButton
       icon="plus"
-      text={getString('cv.slos.newSLO')}
+      text={getString('cv.slos.createSLO')}
       variation={ButtonVariation.PRIMARY}
       onClick={() => {
-        history.push(routes.toCVCreateSLOs({ accountId, orgIdentifier, projectIdentifier }))
+        history.push({
+          pathname: routes.toCVCreateSLOs({ accountId, orgIdentifier, projectIdentifier, module: 'cv' }),
+          search: monitoredService?.identifier ? `?monitoredServiceIdentifier=${monitoredService.identifier}` : ''
+        })
       }}
       className={getClassNameForMonitoredServicePage(css.createSloInMonitoredService, monitoredService?.identifier)}
       permission={{
@@ -203,7 +208,7 @@ const CVSLOsListingPage: React.FC<CVSLOsListingPageProps> = ({ monitoredService 
 
   return (
     <>
-      {!monitoredService?.identifier && (
+      {!monitoredService?.identifier && !getIsDataEmpty(content?.length, riskCountResponse?.data?.riskCounts) && (
         <>
           <Page.Header breadcrumbs={<NGBreadcrumbs />} title={getString('cv.slos.title')} />
           <Page.Header title={getAddSLOButton()} />
@@ -238,9 +243,11 @@ const CVSLOsListingPage: React.FC<CVSLOsListingPageProps> = ({ monitoredService 
           }
         }}
         noData={{
-          when: () => getIsDataEmpty(content?.length, riskCountResponse?.data?.riskCounts?.length),
-          message: getString('cv.slos.noData'),
-          icon: 'join-table'
+          when: () => getIsDataEmpty(content?.length, riskCountResponse?.data?.riskCounts),
+          messageTitle: getString('cv.slos.noData'),
+          message: getString('cv.slos.noSLOsStateMessage'),
+          button: getAddSLOButton(),
+          image: slosEmptyState
         }}
         className={css.pageBody}
       >
@@ -258,7 +265,6 @@ const CVSLOsListingPage: React.FC<CVSLOsListingPageProps> = ({ monitoredService 
               />
             </Container>
           </Layout.Horizontal>
-
           <CardSelect<SLORiskFilter>
             type={CardSelectType.CardView}
             data={getSLORiskTypeFilter(
@@ -271,9 +277,7 @@ const CVSLOsListingPage: React.FC<CVSLOsListingPageProps> = ({ monitoredService 
             selected={filterState.sloRiskFilter as SLORiskFilter}
             onChange={onFilter}
           />
-
           <hr />
-
           {!!content?.length && (
             <>
               <div className={css.sloCardContainer} data-testid="slo-card-container">
@@ -301,7 +305,7 @@ const CVSLOsListingPage: React.FC<CVSLOsListingPageProps> = ({ monitoredService 
           )}
 
           {getIsWidgetDataEmpty(content?.length, dashboardWidgetsLoading) && (
-            <NoDataCard icon="join-table" message={getString('cv.slos.noData')} />
+            <NoDataCard image={noData} message={getString('cv.slos.noMatchingData')} />
           )}
         </Layout.Vertical>
       </Page.Body>

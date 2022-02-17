@@ -22,7 +22,8 @@ import {
   Page,
   TableV2,
   ExpandingSearchInput,
-  FontVariation
+  FontVariation,
+  PageHeader
 } from '@harness/uicore'
 import { isEmpty as _isEmpty, defaultTo as _defaultTo } from 'lodash-es'
 import HighchartsReact from 'highcharts-react-official'
@@ -45,7 +46,6 @@ import {
   ServiceError,
   useCumulativeServiceSavings
 } from 'services/lw'
-import { Breadcrumbs } from '@common/components/Breadcrumbs/Breadcrumbs'
 import { String, useStrings } from 'framework/strings'
 import useDeleteServiceHook from '@ce/common/useDeleteService'
 import { useTelemetry } from '@common/hooks/useTelemetry'
@@ -54,6 +54,7 @@ import { useFeature } from '@common/hooks/useFeatures'
 import RbacButton from '@rbac/components/Button/Button'
 import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
 import type { FeatureDetail } from 'framework/featureStore/featureStoreUtil'
+import { NGBreadcrumbs } from '@common/components/NGBreadcrumbs/NGBreadcrumbs'
 import COGatewayAnalytics from './COGatewayAnalytics'
 import COGatewayCumulativeAnalytics from './COGatewayCumulativeAnalytics'
 import odIcon from './images/ondemandIcon.svg'
@@ -268,22 +269,28 @@ function ResourcesCell(tableProps: CellProps<Service>): JSX.Element {
             </>
           )}
         </Layout.Horizontal>
-        <Layout.Horizontal spacing="small">
-          <Text
-            style={{
-              flex: 1,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              color: tableProps.row.original.disabled ? textColor.disable : '#0278D5',
-              textDecoration: 'underline',
-              cursor: isSubmittedRule ? 'not-allowed' : 'inherit'
-            }}
-            onClick={handleDomainClick}
-          >
-            {hasCustomDomains ? tableProps.row.original.custom_domains?.join(',') : tableProps.row.original.host_name}
-          </Text>
-        </Layout.Horizontal>
+        {!isK8sRule ? (
+          <Layout.Horizontal spacing="small">
+            <Text
+              style={{
+                flex: 1,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                color: tableProps.row.original.disabled ? textColor.disable : '#0278D5',
+                textDecoration: 'underline',
+                cursor: isSubmittedRule ? 'not-allowed' : 'inherit'
+              }}
+              onClick={handleDomainClick}
+            >
+              {hasCustomDomains ? tableProps.row.original.custom_domains?.join(',') : tableProps.row.original.host_name}
+            </Text>
+          </Layout.Horizontal>
+        ) : (
+          <Layout.Horizontal flex={{ justifyContent: 'center' }}>
+            <Text>{'-'}</Text>
+          </Layout.Horizontal>
+        )}
       </Layout.Vertical>
       {/* <Icon name={tableProps.row.original.provider.icon as IconName}></Icon> */}
       {tableProps.value}
@@ -385,15 +392,14 @@ const StatusCell = ({ row }: CellProps<Service>) => {
   )
 }
 
-const EmptyListPage: React.FC<EmptyListPageProps> = ({ featureDetail }) => {
+const EmptyListPage: React.FC<EmptyListPageProps> = () => {
   const { accountId } = useParams<AccountPathProps>()
   const { getString } = useStrings()
   const history = useHistory()
   const { trackEvent } = useTelemetry()
   return (
     <Container background={Color.WHITE} height="100vh">
-      <Breadcrumbs
-        className={css.breadCrumb}
+      <NGBreadcrumbs
         links={[
           {
             url: routes.toCECORules({ accountId }),
@@ -420,11 +426,7 @@ const EmptyListPage: React.FC<EmptyListPageProps> = ({ featureDetail }) => {
           featuresProps={{
             featuresRequest: {
               featureNames: [FeatureIdentifier.RESTRICTED_AUTOSTOPPING_RULE_CREATION]
-            },
-            warningMessage: getString('ce.co.autoStoppingRule.limitWarningMessage', {
-              limit: featureDetail?.limit,
-              count: featureDetail?.count
-            })
+            }
           }}
           onClick={() => {
             history.push(
@@ -731,16 +733,18 @@ const COGatewayList: React.FC = () => {
   // with search - data is available or unavailable
   return (
     <Container background={Color.WHITE} height="100vh">
-      <Layout.Horizontal
-        flex={{ justifyContent: 'flex-start' }}
-        className={css.header}
-        padding={{ left: 'xlarge', right: 'xlarge' }}
-      >
-        <Heading data-tooltip-id="autostoppingRule" level={2} color={Color.GREY_800} font={{ weight: 'bold' }}>
-          {getString('ce.co.breadCrumb.rules')}
-        </Heading>
-        <HarnessDocTooltip tooltipId="autostoppingRule" useStandAlone={true} />
-      </Layout.Horizontal>
+      <PageHeader
+        title={
+          <Layout.Horizontal flex={{ alignItems: 'center' }}>
+            <Heading data-tooltip-id="autostoppingRule" level={2} color={Color.GREY_800} font={{ weight: 'bold' }}>
+              {getString('ce.co.breadCrumb.rules')}
+            </Heading>
+            <HarnessDocTooltip tooltipId="autostoppingRule" useStandAlone={true} />
+          </Layout.Horizontal>
+        }
+        breadcrumbs={<NGBreadcrumbs />}
+      />
+
       <Drawer
         autoFocus={true}
         enforceFocus={true}
@@ -777,11 +781,7 @@ const COGatewayList: React.FC = () => {
               featuresProps={{
                 featuresRequest: {
                   featureNames: [FeatureIdentifier.RESTRICTED_AUTOSTOPPING_RULE_CREATION]
-                },
-                warningMessage: getString('ce.co.autoStoppingRule.limitWarningMessage', {
-                  limit: featureDetail?.limit,
-                  count: featureDetail?.count
-                })
+                }
               }}
               onClick={() => {
                 history.push(

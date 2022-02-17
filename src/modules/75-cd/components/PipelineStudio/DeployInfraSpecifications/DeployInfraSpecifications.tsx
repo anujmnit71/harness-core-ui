@@ -67,14 +67,18 @@ export default function DeployInfraSpecifications(props: React.PropsWithChildren
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounceUpdateStage = React.useCallback(
-    debounce((stage?: StageElementConfig) => (stage ? updateStage(stage) : Promise.resolve()), 100),
+    debounce(
+      (changedStage?: StageElementConfig) =>
+        changedStage ? updateStage(changedStage) : /* instanbul ignore next */ Promise.resolve(),
+      100
+    ),
     [updateStage]
   )
 
   const { stage } = getStageFromPipeline<DeploymentStageElementConfig>(selectedStageId || '')
 
   useEffect(() => {
-    if (!stage?.stage?.spec?.infrastructure?.infrastructureDefinition && stage?.stage?.type === StageType.DEPLOY) {
+    if (isEmpty(stage?.stage?.spec?.infrastructure) && stage?.stage?.type === StageType.DEPLOY) {
       const stageData = produce(stage, draft => {
         if (draft) {
           set(draft, 'stage.spec', {
@@ -353,10 +357,9 @@ export default function DeployInfraSpecifications(props: React.PropsWithChildren
     },
     [stage, debounceUpdateStage, stage?.stage?.spec?.infrastructure?.infrastructureDefinition]
   )
-
   return (
     <div className={stageCss.serviceOverrides} key="1">
-      <DeployServiceErrors />
+      <DeployServiceErrors domRef={scrollRef as React.MutableRefObject<HTMLElement | undefined>} />
       <div className={stageCss.contentSection} ref={scrollRef}>
         <div className={stageCss.tabHeading} id="environment">
           {getString('environment')}

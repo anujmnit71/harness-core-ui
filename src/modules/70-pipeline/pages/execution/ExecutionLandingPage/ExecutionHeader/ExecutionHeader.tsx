@@ -119,10 +119,10 @@ export function ExecutionHeader(): React.ReactElement {
                 resourceType: ResourceType.PIPELINE,
                 resourceIdentifier: pipelineIdentifier as string
               },
-              permission: PermissionIdentifier.EDIT_PIPELINE
+              permission: PermissionIdentifier.VIEW_PIPELINE
             }}
-            icon="edit"
-            text={getString('edit')}
+            text={getString('common.viewText')}
+            icon="main-view"
             onClick={ev => {
               ev.stopPropagation()
               const allNodes = Object.values(allNodeMap)
@@ -184,7 +184,7 @@ export function ExecutionHeader(): React.ReactElement {
             }, {} as { [key: string]: string })}
           />
         ) : null}
-        {pipelineExecutionSummary.gitDetails?.objectId ? (
+        {pipelineExecutionSummary.gitDetails ? (
           <GitSyncStoreProvider>
             <GitPopover
               data={pipelineExecutionSummary.gitDetails}

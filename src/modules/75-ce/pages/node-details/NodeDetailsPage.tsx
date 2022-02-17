@@ -21,7 +21,6 @@ import {
   InstanceDetails
 } from 'services/ce/services'
 import { useStrings } from 'framework/strings'
-import { Breadcrumbs } from '@common/components/Breadcrumbs/Breadcrumbs'
 import routes from '@common/RouteDefinitions'
 import { getViewFilterForId, getTimeFilters, GROUP_BY_POD, getTimeRangeFilter } from '@ce/utils/perspectiveUtils'
 import CloudCostInsightChart from '@ce/components/CloudCostInsightChart/CloudCostInsightChart'
@@ -32,13 +31,16 @@ import {
   CE_DATE_FORMAT_INTERNAL,
   DATE_RANGE_SHORTCUTS,
   getGMTEndDateTime,
-  getGMTStartDateTime
+  getGMTStartDateTime,
+  DEFAULT_TIME_RANGE
 } from '@ce/utils/momentUtils'
-import { CCM_PAGE_TYPE } from '@ce/types'
+import { CCM_PAGE_TYPE, TimeRangeFilterType } from '@ce/types'
 import PerspectiveGrid from '@ce/components/PerspectiveGrid/PerspectiveGrid'
 import { Page } from '@common/exports'
 import WorkloadSummary from '@ce/components/WorkloadSummary/WorkloadSummary'
 import EmptyView from '@ce/images/empty-state.svg'
+import { NGBreadcrumbs } from '@common/components/NGBreadcrumbs/NGBreadcrumbs'
+import { useQueryParamsState } from '@common/hooks/useQueryParamsState'
 import { Aggregation, AggregationFunctionMapping } from './constants'
 import css from './NodeDetailsPage.module.scss'
 
@@ -52,13 +54,8 @@ const NodeDetailsPage: () => JSX.Element = () => {
   }>()
 
   const { getString } = useStrings()
-
   const [chartDataAggregation, setChartDataAggregation] = useState<Aggregation>(Aggregation.Average)
-
-  const [timeRange, setTimeRange] = useState<{ to: string; from: string }>({
-    to: DATE_RANGE_SHORTCUTS.LAST_7_DAYS[1].format(CE_DATE_FORMAT_INTERNAL),
-    from: DATE_RANGE_SHORTCUTS.LAST_7_DAYS[0].format(CE_DATE_FORMAT_INTERNAL)
-  })
+  const [timeRange, setTimeRange] = useQueryParamsState<TimeRangeFilterType>('timeRange', DEFAULT_TIME_RANGE)
 
   const isDateRangeInLast7Days = useMemo(() => {
     const last7DaysRange = DATE_RANGE_SHORTCUTS['LAST_7_DAYS']
@@ -191,29 +188,23 @@ const NodeDetailsPage: () => JSX.Element = () => {
     ? (summaryData.perspectiveGrid.data[0]?.instanceDetails as InstanceDetails)
     : ({} as InstanceDetails)
 
+  const breadcrumbsLinks = useMemo(
+    () => [
+      {
+        url: routes.toCEPerspectives({ accountId }),
+        label: getString('ce.perspectives.sideNavText')
+      },
+      {
+        url: routes.toPerspectiveDetails({ accountId, perspectiveId, perspectiveName }),
+        label: perspectiveName
+      }
+    ],
+    []
+  )
+
   return (
     <>
-      <Page.Header
-        title={infoData.name || nodeId}
-        breadcrumbs={
-          <Breadcrumbs
-            links={[
-              {
-                url: routes.toCEPerspectives({ accountId }),
-                label: getString('ce.perspectives.sideNavText')
-              },
-              {
-                url: routes.toPerspectiveDetails({ accountId, perspectiveId, perspectiveName }),
-                label: perspectiveName
-              },
-              {
-                label: '',
-                url: '#'
-              }
-            ]}
-          />
-        }
-      />
+      <Page.Header title={infoData.name || nodeId} breadcrumbs={<NGBreadcrumbs links={breadcrumbsLinks} />} />
       <Page.Body>
         <Container flex background="white" padding="small">
           <FlexExpander />

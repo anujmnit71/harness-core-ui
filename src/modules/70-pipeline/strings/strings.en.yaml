@@ -20,6 +20,8 @@ copyTemplate: Template configurations will be copied to your pipeline and made e
 collapseIsDisabledWhileStageIsRunning: Collapse is disable while stage is running
 changeTemplateLabel: Change Template
 removeTemplateLabel: Remove Template
+openTemplateInNewTabLabel: Open Template in new tab
+previewTemplateLabel: Preview Template YAML
 onlyPositiveInteger: Only positive integer values
 depth: Depth
 advancedOptions: Advanced Options
@@ -455,6 +457,8 @@ triggers:
   copyAsUrl: 'Copy as Webhook URL'
   copyAsCurl: 'Copy as cURL Command'
   cannotParseTriggersData: 'Cannot parse trigger data'
+  cannotParseTriggersYaml: 'Cannot parse trigger YAML'
+  cannotParseInputYaml: 'Cannot parse inputYaml in trigger YAML'
   cannotParseInputValues: 'Cannot parse pipeline input values'
   validation:
     triggerName: 'Trigger Name is required.'
@@ -476,6 +480,7 @@ triggers:
     toggleEnable: 'Successfully {{enabled}} {{name}}.'
     webhookUrlCopied: 'Webhook URL is copied to clipboard.'
     webhookCurlCopied: 'Webhook cURL Command is copied to clipboard.'
+    existingTriggerError: 'There are some errors with this existing trigger. Please edit and update for more details.'
   triggerConfigurationPanel:
     title: 'Trigger Configuration: On New Webhook'
     triggerName: 'Trigger Name'
@@ -712,8 +717,12 @@ imagePathLabel: Image Path
 artifactsSelection:
   repositoryPort: Repository port
   repositoryPortPlaceholder: Enter Repository Port
+  dockerRepositoryServer: Docker Repository Server
+  dockerRepositoryServerPlaceholder: Enter Docker Repository Server
+  repositoryPlaceholder: Enter Repository
   artifactDetails: Artifact Details
   artifactTyperequired: Artifact Type is required
+  loadingTags: Loading Tags...
   existingDocker:
     sidecarId: Sidecar Identifier
     sidecarIdPlaceholder: Enter Artifact Identifier
@@ -726,6 +735,7 @@ artifactsSelection:
     tagRegex: Tag Regex is required
     sidecarId: Sidecar Identifier is required
     repositoryPort: Repository Port is required
+    dockerRepositoryServer: Docker Repository Server is required
 overrideSets:
   createOverrideSet: Create Override Set
   overrideSetPlaceholder: Enter Override Set Name
@@ -932,6 +942,7 @@ featureRestriction:
   numMonthlyBuilds: You have used {{count}} / {{limit}} free builds this month.
   subscription90PercentLimit: You have used {{usagePercent}}% of your developer subscription limit.
   subscriptionExceededLimit: You have exceeded your developer subscription limit.
+  unlimitedBuildsRequiredPlan: Monthly builds limit met. For Unlimited builds, consider upgrading to Team or Enterprise plan.
 policyEvaluations:
   title: Policy Evaluations
   failedToSavePipeline: Pipeline can not be saved due to the policy evaluation failures.
@@ -968,7 +979,7 @@ dashboardDeploymentsWidget:
   runningPipeline:
     singular: Currently running pipeline
     plural: Currently running pipelines
-runtimeInputNotSupported: '{{field}} values cannot be run-time input'
+runtimeInputNotSupported: '{{field}} cannot be runtime inputs'
 security:
   title: Security
 runPipeline:

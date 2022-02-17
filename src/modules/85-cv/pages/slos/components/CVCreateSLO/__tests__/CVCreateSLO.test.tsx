@@ -9,8 +9,11 @@ import React from 'react'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor, RenderResult } from '@testing-library/react'
 import * as cvServices from 'services/cv'
+import routes from '@common/RouteDefinitions'
 import { InputTypes, setFieldValue } from '@common/utils/JestFormHelper'
 import { TestWrapper } from '@common/utils/testUtils'
+import { getCVMonitoringServicesSearchParam } from '@cv/utils/CommonUtils'
+import { MonitoredServiceEnum } from '@cv/pages/monitored-service/MonitoredServicePage.constants'
 import CVCreateSLO from '../CVCreateSLO'
 import { createSLORequestPayload } from '../CVCreateSLO.utils'
 import { Comparators, SLOFormFields } from '../CVCreateSLO.types'
@@ -248,6 +251,213 @@ describe('CVCreateSLO - Edit', () => {
       )
       expect(screen.getByText('cv.slos.sloUpdated')).toBeInTheDocument()
     })
+
+    expect(screen.getByText(routes.toCVSLOs({ ...pathParams }))).toBeInTheDocument()
+  })
+
+  test('it should update the SLO and redirect to the MS details page', async () => {
+    const fetchSLO = jest.fn()
+    jest
+      .spyOn(cvServices, 'useGetServiceLevelObjective')
+      .mockImplementation(() => ({ data: SLOResponse, loading: false, error: null, refetch: fetchSLO } as any))
+
+    render(
+      <TestWrapper
+        {...testWrapperPropsForEdit}
+        queryParams={{
+          monitoredServiceIdentifier: 'monitored_service_identifier'
+        }}
+      >
+        <CVCreateSLO />
+      </TestWrapper>
+    )
+
+    expect(fetchSLO).toHaveBeenCalled()
+
+    expect(screen.getByText('name')).toHaveAttribute('aria-selected', 'true')
+
+    userEvent.click(screen.getByText('continue'))
+
+    await waitFor(() => expect(screen.getByText('cv.slos.sli')).toHaveAttribute('aria-selected', 'true'))
+
+    userEvent.click(screen.getByText('continue'))
+
+    await waitFor(() =>
+      expect(screen.getByText('cv.slos.sloTargetAndBudgetPolicy')).toHaveAttribute('aria-selected', 'true')
+    )
+
+    userEvent.click(screen.getByText('save'))
+
+    await waitFor(() => {
+      expect(updateSLO).toBeCalledWith(
+        createSLORequestPayload(serviceLevelObjective, pathParams.orgIdentifier, pathParams.projectIdentifier)
+      )
+      expect(screen.getByText('cv.slos.sloUpdated')).toBeInTheDocument()
+    })
+
+    expect(
+      screen.getByText(
+        routes.toCVAddMonitoringServicesEdit({ ...pathParams, identifier: 'monitored_service_identifier' }) +
+          getCVMonitoringServicesSearchParam({ tab: MonitoredServiceEnum.SLOs })
+      )
+    ).toBeInTheDocument()
+  })
+
+  test('it should redirect to the SLO listing page by clicking on Back button', async () => {
+    jest
+      .spyOn(cvServices, 'useGetServiceLevelObjective')
+      .mockImplementation(() => ({ data: SLOResponse, loading: false, error: null, refetch: jest.fn() } as any))
+
+    render(
+      <TestWrapper {...testWrapperPropsForEdit}>
+        <CVCreateSLO />
+      </TestWrapper>
+    )
+
+    userEvent.click(screen.getByText('continue'))
+    userEvent.click(screen.getByText('continue'))
+
+    userEvent.click(screen.getByText('back'))
+    userEvent.click(screen.getByText('back'))
+    userEvent.click(screen.getByText('back'))
+
+    expect(screen.getByText(routes.toCVSLOs({ ...pathParams }))).toBeInTheDocument()
+  })
+
+  test('it should redirect to the MS details page by clicking on Back button', async () => {
+    jest
+      .spyOn(cvServices, 'useGetServiceLevelObjective')
+      .mockImplementation(() => ({ data: SLOResponse, loading: false, error: null, refetch: jest.fn() } as any))
+
+    render(
+      <TestWrapper
+        {...testWrapperPropsForEdit}
+        queryParams={{
+          monitoredServiceIdentifier: 'monitored_service_identifier'
+        }}
+      >
+        <CVCreateSLO />
+      </TestWrapper>
+    )
+
+    userEvent.click(screen.getByText('back'))
+
+    expect(
+      screen.getByText(
+        routes.toCVAddMonitoringServicesEdit({ ...pathParams, identifier: 'monitored_service_identifier' }) +
+          getCVMonitoringServicesSearchParam({ tab: MonitoredServiceEnum.SLOs })
+      )
+    ).toBeInTheDocument()
+  })
+
+  test('+ New Monitored Service should go to Add new monitored service page', () => {
+    jest
+      .spyOn(cvServices, 'useGetServiceLevelObjective')
+      .mockImplementation(() => ({ data: SLOResponse, loading: false, error: null, refetch: jest.fn() } as any))
+
+    render(
+      <TestWrapper
+        {...testWrapperPropsForEdit}
+        queryParams={{
+          monitoredServiceIdentifier: 'monitored_service_identifier'
+        }}
+      >
+        <CVCreateSLO />
+      </TestWrapper>
+    )
+
+    userEvent.click(screen.getByText('continue'))
+
+    userEvent.click(
+      screen.getByRole('button', {
+        name: /cv.monitoredServices.newMonitoredServices/i
+      })
+    )
+
+    expect(
+      screen.getByText(
+        routes.toCVAddMonitoringServicesSetup({ ...pathParams }) +
+          getCVMonitoringServicesSearchParam({
+            redirectToSLO: true,
+            sloIdentifier: 'SLO5',
+            monitoredServiceIdentifier: 'monitored_service_identifier'
+          })
+      )
+    )
+  })
+
+  test('+ New Health Source should go to Configurations in monitored service details page', () => {
+    jest
+      .spyOn(cvServices, 'useGetServiceLevelObjective')
+      .mockImplementation(() => ({ data: SLOResponse, loading: false, error: null, refetch: jest.fn() } as any))
+
+    render(
+      <TestWrapper
+        {...testWrapperPropsForEdit}
+        queryParams={{
+          monitoredServiceIdentifier: 'monitored_service_identifier'
+        }}
+      >
+        <CVCreateSLO />
+      </TestWrapper>
+    )
+
+    userEvent.click(screen.getByText('continue'))
+
+    userEvent.click(
+      screen.getByRole('button', {
+        name: /cv.healthSource.newHealthSource/i
+      })
+    )
+
+    expect(
+      screen.getByText(
+        routes.toCVAddMonitoringServicesEdit({ ...pathParams, identifier: 'test1_env1' }) +
+          getCVMonitoringServicesSearchParam({
+            tab: MonitoredServiceEnum.Configurations,
+            redirectToSLO: true,
+            sloIdentifier: 'SLO5',
+            monitoredServiceIdentifier: 'monitored_service_identifier'
+          })
+      )
+    )
+  })
+
+  test('+ New Metric should go to Configurations in monitored service details page', () => {
+    jest
+      .spyOn(cvServices, 'useGetServiceLevelObjective')
+      .mockImplementation(() => ({ data: SLOResponse, loading: false, error: null, refetch: jest.fn() } as any))
+
+    render(
+      <TestWrapper
+        {...testWrapperPropsForEdit}
+        queryParams={{
+          monitoredServiceIdentifier: 'monitored_service_identifier'
+        }}
+      >
+        <CVCreateSLO />
+      </TestWrapper>
+    )
+
+    userEvent.click(screen.getByText('continue'))
+
+    userEvent.click(
+      screen.getAllByRole('button', {
+        name: /cv.newMetric/g
+      })[0]
+    )
+
+    expect(
+      screen.getByText(
+        routes.toCVAddMonitoringServicesEdit({ ...pathParams, identifier: 'test1_env1' }) +
+          getCVMonitoringServicesSearchParam({
+            tab: MonitoredServiceEnum.Configurations,
+            redirectToSLO: true,
+            sloIdentifier: 'SLO5',
+            monitoredServiceIdentifier: 'monitored_service_identifier'
+          })
+      )
+    )
   })
 
   test('it should not render Event type and Good request metric dropdowns for Threshold based', () => {

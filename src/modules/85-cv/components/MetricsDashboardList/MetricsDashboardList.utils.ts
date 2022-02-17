@@ -5,6 +5,8 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
+import type { GetDataError } from 'restful-react'
+import { getErrorMessage } from '@cv/utils/CommonUtils'
 import type { TableDashboardItem, TableData } from '@cv/components/MetricsDashboardList/MetricsDashboardList.type'
 
 export function initializeTableData(
@@ -43,4 +45,16 @@ export function initializeSelectedDashboards<T>(
     }
   }
   return selectedDashboards
+}
+
+export function isError(loading: boolean, error: GetDataError<any> | null): boolean {
+  return !loading && !!getErrorMessage(error)
+}
+
+export function isNoData(
+  loading: boolean,
+  error: GetDataError<any> | null,
+  dashboardItems: TableDashboardItem[]
+): boolean {
+  return !loading && !getErrorMessage(error) && !dashboardItems?.length
 }

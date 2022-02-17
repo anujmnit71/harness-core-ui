@@ -20,14 +20,17 @@ import {
 import { get } from 'lodash-es'
 import { useStrings } from 'framework/strings'
 import { DialogExtensionContext } from '@connectors/common/ConnectorExtention/DialogExtention'
-import LabelWithTooltip from '@connectors/common/LabelWithTooltip/LabelWithTooltip'
 import type { GcpBillingExportSpec, GcpCloudCostConnector } from 'services/cd-ng'
+import { CE_GCP_CONNECTOR_CREATION_EVENTS } from '@connectors/trackingConstants'
+import { useStepLoadTelemetry } from '@connectors/common/useTrackStepLoad/useStepLoadTelemetry'
 import type { CEGcpConnectorDTO } from './OverviewStep'
 import BillingExportExtention from './BillingExportExtention'
 import css from '../CreateCeGcpConnector.module.scss'
 
 const BillingExport: React.FC<StepProps<CEGcpConnectorDTO>> = props => {
   const { getString } = useStrings()
+
+  useStepLoadTelemetry(CE_GCP_CONNECTOR_CREATION_EVENTS.LOAD_BILLING_EXPORT_SETUP)
 
   const { prevStepData, nextStep, previousStep } = props
 
@@ -104,25 +107,19 @@ const BillingExport: React.FC<StepProps<CEGcpConnectorDTO>> = props => {
               <div>
                 <FormInput.Text
                   name={'datasetId'}
-                  label={
-                    <LabelWithTooltip
-                      label={getString('connectors.ceGcp.billingExport.datasetIdLabel')}
-                      extentionComponent={BillingExportExtention}
-                      toolTipContent={getString('connectors.ceGcp.billingExport.tooltipDescription')}
-                    />
-                  }
+                  tooltipProps={{
+                    dataTooltipId: 'gcp-dataset-name'
+                  }}
+                  label={getString('connectors.ceGcp.billingExport.datasetIdLabel')}
                   className={css.dataFields}
                 />
 
                 <FormInput.Text
                   name={'tableId'}
-                  label={
-                    <LabelWithTooltip
-                      label={getString('connectors.ceGcp.billingExport.tableIdLabel')}
-                      extentionComponent={BillingExportExtention}
-                      toolTipContent={getString('connectors.ceGcp.billingExport.tableIdTooltipDesc')}
-                    />
-                  }
+                  tooltipProps={{
+                    dataTooltipId: 'gcp-table-name'
+                  }}
+                  label={getString('connectors.ceGcp.billingExport.tableIdLabel')}
                   className={css.dataFields}
                 />
               </div>

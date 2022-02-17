@@ -5,7 +5,7 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useMemo, useRef, useState, useCallback, ReactElement } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   Button,
@@ -67,6 +67,9 @@ import { GitDetails, GitSyncFormValues, GIT_SYNC_ERROR_CODE, useGitSync, UseGitS
 import UsageLimitBanner from '@cf/components/UsageLimitBanner/UsageLimitBanner'
 import usePlanEnforcement from '@cf/hooks/usePlanEnforcement'
 import FlagOptionsMenuButton from '@cf/components/FlagOptionsMenuButton/FlagOptionsMenuButton'
+import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
+import { useFeature } from '@common/hooks/useFeatures'
+import { FeatureWarningTooltip } from '@common/components/FeatureWarning/FeatureWarningWithTooltip'
 import imageURL from './Feature_Flags_Teepee.svg'
 import { FeatureFlagStatus, FlagStatus } from './FlagStatus'
 import { FlagResult } from './FlagResult'
@@ -141,7 +144,7 @@ const RenderColumnFlag: React.FC<RenderColumnFlagProps> = ({
   }
 
   const switchTooltip = (
-    <Container width={'350px'} padding="xxxlarge">
+    <Container width={'350px'} padding="xxxlarge" className={css.switchTooltip}>
       <Heading level={2} style={{ fontWeight: 600, fontSize: '24px', lineHeight: '32px', color: '#22222A' }}>
         {getString(status ? 'cf.featureFlags.turnOffHeading' : 'cf.featureFlags.turnOnHeading')}
       </Heading>
@@ -208,24 +211,41 @@ const RenderColumnFlag: React.FC<RenderColumnFlagProps> = ({
     }
   }, [])
 
+  const { isPlanEnforcementEnabled, isFreePlan } = usePlanEnforcement()
+
+  const { enabled } = useFeature({
+    featureRequest: {
+      featureName: FeatureIdentifier.MAUS
+    }
+  })
+
+  const switchDisabled = isPlanEnforcementEnabled && !enabled && isFreePlan
+
+  const getTooltip = (): ReactElement | undefined => {
+    if (!canToggle) {
+      return (
+        <RBACTooltip permission={PermissionIdentifier.TOGGLE_FF_FEATUREFLAG} resourceType={ResourceType.ENVIRONMENT} />
+      )
+    } else if (switchDisabled) {
+      return <FeatureWarningTooltip featureName={FeatureIdentifier.MAUS} />
+    } else {
+      return switchTooltip
+    }
+  }
+
   return (
     <Container flex>
       <Container onClick={Utils.stopEvent}>
         <Button
           noStyling
-          tooltip={
-            data.archived ? undefined : canToggle ? (
-              switchTooltip
-            ) : (
-              <RBACTooltip
-                permission={PermissionIdentifier.TOGGLE_FF_FEATUREFLAG}
-                resourceType={ResourceType.ENVIRONMENT}
-              />
-            )
-          }
-          tooltipProps={{ interactionKind: 'click', hasBackdrop: true, position: Position.TOP_LEFT }}
+          tooltip={getTooltip()}
+          tooltipProps={{
+            interactionKind: switchDisabled ? 'hover' : 'click',
+            hasBackdrop: switchDisabled ? false : true,
+            position: Position.TOP_LEFT
+          }}
           className={css.toggleFlagButton}
-          disabled={data.archived || !canToggle}
+          disabled={data.archived || !canToggle || switchDisabled}
         >
           <Switch
             style={{ alignSelf: 'baseline', marginLeft: '-10px' }}
@@ -272,6 +292,7 @@ const RenderColumnFlag: React.FC<RenderColumnFlagProps> = ({
           )}
         </Layout.Vertical>
       </Layout.Horizontal>
+
       <Container onClick={event => event.stopPropagation()}>
         {isSaveToggleModalOpen && (
           <SaveFlagToGitModal
@@ -294,7 +315,7 @@ const RenderColumnDetails: Renderer<CellProps<Feature>> = ({ row }) => {
   const isOn = isFeatureFlagOn(data)
   const hasCustomRules = featureFlagHasCustomRules(data)
   const index = data.variations.findIndex(
-    d => d.identifier === (isOn ? data.defaultOnVariation : data.defaultOffVariation)
+    d => d.identifier === (isOn ? data.envProperties?.defaultServe.variation : data.envProperties?.offVariation)
   )
   const isFlagTypeBoolean = data.kind === FlagTypeVariations.booleanFlag
   const typeToString = useFeatureFlagTypeToStringMapping()
@@ -518,7 +539,7 @@ const FeatureFlagsPage: React.FC = () => {
         refetch
       }
     ],
-    [gitSync.isAutoCommitEnabled, gitSync.isGitSyncEnabled, activeEnvironment]
+    [gitSync.isAutoCommitEnabled, gitSync.isGitSyncEnabled, activeEnvironment, features]
   )
   const onSearchInputChanged = useCallback(
     name => {

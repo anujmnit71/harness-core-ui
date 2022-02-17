@@ -40,6 +40,8 @@ import {
 } from '@connectors/pages/connectors/utils/ConnectorUtils'
 import type { ProjectPathProps } from '@common/interfaces/RouteInterfaces'
 import { ErrorHandler } from '@common/components/ErrorHandler/ErrorHandler'
+import { useTelemetry } from '@common/hooks/useTelemetry'
+import { CE_K8S_CONNECTOR_CREATION_EVENTS } from '@connectors/trackingConstants'
 import css from './VerifyOutOfClusterDelegate.module.scss'
 
 interface RenderUrlInfo {
@@ -171,6 +173,14 @@ const VerifyOutOfClusterDelegate: React.FC<StepProps<VerifyOutOfClusterStepProps
       status: 'PROCESS'
     })
 
+    const { trackEvent } = useTelemetry()
+
+    useEffect(() => {
+      if (props.type === Connectors.CE_KUBERNETES) {
+        trackEvent(CE_K8S_CONNECTOR_CREATION_EVENTS.LOAD_CONNECTION_TEST, {})
+      }
+    }, [])
+
     const { getString } = useStrings()
 
     const getPermissionsLink = (): string => {
@@ -202,6 +212,8 @@ const VerifyOutOfClusterDelegate: React.FC<StepProps<VerifyOutOfClusterStepProps
           return 'https://ngdocs.harness.io/article/illz8off8q'
         case Connectors.HttpHelmRepo:
           return 'https://ngdocs.harness.io/article/a0jotsvsi7'
+        case Connectors.DATADOG:
+          return 'https://ngdocs.harness.io/article/g21fb5kfkg-connect-to-monitoring-and-logging-systems#step_add_datadog'
         default:
           return ''
       }
