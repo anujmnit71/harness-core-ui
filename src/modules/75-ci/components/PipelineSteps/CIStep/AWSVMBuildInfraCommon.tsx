@@ -15,8 +15,8 @@ import { useStrings } from 'framework/strings'
 import { MultiTypeTextField } from '@common/components/MultiTypeText/MultiTypeText'
 import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
 import { useGitScope } from '@pipeline/utils/CIUtils'
-import { getOptionalSubLabel } from '../CIStep/CIStepOptionalConfig'
-import { AllMultiTypeInputTypesForStep } from '../CIStep/StepUtils'
+import { getOptionalSubLabel } from './CIStepOptionalConfig'
+import { AllMultiTypeInputTypesForStep } from './StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 interface AWSVMBuildInfraCommonProps {
