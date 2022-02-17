@@ -13,9 +13,7 @@ import { useParams } from 'react-router-dom'
 import { StepCategory, StepData, StepPalleteModuleInfo, useGetStepsV2 } from 'services/pipeline-ng'
 import { useMutateAsGet } from '@common/hooks'
 import { useStrings } from 'framework/strings'
-import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
 import { useTelemetry } from '@common/hooks/useTelemetry'
-import { useFeature } from '@common/hooks/useFeatures'
 import { StepActions } from '@common/constants/TrackingConstants'
 import type { StageType } from '@pipeline/utils/stageHelpers'
 import { StepPopover } from '@pipeline/components/PipelineStudio/StepPalette/StepPopover/StepPopover'
@@ -71,11 +69,6 @@ export function StepPalette({ onSelect, stepsFactory, stepPaletteModuleInfos }: 
   // Need this when we have same names for category and sub category
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null)
   const { accountId } = useParams<{ module: string; accountId: string }>()
-  const { enabled: featureZeroNorth } = useFeature({
-    featureRequest: {
-      featureName: FeatureIdentifier.ZERONORTH_STEP
-    }
-  })
 
   function Message({ stepsDataLoading }: { stepsDataLoading: boolean }): React.ReactElement | null {
     const message = stepsDataLoading
@@ -102,8 +95,8 @@ export function StepPalette({ onSelect, stepsFactory, stepPaletteModuleInfos }: 
     const toShow: StepCategory[] = []
     fromApi?.forEach(stepCat => {
       if (stepCat?.stepCategories?.length) {
-        if (featureZeroNorth) {
-          // TODO: remove - Inject a "beta version" ZeroNorth Step, until Portal is updated to list it
+        if (localStorage.STO_PIPELINE_SECURITY_ENABLED) {
+          // TODO (Chris Hamper): remove - Inject a "beta version" ZeroNorth Step, until Portal is updated to list it
           if (stepCat.name === 'Continuous Integration') {
             stepCat.stepCategories.push({
               name: 'Security',
