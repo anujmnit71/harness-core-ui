@@ -73,6 +73,7 @@ export type AccessPointScreenMode = 'create' | 'import' | 'edit'
 export enum QualityOfService {
   BURSTABLE = 'BURSTABLE',
   GUARANTEED = 'GUARANTEED'
+}
 
 export interface TimeRangeFilterType {
   to: string
