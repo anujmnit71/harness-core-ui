@@ -33,9 +33,16 @@ export default function UserNav(): React.ReactElement {
 
   const signOut = async (): Promise<void> => {
     try {
-      await logout()
+      // BE is not publishing correct types for logout response yet
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await logout()
       AppStorage.clear()
-      history.push({ pathname: routes.toRedirect(), search: returnUrlParams(getLoginPageURL({})) })
+      if (response?.logoutUrl) {
+        // if BE returns a logoutUrl, redirect there. Used by some customers in onprem
+        window.location = response.logoutUrl
+      } else {
+        history.push({ pathname: routes.toRedirect(), search: returnUrlParams(getLoginPageURL({})) })
+      }
       return
     } catch (err) {
       showError(get(err, 'responseMessages[0].message', getString('somethingWentWrong')))
