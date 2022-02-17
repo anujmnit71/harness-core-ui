@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import * as lwServices from 'services/lw'
 import type { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
@@ -222,6 +222,46 @@ describe('Test COGatewayList', () => {
     expect(container).toMatchSnapshot()
   })
 
+  test('able to search through the list', () => {
+    const { container } = render(
+      <TestWrapper path={testpath} pathParams={testparams}>
+        <COGatewayList></COGatewayList>
+      </TestWrapper>
+    )
+
+    const searchInput = container.querySelector('input[type="search"]') as HTMLInputElement
+    expect(searchInput).toBeDefined()
+    act(async () => {
+      await waitFor(() => {
+        fireEvent.change(searchInput, { target: { value: 'test' } })
+      })
+    })
+
+    expect(searchInput.value).toBe('test')
+    expect(container).toMatchSnapshot()
+  })
+
+  test('error from services API should show error', () => {
+    jest.spyOn(lwServices, 'useGetServices').mockImplementation(
+      () =>
+        ({
+          data: null,
+          loading: false,
+          error: { data: { errors: ['Fetch Service error'] } },
+          refetch: jest.fn()
+        } as any)
+    )
+    const { container } = render(
+      <TestWrapper path={testpath} pathParams={testparams}>
+        <COGatewayList></COGatewayList>
+      </TestWrapper>
+    )
+
+    act(() => {
+      expect(container).toMatchSnapshot()
+    })
+  })
+
   describe('render based on the content', () => {
     test('render page loader on initial loading', () => {
       jest.spyOn(lwServices, 'useGetServices').mockImplementation(
@@ -239,6 +279,26 @@ describe('Test COGatewayList', () => {
         </TestWrapper>
       )
       expect(container).toMatchSnapshot()
+    })
+
+    test('render empty page component for no rules created', () => {
+      const servicesSpy = jest.spyOn(lwServices, 'useGetServices')
+      servicesSpy.mockImplementation(
+        () =>
+          ({
+            data: { response: null },
+            loading: false,
+            error: null
+          } as any)
+      )
+      const { container } = render(
+        <TestWrapper path={testpath} pathParams={testparams}>
+          <COGatewayList></COGatewayList>
+        </TestWrapper>
+      )
+
+      expect(container).toMatchSnapshot()
+      servicesSpy.mockClear()
     })
   })
 })
