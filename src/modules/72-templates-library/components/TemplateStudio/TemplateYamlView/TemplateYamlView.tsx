@@ -6,11 +6,10 @@
  */
 
 import React from 'react'
-import { defaultTo, isEmpty, isEqual, isEqualWith, isNil } from 'lodash-es'
+import { defaultTo, isEmpty, isEqual } from 'lodash-es'
 import { parse } from 'yaml'
 import { ButtonVariation, Tag } from '@wings-software/uicore'
 import { useParams } from 'react-router-dom'
-import YAMLBuilder from '@common/components/YAMLBuilder/YamlBuilder'
 import type { YamlBuilderHandlerBinding } from '@common/interfaces/YAMLBuilderProps'
 import { useStrings } from 'framework/strings'
 import RbacButton from '@rbac/components/Button/Button'
@@ -20,17 +19,10 @@ import { PermissionIdentifier } from '@rbac/interfaces/PermissionIdentifier'
 import { TemplateContext } from '@templates-library/components/TemplateStudio/TemplateContext/TemplateContext'
 import factory from '@pipeline/components/PipelineSteps/PipelineStepFactory'
 import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
+import { YamlBuilderMemo } from '@pipeline/components/PipelineStudio/PipelineYamlView/PipelineYamlView'
 import css from './TemplateYamlView.module.scss'
 
 export const POLL_INTERVAL = 1 /* sec */ * 1000 /* ms */
-export const YamlBuilderMemo = React.memo(YAMLBuilder, (prevProps, nextProps) => {
-  if (isNil(prevProps.schema) && !isNil(nextProps.schema)) {
-    return false
-  }
-  return isEqualWith(nextProps, prevProps, (_arg1, _arg2, key) => {
-    return ['onExpressionTrigger', 'schema', 'onEnableEditMode'].indexOf(key as string) > -1
-  })
-})
 
 let Interval: number | undefined
 const defaultFileName = 'Template.yaml'
@@ -64,7 +56,8 @@ const TemplateYamlView: React.FC = () => {
           const templateFromYaml = parse(yamlHandler.getLatestYaml())?.template
           if (
             !isEqual(template, templateFromYaml) &&
-            isEmpty(yamlHandler.getYAMLValidationErrorMap()) // Don't update for Invalid Yaml
+            !isEmpty(templateFromYaml) // Remove this line when template yaml validation is ready and uncomment below line
+            // yamlHandler.getYAMLValidationErrorMap()?.size === 0 // Don't update for Invalid Yaml
           ) {
             updateTemplate(templateFromYaml)
           }
