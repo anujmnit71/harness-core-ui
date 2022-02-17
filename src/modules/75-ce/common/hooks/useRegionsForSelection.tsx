@@ -7,9 +7,9 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { defaultTo } from 'lodash'
-import { Region, useAllRegions, UseAllRegionsProps } from 'services/lw'
+import { defaultTo } from 'lodash-es'
 import type { SelectOption } from '@harness/uicore'
+import { Region, useAllRegions, UseAllRegionsProps } from 'services/lw'
 import type { AccountPathProps } from '@common/interfaces/RouteInterfaces'
 
 interface UseRegionsForSelectionProps {

@@ -79,9 +79,18 @@ const mockedResourceGroup = {
 
 const mockedResourceGroupResponse = [mockedResourceGroup]
 
+const mockedRegionsData = { data: { response: [{ name: 'ap-southeast-1', label: 'ap-southeast-1' }] }, loading: false }
+
+const mockedZonesData = { response: ['us-container-1'] }
+
 jest.mock('services/lw', () => ({
   useAllResourceGroups: jest.fn().mockImplementation(() => ({
     data: { response: mockedResourceGroupResponse },
+    loading: false
+  })),
+  useAllRegions: jest.fn().mockImplementation(() => mockedRegionsData),
+  useAllZones: jest.fn().mockImplementation(() => ({
+    data: mockedZonesData,
     loading: false
   }))
 }))

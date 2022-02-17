@@ -3359,8 +3359,11 @@ export interface StringsMap {
   'ce.co.autoStoppingRule.configuration.ecsModal.emptyDescription': string
   'ce.co.autoStoppingRule.configuration.ecsModal.title': string
   'ce.co.autoStoppingRule.configuration.instanceModal.description': string
-  'ce.co.autoStoppingRule.configuration.instanceModal.emptyDescription': string
-  'ce.co.autoStoppingRule.configuration.instanceModal.emptyInstancesDescription': string
+  'ce.co.autoStoppingRule.configuration.instanceModal.gcpEmptyInstancesDescription': string
+  'ce.co.autoStoppingRule.configuration.instanceModal.gcpFiltersNotSelectedDescription': string
+  'ce.co.autoStoppingRule.configuration.instanceModal.gcpZoneFilterNotSelectedDescription': string
+  'ce.co.autoStoppingRule.configuration.instanceModal.rgEmptyDescription': string
+  'ce.co.autoStoppingRule.configuration.instanceModal.rgEmptyInstancesDescription': string
   'ce.co.autoStoppingRule.configuration.rdsModal.emptyDescription': string
   'ce.co.autoStoppingRule.configuration.rdsModal.title': string
   'ce.co.autoStoppingRule.configuration.step1.form.idleTime.label': string

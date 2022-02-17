@@ -417,6 +417,18 @@ interface InstanceSelectorBodyProps {
   selectedGcpFilters?: GCPFiltersProps
 }
 
+interface WarningMessageProps {
+  messageText: string
+}
+
+const WarningMessage = ({ messageText }: WarningMessageProps) => {
+  return (
+    <Text icon={'execution-warning'} font={{ size: 'medium' }} iconProps={{ size: 20 }}>
+      {messageText}
+    </Text>
+  )
+}
+
 const InstanceSelectorBody: React.FC<InstanceSelectorBodyProps> = ({
   isLoading,
   selectedResourceGroup,
@@ -506,14 +518,14 @@ const InstanceSelectorBody: React.FC<InstanceSelectorBodyProps> = ({
   const azureBodyRenderer = (): ReactNode => {
     return _isEmpty(selectedResourceGroup) ? (
       <Layout.Horizontal flex={{ justifyContent: 'center' }}>
-        <Text icon={'execution-warning'} font={{ size: 'medium' }} iconProps={{ size: 20 }}>
-          {getString('ce.co.autoStoppingRule.configuration.instanceModal.emptyDescription')}
-        </Text>
+        <WarningMessage
+          messageText={getString('ce.co.autoStoppingRule.configuration.instanceModal.rgEmptyDescription')}
+        />
       </Layout.Horizontal>
     ) : _isEmpty(instances) ? (
       <Layout.Horizontal flex={{ justifyContent: 'center' }}>
         <Text font={{ size: 'medium' }} iconProps={{ size: 20 }}>
-          {getString('ce.co.autoStoppingRule.configuration.instanceModal.emptyInstancesDescription', {
+          {getString('ce.co.autoStoppingRule.configuration.instanceModal.rgEmptyInstancesDescription', {
             region: selectedResourceGroup?.label
           })}
         </Text>
@@ -526,22 +538,22 @@ const InstanceSelectorBody: React.FC<InstanceSelectorBodyProps> = ({
   const gcpBodyRenderer = (): ReactNode => {
     return _isEmpty(selectedGcpFilters?.region) ? (
       <Layout.Horizontal flex={{ justifyContent: 'center' }}>
-        <Text icon={'execution-warning'} font={{ size: 'medium' }} iconProps={{ size: 20 }}>
-          {'Select region and zone'}
-        </Text>
+        <WarningMessage
+          messageText={getString('ce.co.autoStoppingRule.configuration.instanceModal.gcpFiltersNotSelectedDescription')}
+        />
       </Layout.Horizontal>
     ) : _isEmpty(selectedGcpFilters?.zone) ? (
       <Layout.Horizontal flex={{ justifyContent: 'center' }}>
-        <Text icon={'execution-warning'} font={{ size: 'medium' }} iconProps={{ size: 20 }}>
-          {'Select Zone'}
-        </Text>
+        <WarningMessage
+          messageText={getString(
+            'ce.co.autoStoppingRule.configuration.instanceModal.gcpZoneFilterNotSelectedDescription'
+          )}
+        />
       </Layout.Horizontal>
     ) : _isEmpty(instances) ? (
       <Layout.Horizontal flex={{ justifyContent: 'center' }}>
         <Text font={{ size: 'medium' }} iconProps={{ size: 20 }}>
-          {getString('ce.co.autoStoppingRule.configuration.instanceModal.emptyInstancesDescription', {
-            region: selectedResourceGroup?.label
-          })}
+          {getString('ce.co.autoStoppingRule.configuration.instanceModal.gcpEmptyInstancesDescription')}
         </Text>
       </Layout.Horizontal>
     ) : (
