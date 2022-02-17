@@ -328,7 +328,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           {renderMultiTypeList({
             name: `${prefix}spec.entrypoint`,
             labelKey: 'entryPointLabel',
-            tooltipId: 'dependencyEntryPoint'
+            tooltipId: 'dependencyEntryPoint',
+            allowedTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
           })}
         </Container>
       ) : null}
@@ -337,7 +338,8 @@ export const CIStepOptionalConfig: React.FC<CIStepOptionalConfigProps> = props =
           {renderMultiTypeList({
             name: `${prefix}spec.args`,
             labelKey: 'argsLabel',
-            tooltipId: 'dependencyArgs'
+            tooltipId: 'dependencyArgs',
+            allowedTypes: isInputSetView ? AllMultiTypeInputTypesForInputSet : AllMultiTypeInputTypesForStep
           })}
         </Container>
       ) : null}
