@@ -166,7 +166,7 @@ export const RunTestsStepBase = (
   )
 
   const renderMultiTypeSelectField = React.useCallback(
-    ({ name, fieldLabelKey, tooltipId, selectFieldOptions = [], onSelectChange }: FieldRenderProps) => {
+    ({ name, fieldLabelKey, tooltipId, selectFieldOptions = [], onSelectChange, allowableTypes }: FieldRenderProps) => {
       return (
         <MultiTypeSelectField
           name={name}
@@ -184,7 +184,7 @@ export const RunTestsStepBase = (
             selectItems: selectFieldOptions,
             multiTypeInputProps: {
               onChange: option => onSelectChange?.(option),
-              allowableTypes: [MultiTypeInputType.FIXED],
+              allowableTypes: allowableTypes,
               expressions
             },
             disabled: readonly
