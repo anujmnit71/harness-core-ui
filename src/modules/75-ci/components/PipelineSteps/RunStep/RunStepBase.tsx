@@ -124,7 +124,9 @@ export const RunStepBase = (
                 description: {}
               }}
             />
-            {buildInfrastructureType !== 'VM' ? <AWSVMBuildInfraCommon showOptionalSublabel={false} /> : null}
+            {buildInfrastructureType !== 'VM' ? (
+              <AWSVMBuildInfraCommon showOptionalSublabel={false} readonly={readonly} />
+            ) : null}
             <div className={cx(css.fieldsGroup, css.withoutSpacing, css.topPadding3, css.bottomPadding3)}>
               <MultiTypeFieldSelector
                 name="spec.command"
@@ -184,7 +186,9 @@ export const RunStepBase = (
                 summary={getString('common.optionalConfig')}
                 details={
                   <Container margin={{ top: 'medium' }}>
-                    {buildInfrastructureType === 'VM' ? <AWSVMBuildInfraCommon showOptionalSublabel={true} /> : null}
+                    {buildInfrastructureType === 'VM' ? (
+                      <AWSVMBuildInfraCommon showOptionalSublabel={true} readonly={readonly} />
+                    ) : null}
                     <CIStepOptionalConfig
                       stepViewType={stepViewType}
                       readonly={readonly}

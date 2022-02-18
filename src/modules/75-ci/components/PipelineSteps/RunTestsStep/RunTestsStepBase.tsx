@@ -294,7 +294,9 @@ export const RunTestsStepBase = (
                 description: {}
               }}
             />
-            {buildInfrastructureType !== 'VM' ? <AWSVMBuildInfraCommon showOptionalSublabel={false} /> : null}
+            {buildInfrastructureType !== 'VM' ? (
+              <AWSVMBuildInfraCommon showOptionalSublabel={false} readonly={readonly} />
+            ) : null}
             <Container className={cx(css.formGroup, css.lg, css.bottomMargin5)}>
               {renderMultiTypeSelectField({
                 name: 'spec.language',
@@ -410,7 +412,9 @@ gradle.projectsEvaluated {
                 summary={getString('common.optionalConfig')}
                 details={
                   <Container margin={{ top: 'medium' }}>
-                    {buildInfrastructureType === 'VM' ? <AWSVMBuildInfraCommon showOptionalSublabel={true} /> : null}
+                    {buildInfrastructureType === 'VM' ? (
+                      <AWSVMBuildInfraCommon showOptionalSublabel={true} readonly={readonly} />
+                    ) : null}
                     <Container className={cx(css.formGroup, css.sm, css.bottomMargin5)}>
                       <FormMultiTypeCheckboxField
                         name="spec.runOnlySelectedTests"
