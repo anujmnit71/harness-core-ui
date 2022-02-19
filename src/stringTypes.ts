@@ -9079,6 +9079,10 @@ export interface StringsMap {
   /**
    * @deprecated migrate this string to module level file
    */
+  'validation.validPortRegex': string
+  /**
+   * @deprecated migrate this string to module level file
+   */
   'validation.validReportPathRegex': string
   /**
    * @deprecated migrate this string to module level file

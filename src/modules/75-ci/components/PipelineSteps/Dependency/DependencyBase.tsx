@@ -25,7 +25,7 @@ import {
 } from '@pipeline/components/PipelineSteps/Steps/StepsTransformValuesUtils'
 import { validate } from '@pipeline/components/PipelineSteps/Steps/StepsValidateUtils'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
-import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './DependencyFunctionConfigs'
+import { transformValuesFieldsConfig, getEditViewValidateFieldsConfig } from './DependencyFunctionConfigs'
 import type { DependencyProps, DependencyData, DependencyDataUI } from './Dependency'
 import { CIStep } from '../CIStep/CIStep'
 import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
@@ -65,7 +65,7 @@ export const DependencyBase = (
         onChange?.(schemaValues)
         return validate(
           valuesToValidate,
-          editViewValidateFieldsConfig,
+          getEditViewValidateFieldsConfig(buildInfrastructureType),
           {
             initialValues,
             steps: currentStage?.stage?.spec?.execution?.steps || [],

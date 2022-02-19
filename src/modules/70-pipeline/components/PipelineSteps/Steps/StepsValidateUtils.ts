@@ -37,7 +37,8 @@ export enum Types {
   Boolean,
   ImagePullPolicy,
   Shell,
-  Numeric
+  Numeric,
+  KeyValue
 }
 
 interface Field {
@@ -343,6 +344,34 @@ function generateSchemaForBoolean(): Lazy {
   )
 }
 
+function generateSchemaForKeyValue({ isInputSet }: Field, { getString }: GenerateSchemaDependencies): Lazy {
+  if (isInputSet) {
+    return yup.mixed().test('validKeys', getString('validation.validKeyRegex'), map => {
+      if (!map || getMultiTypeFromValue(map as string) === MultiTypeInputType.RUNTIME) {
+        return true
+      }
+      return Object.keys(map).every(key => keyRegexIdentifier.test(key))
+    })
+  } else {
+    return yup.lazy(value => {
+      if (typeof value === 'object') {
+        return yup.object().shape({
+          key: yup
+            .string()
+            .matches(/^[0-9]*$/, getString('validation.validPortRegex'))
+            .required(getString('validation.keyRequired')),
+          value: yup
+            .string()
+            .matches(/^[0-9]*$/, getString('validation.validPortRegex'))
+            .required(getString('validation.valueRequired'))
+        })
+      } else {
+        return yup.string()
+      }
+    })
+  }
+}
+
 export function generateSchemaFields(
   fields: Field[],
   { initialValues, steps, serviceDependencies, getString }: GenerateSchemaDependencies,
@@ -395,6 +424,10 @@ export function generateSchemaFields(
 
     if (type === Types.Text) {
       validationRule = yup.string()
+    }
+
+    if (type === Types.KeyValue) {
+      validationRule = generateSchemaForKeyValue(field, { getString })
     }
 
     if ((type === Types.Identifier || type === Types.Name || type === Types.Text) && isRequired && label) {
