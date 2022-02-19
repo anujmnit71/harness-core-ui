@@ -103,6 +103,7 @@ export const getEditViewValidateFieldsConfig = (buildInfrastructureType: K8sDire
   {
     name: 'spec.portBindings',
     type: ValidationFieldTypes.KeyValue,
+    label: 'ci.portBindings',
     isRequired: buildInfrastructureType === 'VM'
   },
   {
@@ -154,6 +155,7 @@ export function getInputSetViewValidateFieldsConfig(
     },
     {
       name: 'spec.portBindings',
+      label: 'ci.portBindings',
       type: ValidationFieldTypes.Map
     },
     {
