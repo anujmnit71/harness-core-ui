@@ -38,6 +38,10 @@ export const transformValuesFieldsConfig = [
     type: TransformValuesTypes.Map
   },
   {
+    name: 'spec.portBindings',
+    type: TransformValuesTypes.Map
+  },
+  {
     name: 'spec.entrypoint',
     type: TransformValuesTypes.List
   },
@@ -146,6 +150,10 @@ export function getInputSetViewValidateFieldsConfig(
     },
     {
       name: 'spec.envVariables',
+      type: ValidationFieldTypes.Map
+    },
+    {
+      name: 'spec.portBindings',
       type: ValidationFieldTypes.Map
     },
     {
