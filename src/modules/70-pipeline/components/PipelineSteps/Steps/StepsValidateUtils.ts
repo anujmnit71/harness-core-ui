@@ -200,7 +200,8 @@ export function generateSchemaForNumeric(
 
 function generateSchemaForMap(
   { label, isRequired, isInputSet }: Field,
-  { getString }: GenerateSchemaDependencies
+  { getString }: GenerateSchemaDependencies,
+  objectShape?: Schema<unknown>
 ): Lazy {
   if (isInputSet) {
     // We can't add validation for key uniqueness and key's value
@@ -216,22 +217,23 @@ function generateSchemaForMap(
         let schema = yup
           .array()
           .of(
-            yup.object().shape(
-              {
-                key: yup.string().when('value', {
-                  is: val => val?.length,
-                  then: yup
-                    .string()
-                    .matches(keyRegexIdentifier, getString('validation.validKeyRegex'))
-                    .required(getString('validation.keyRequired'))
-                }),
-                value: yup.string().when('key', {
-                  is: val => val?.length,
-                  then: yup.string().required(getString('validation.valueRequired'))
-                })
-              },
-              [['key', 'value']]
-            )
+            objectShape ??
+              yup.object().shape(
+                {
+                  key: yup.string().when('value', {
+                    is: val => val?.length,
+                    then: yup
+                      .string()
+                      .matches(keyRegexIdentifier, getString('validation.validKeyRegex'))
+                      .required(getString('validation.keyRequired'))
+                  }),
+                  value: yup.string().when('key', {
+                    is: val => val?.length,
+                    then: yup.string().required(getString('validation.valueRequired'))
+                  })
+                },
+                [['key', 'value']]
+              )
           )
           .test('keysShouldBeUnique', getString('validation.uniqueKeys'), map => {
             if (!map) return true
@@ -348,59 +350,29 @@ function generateSchemaForKeyValue(
   { label, isRequired, isInputSet }: Field,
   { getString }: GenerateSchemaDependencies
 ): Lazy {
-  if (isInputSet) {
-    // We can't add validation for key uniqueness and key's value
-    return yup.mixed().test('validKeys', getString('validation.validKeyRegex'), map => {
-      if (!map || getMultiTypeFromValue(map as string) === MultiTypeInputType.RUNTIME) {
-        return true
-      }
-      return Object.keys(map).every(key => keyRegexIdentifier.test(key))
-    })
-  } else {
-    return yup.lazy(value => {
-      if (Array.isArray(value)) {
-        let schema = yup
-          .array()
-          .of(
-            yup.object().shape(
-              {
-                key: yup.string().when('value', {
-                  is: val => val?.length,
-                  then: yup
-                    .string()
-                    .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
-                    .required(getString('validation.keyRequired'))
-                }),
-                value: yup.string().when('key', {
-                  is: val => val?.length,
-                  then: yup
-                    .string()
-                    .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
-                    .required(getString('validation.valueRequired'))
-                })
-              },
-              [['key', 'value']]
-            )
-          )
-          .test('keysShouldBeUnique', getString('validation.uniqueKeys'), map => {
-            if (!map) return true
-
-            return uniqBy(map, 'key').length === map.length
-          })
-
-        if (Array.isArray(value) && isRequired && label) {
-          schema = schema
-            .ensure()
-            .compact((val: any) => !val?.value)
-            .min(1, getString('fieldRequired', { field: getString(label as StringKeys) }))
-        }
-
-        return schema
-      } else {
-        return yup.string()
-      }
-    })
-  }
+  return generateSchemaForMap(
+    { label, isRequired, isInputSet } as Field,
+    { getString },
+    yup.object().shape(
+      {
+        key: yup.string().when('value', {
+          is: val => val?.length,
+          then: yup
+            .string()
+            .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
+            .required(getString('validation.keyRequired'))
+        }),
+        value: yup.string().when('key', {
+          is: val => val?.length,
+          then: yup
+            .string()
+            .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
+            .required(getString('validation.valueRequired'))
+        })
+      },
+      [['key', 'value']]
+    )
+  )
 }
 
 export function generateSchemaFields(
