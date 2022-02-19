@@ -13,6 +13,7 @@ import { get, set, uniq, uniqBy, isEmpty, isUndefined } from 'lodash-es'
 import type { UseStringsReturn, StringKeys } from 'framework/strings'
 import { getDurationValidationSchema } from '@common/components/MultiTypeDuration/MultiTypeDuration'
 import type { ExecutionWrapperConfig, StepElementConfig } from 'services/cd-ng'
+import type { K8sDirectInfraYaml } from 'services/ci'
 import { keyRegexIdentifier, regexIdentifier } from '@common/utils/StringUtils'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import {
@@ -345,7 +346,8 @@ function generateSchemaForBoolean(): Lazy {
 export function generateSchemaFields(
   fields: Field[],
   { initialValues, steps, serviceDependencies, getString }: GenerateSchemaDependencies,
-  stepViewType: StepViewType
+  stepViewType: StepViewType,
+  buildInfrastructureType?: K8sDirectInfraYaml['type']
 ): SchemaField[] {
   return fields.map(field => {
     const { name, type, label, isRequired, isActive } = field
@@ -400,6 +402,12 @@ export function generateSchemaFields(
         validationRule = (validationRule as any).required(
           getString('fieldRequired', { field: getString(label as StringKeys) })
         )
+        if (buildInfrastructureType === 'VM' && type === Types.Identifier) {
+          validationRule = validationRule.matches(
+            /^[a-zA-Z][a-zA-Z0-9_]*$/,
+            'Identifier should match regex ^[a-zA-Z][a-zA-Z0-9_]*$'
+          )
+        }
       } else if (stepViewType !== StepViewType.Template && type !== Types.Identifier && type !== Types.Name) {
         validationRule = yup.string().required(getString('fieldRequired', { field: getString(label as StringKeys) }))
       }
@@ -425,7 +433,8 @@ export function validate(
   values: any,
   config: Field[],
   dependencies: GenerateSchemaDependencies,
-  stepViewType: StepViewType
+  stepViewType: StepViewType,
+  buildInfrastructureType?: K8sDirectInfraYaml['type']
 ): FormikErrors<any> {
   const errors = {}
   if (isEmpty(dependencies.steps)) {
@@ -434,7 +443,7 @@ export function validate(
   if (isEmpty(dependencies.serviceDependencies)) {
     dependencies.serviceDependencies = []
   }
-  const schemaFields = generateSchemaFields(config, dependencies, stepViewType)
+  const schemaFields = generateSchemaFields(config, dependencies, stepViewType, buildInfrastructureType)
   schemaFields.forEach(({ name, validationRule, isActive = true }) => {
     if (!isActive) return
 

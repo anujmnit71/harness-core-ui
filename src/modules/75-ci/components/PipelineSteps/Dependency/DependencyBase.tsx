@@ -73,7 +73,8 @@ export const DependencyBase = (
             type: StepType.Dependency,
             getString
           },
-          stepViewType
+          stepViewType,
+          buildInfrastructureType
         )
       }}
       onSubmit={(_values: DependencyDataUI) => {
