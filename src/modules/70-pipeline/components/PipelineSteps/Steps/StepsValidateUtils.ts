@@ -14,7 +14,12 @@ import type { UseStringsReturn, StringKeys } from 'framework/strings'
 import { getDurationValidationSchema } from '@common/components/MultiTypeDuration/MultiTypeDuration'
 import type { ExecutionWrapperConfig, StepElementConfig } from 'services/cd-ng'
 import type { K8sDirectInfraYaml } from 'services/ci'
-import { keyRegexIdentifier, regexIdentifier } from '@common/utils/StringUtils'
+import {
+  keyRegexIdentifier,
+  portNumberRegex,
+  regexIdentifier,
+  serviceDependencyIdRegex
+} from '@common/utils/StringUtils'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import {
   IdentifierSchema,
@@ -359,14 +364,14 @@ function generateSchemaForKeyValue(
           is: val => val?.length,
           then: yup
             .string()
-            .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
+            .matches(portNumberRegex, getString('pipeline.ci.validPortRegex'))
             .required(getString('validation.keyRequired'))
         }),
         value: yup.string().when('key', {
           is: val => val?.length,
           then: yup
             .string()
-            .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
+            .matches(portNumberRegex, getString('pipeline.ci.validPortRegex'))
             .required(getString('validation.valueRequired'))
         })
       },
@@ -440,8 +445,8 @@ export function generateSchemaFields(
         )
         if (buildInfrastructureType === 'VM' && type === Types.Identifier) {
           validationRule = validationRule.matches(
-            /^[a-zA-Z][a-zA-Z0-9_]*$/,
-            'Identifier should match regex ^[a-zA-Z][a-zA-Z0-9_]*$'
+            serviceDependencyIdRegex,
+            `Identifier should match regex ${serviceDependencyIdRegex}`
           )
         }
       } else if (stepViewType !== StepViewType.Template && type !== Types.Identifier && type !== Types.Name) {

@@ -96,3 +96,7 @@ export function getEntityNameFromType(entity: GitSyncEntityDTO['entityType']): s
     ? (entity.endsWith('s') ? entity.substring(0, entity.length - 1) : entity).toLowerCase()
     : ''
 }
+
+export const serviceDependencyIdRegex = /^[a-zA-Z][a-zA-Z0-9_]*$/
+
+export const portNumberRegex = /^[0-9]*$/
