@@ -975,7 +975,6 @@ validation:
   # Replace if validIdRegex will apply the same rules
   validStepIdRegex: Identifier can only contain alphanumerics and _
   validKeyRegex: Keys can only contain alphanumerics and _ with an optional dot(.) in the middle
-  validPortRegex: Port can only contain digits
   validOutputVariableRegex: Output variables can only contain alphanumerics and _
   validReportPathRegex: Report paths should end with .xml
   validStepNameRegex: Step Name can only contain alphanumerics, spaces, _, and -

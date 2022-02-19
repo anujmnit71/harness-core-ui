@@ -344,8 +344,12 @@ function generateSchemaForBoolean(): Lazy {
   )
 }
 
-function generateSchemaForKeyValue({ isInputSet }: Field, { getString }: GenerateSchemaDependencies): Lazy {
+function generateSchemaForKeyValue(
+  { label, isRequired, isInputSet }: Field,
+  { getString }: GenerateSchemaDependencies
+): Lazy {
   if (isInputSet) {
+    // We can't add validation for key uniqueness and key's value
     return yup.mixed().test('validKeys', getString('validation.validKeyRegex'), map => {
       if (!map || getMultiTypeFromValue(map as string) === MultiTypeInputType.RUNTIME) {
         return true
@@ -354,17 +358,44 @@ function generateSchemaForKeyValue({ isInputSet }: Field, { getString }: Generat
     })
   } else {
     return yup.lazy(value => {
-      if (typeof value === 'object') {
-        return yup.object().shape({
-          key: yup
-            .string()
-            .matches(/^[0-9]*$/, getString('validation.validPortRegex'))
-            .required(getString('validation.keyRequired')),
-          value: yup
-            .string()
-            .matches(/^[0-9]*$/, getString('validation.validPortRegex'))
-            .required(getString('validation.valueRequired'))
-        })
+      if (Array.isArray(value)) {
+        let schema = yup
+          .array()
+          .of(
+            yup.object().shape(
+              {
+                key: yup.string().when('value', {
+                  is: val => val?.length,
+                  then: yup
+                    .string()
+                    .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
+                    .required(getString('validation.keyRequired'))
+                }),
+                value: yup.string().when('key', {
+                  is: val => val?.length,
+                  then: yup
+                    .string()
+                    .matches(/^[0-9]*$/, getString('pipeline.ci.validPortRegex'))
+                    .required(getString('validation.valueRequired'))
+                })
+              },
+              [['key', 'value']]
+            )
+          )
+          .test('keysShouldBeUnique', getString('validation.uniqueKeys'), map => {
+            if (!map) return true
+
+            return uniqBy(map, 'key').length === map.length
+          })
+
+        if (Array.isArray(value) && isRequired && label) {
+          schema = schema
+            .ensure()
+            .compact((val: any) => !val?.value)
+            .min(1, getString('fieldRequired', { field: getString(label as StringKeys) }))
+        }
+
+        return schema
       } else {
         return yup.string()
       }

@@ -2272,6 +2272,7 @@ export interface StringsMap {
   'pipeline.buildRepo': string
   'pipeline.changeTemplate': string
   'pipeline.changeTemplateLabel': string
+  'pipeline.ci.validPortRegex': string
   'pipeline.ciCodebase.buildType': string
   'pipeline.ciCodebase.prCloneStrategy': string
   'pipeline.ciCodebase.pullRequestNumber': string
@@ -9076,10 +9077,6 @@ export interface StringsMap {
    * @deprecated migrate this string to module level file
    */
   'validation.validOutputVariableRegex': string
-  /**
-   * @deprecated migrate this string to module level file
-   */
-  'validation.validPortRegex': string
   /**
    * @deprecated migrate this string to module level file
    */
