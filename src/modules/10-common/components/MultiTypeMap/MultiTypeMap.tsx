@@ -45,6 +45,8 @@ export interface MultiTypeMapProps {
   cardStyle?: React.CSSProperties
   disabled?: boolean
   appearance?: 'default' | 'minimal'
+  keyLabel?: string
+  valueLabel?: string
 }
 
 export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
@@ -58,6 +60,8 @@ export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
     formik,
     disabled,
     appearance = 'default',
+    keyLabel,
+    valueLabel,
     ...restProps
   } = props
 
@@ -98,7 +102,7 @@ export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
                       <div>
                         {index === 0 && (
                           <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
-                            {getString('keyLabel')}
+                            {keyLabel ?? getString('keyLabel')}
                           </Text>
                         )}
                         <FormInput.Text name={`${name}[${index}].key`} disabled={disabled} />
@@ -107,7 +111,7 @@ export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
                       <div>
                         {index === 0 && (
                           <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
-                            {getString('valueLabel')}
+                            {valueLabel ?? getString('valueLabel')}
                           </Text>
                         )}
                         <div className={cx(css.group, css.withoutAligning, css.withoutSpacing)}>

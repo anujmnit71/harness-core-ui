@@ -9,6 +9,7 @@ import React from 'react'
 import { Text, Formik, FormikForm, Accordion, Color, Container } from '@wings-software/uicore'
 import get from 'lodash/get'
 import type { K8sDirectInfraYaml } from 'services/ci'
+import MultiTypeMap from '@common/components/MultiTypeMap/MultiTypeMap'
 import { Connectors } from '@connectors/constants'
 import { useVariablesExpression } from '@pipeline/components/PipelineStudio/PiplineHooks/useVariablesExpression'
 import { usePipelineContext } from '@pipeline/components/PipelineStudio/PipelineContext/PipelineContext'
@@ -132,6 +133,27 @@ export const DependencyBase = (
                   }
                 }}
               />
+              {buildInfrastructureType === 'VM' ? (
+                <MultiTypeMap
+                  name={'spec.portBindings'}
+                  valueMultiTextInputProps={{ expressions, allowableTypes }}
+                  multiTypeFieldSelectorProps={{
+                    label: (
+                      <Text
+                        style={{ display: 'flex', alignItems: 'center' }}
+                        className={css.inpLabel}
+                        color={Color.GREY_800}
+                        font={{ size: 'small', weight: 'semi-bold' }}
+                      >
+                        {getString('ci.portBindings')}
+                      </Text>
+                    )
+                  }}
+                  disabled={readonly}
+                  keyLabel={getString('ci.hostPort')}
+                  valueLabel={getString('ci.containerPort')}
+                />
+              ) : null}
               <Accordion className={css.accordion}>
                 <Accordion.Panel
                   id="optional-config"
