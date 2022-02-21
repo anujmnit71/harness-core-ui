@@ -668,12 +668,12 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="Layout--vertical StyledProps--main StyledProps--margin-bottom-medium"
           >
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey500"
             >
               ce.recommendation.listPage.filters.clusterName
             </p>
             <p
-              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-primary7"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey800"
             >
               ce-test-dontdelete
             </p>
@@ -682,12 +682,12 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="Layout--vertical StyledProps--main StyledProps--margin-bottom-medium"
           >
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey500"
             >
               ce.perspectives.workloadDetails.fieldNames.workload
             </p>
             <p
-              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-primary7"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey800"
             >
               ce-test-dontdelete-kmpysm
             </p>
@@ -1530,12 +1530,12 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="Layout--vertical StyledProps--main StyledProps--margin-bottom-medium"
           >
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey500"
             >
               ce.recommendation.listPage.filters.clusterName
             </p>
             <p
-              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-primary7"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey800"
             >
               ce-test-dontdelete
             </p>
@@ -1544,12 +1544,12 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="Layout--vertical StyledProps--main StyledProps--margin-bottom-medium"
           >
             <p
-              class="StyledProps--font StyledProps--main"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey500"
             >
               ce.perspectives.workloadDetails.fieldNames.workload
             </p>
             <p
-              class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-primary7"
+              class="StyledProps--font StyledProps--main StyledProps--font-variation-small-semi StyledProps--color StyledProps--color-grey800"
             >
               ce-test-dontdelete-kmpysm
             </p>

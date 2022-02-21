@@ -275,7 +275,11 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
               name="duplicate"
               color="primary5"
               onClick={() => {
-                const yamlVal = getRecommendationYaml(cpuReqValue, memReqValue, memLimitValue)
+                const yamlVal = getRecommendationYaml(
+                  addBufferToValue(cpuReqValue, cpuAndMemoryValueBuffer),
+                  addBufferToValue(memReqValue, cpuAndMemoryValueBuffer),
+                  addBufferToValue(memLimitValue, cpuAndMemoryValueBuffer)
+                )
                 copy(yamlVal)
               }}
               className={css.copyIcon}
