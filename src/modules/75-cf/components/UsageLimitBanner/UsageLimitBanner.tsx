@@ -22,6 +22,7 @@ const UsageLimitBanner = (): ReactElement => {
   const { getString } = useStrings()
 
   const { limitData, usageData } = useGetUsageAndLimit(ModuleName.CF)
+  // console.log('limitData, usageData', limitData, usageData)
 
   const license = useLicenseStore()
   const { isPlanEnforcementEnabled } = usePlanEnforcement()
@@ -32,6 +33,8 @@ const UsageLimitBanner = (): ReactElement => {
     license.licenseInformation.CF?.edition === 'ENTERPRISE' || license.licenseInformation.CF?.edition === 'TEAM'
 
   const clientMauUsageCount = Number(usageData.usage?.ff?.activeClientMAUs?.count)
+
+  // console.log('clientMauUsageCount', clientMauUsageCount)
 
   const clientMauPlanLimit = Number(limitData.limit?.ff?.totalClientMAUs)
 

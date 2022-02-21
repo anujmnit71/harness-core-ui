@@ -12,19 +12,12 @@ export interface UsageLimitBannerTextProps {
   message?: string
 }
 
-const UsageLimitBannerText: React.FC<UsageLimitBannerTextProps> = props => {
-  const { message } = props
-
+const UsageLimitBannerText: React.FC<UsageLimitBannerTextProps> = message => {
   const isPlanEnforcementEnabled = usePlanEnforcement()
   if (!isPlanEnforcementEnabled) {
     return <></>
   }
 
-  return (
-    <>
-      <p>usage limit banner text</p>
-      <p>{message}</p>
-    </>
-  )
+  return <div>{message}</div>
 }
 export default UsageLimitBannerText
