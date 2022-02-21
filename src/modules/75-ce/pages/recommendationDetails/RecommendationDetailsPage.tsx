@@ -85,12 +85,20 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
           </Button>
         </Layout.Horizontal>
         <Layout.Vertical margin={{ bottom: 'medium' }}>
-          <Text>{getString('ce.recommendation.listPage.filters.clusterName')}</Text>
-          <Text color={Color.PRIMARY_7}>{workloadData.clusterName}</Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_500}>
+            {getString('ce.recommendation.listPage.filters.clusterName')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_800}>
+            {workloadData.clusterName}
+          </Text>
         </Layout.Vertical>
         <Layout.Vertical margin={{ bottom: 'medium' }}>
-          <Text>{getString('ce.perspectives.workloadDetails.fieldNames.workload')}</Text>
-          <Text color={Color.PRIMARY_7}>{workloadData.resourceName}</Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_500}>
+            {getString('ce.perspectives.workloadDetails.fieldNames.workload')}
+          </Text>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_800}>
+            {workloadData.resourceName}
+          </Text>
         </Layout.Vertical>
         <Text font={{ variation: FontVariation.H5 }} tooltipProps={{ dataTooltipId: 'tuneRecommendations' }}>
           {getString('ce.recommendation.detailsPage.tuneRecommendations')}
