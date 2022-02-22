@@ -623,6 +623,21 @@ export const setupArtifactoryFormData = async (
   return formData
 }
 
+export const setupAzureFormData = async (connectorInfo: ConnectorInfoDTO, accountId: string): Promise<FormData> => {
+  const scopeQueryParams: GetSecretV2QueryParams = {
+    accountIdentifier: accountId,
+    projectIdentifier: connectorInfo.projectIdentifier,
+    orgIdentifier: connectorInfo.orgIdentifier
+  }
+
+  const formData = {
+    delegateType: connectorInfo.spec.credential.type,
+    password: await setSecretField(connectorInfo.spec.credential?.spec?.secretKeyRef, scopeQueryParams)
+  }
+
+  return formData
+}
+
 export const setupAwsKmsFormData = async (connectorInfo: ConnectorInfoDTO, accountId: string): Promise<FormData> => {
   const connectorInfoSpec = connectorInfo?.spec
   const scopeQueryParams: GetSecretV2QueryParams = {
@@ -968,6 +983,32 @@ export const buildHelmPayload = (formData: FormData) => {
 }
 
 export const buildGcpPayload = (formData: FormData) => {
+  const savedData = {
+    name: formData.name,
+    description: formData.description,
+    projectIdentifier: formData.projectIdentifier,
+    identifier: formData.identifier,
+    orgIdentifier: formData.orgIdentifier,
+    tags: formData.tags,
+    type: Connectors.GCP,
+    spec: {
+      ...(formData?.delegateSelectors ? { delegateSelectors: formData.delegateSelectors } : {}),
+      credential: {
+        type: formData?.delegateType,
+        spec:
+          formData?.delegateType === DelegateTypes.DELEGATE_OUT_CLUSTER
+            ? {
+                secretKeyRef: formData.password.referenceString
+              }
+            : null
+      }
+    }
+  }
+
+  return { connector: savedData }
+}
+
+export const buildAzurePayload = (formData: FormData) => {
   const savedData = {
     name: formData.name,
     description: formData.description,

@@ -45,6 +45,7 @@ import CENGAwsConnector from '../CreateConnector/CENGAwsConnector/CreateCeAwsCon
 import CreateCeGcpConnector from '../CreateConnector/CEGcpConnector/CreateCeGcpConnector'
 import CreateCustomHealthConnector from '../CreateConnector/CustomHealthConnector/CreateCustomHealthConnector'
 import CreateErrorTrackingConnector from '../CreateConnector/ErrorTrackingConnector/CreateErrorTrackingConnector'
+import CreateAzureConnector from '../CreateConnector/AzureConnector/CreateAzureConnector'
 import css from './CreateConnectorWizard.module.scss'
 
 interface CreateConnectorWizardProps {
@@ -145,6 +146,9 @@ export const ConnectorWizard: React.FC<CreateConnectorWizardProps> = props => {
       return <ServiceNowConnector {...commonProps} />
     case Connectors.ERROR_TRACKING:
       return ERROR_TRACKING_ENABLED ? <CreateErrorTrackingConnector {...commonProps} /> : null
+    case Connectors.AZURE:
+      return <CreateAzureConnector {...commonProps} />
+
     default:
       return null
   }

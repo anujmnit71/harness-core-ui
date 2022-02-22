@@ -247,6 +247,8 @@ GCR:
   artifactServer: 'GCR Server'
   stepTwoName: 'Google Container Registry Details'
   registryHostname: 'GCR Registry URL'
+ACR:
+  name: Azure Container Registry
 GCS:
   name: GCS
   fullName: Google Cloud Storage
