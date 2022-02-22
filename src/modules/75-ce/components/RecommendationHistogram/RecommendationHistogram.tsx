@@ -193,7 +193,7 @@ const RecommendationHistogram: React.FC<RecommendationChartProps> = props => {
     const columnData = chart.series[0].points as CustomPoint[]
     const filteredColData = columnData.filter(point => point.x <= memReqValue)
     const pointArgs = filteredColData[filteredColData.length - 1]
-    const memReqValX = pointArgs.plotX + chart.plotLeft + pointArgs.pointWidth / 2 - 9
+    const memReqValX = (pointArgs?.plotX || 0) + chart.plotLeft + (pointArgs?.pointWidth || 0) / 2 - 9
     return memReqValX
   }
 

@@ -62,11 +62,6 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
             color={selectedRecommendation === RecommendationType.CostOptimized ? Color.WHITE : Color.PRIMARY_9}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.CostOptimized })}
             tooltipProps={{ dataTooltipId: 'costOptimized' }}
-            rightIcon="info"
-            rightIconProps={{
-              color: selectedRecommendation === RecommendationType.CostOptimized ? Color.WHITE : Color.PRIMARY_9,
-              size: 12
-            }}
           >
             {getString('ce.recommendation.detailsPage.costOptimized')}
           </Text>
@@ -93,11 +88,6 @@ const RecommendationTabs: React.FC<RecommendationTabsProps> = ({
             color={selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.PRIMARY_9}
             className={cx({ [css.selectedTab]: selectedRecommendation === RecommendationType.PerformanceOptimized })}
             tooltipProps={{ dataTooltipId: 'performanceOptimized' }}
-            rightIcon="info"
-            rightIconProps={{
-              color: selectedRecommendation === RecommendationType.PerformanceOptimized ? Color.WHITE : Color.PRIMARY_9,
-              size: 12
-            }}
           >
             {getString('ce.recommendation.detailsPage.performanceOptimized')}
           </Text>
