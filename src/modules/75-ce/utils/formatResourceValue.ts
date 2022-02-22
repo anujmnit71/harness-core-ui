@@ -60,9 +60,9 @@ export const getRecommendationYaml: (
   memLimitVal: string | number,
   qualityOfService: QualityOfService
 ) => string = (cpuReqVal, memReqVal, memLimitVal, qualityOfService) => {
-  return `limits:\n  memory: ${memLimitVal}${
-    qualityOfService === QualityOfService.GUARANTEED ? `\n  cpu: ${cpuReqVal}` : null
-  }\nrequests:\n  memory: ${memReqVal}\n  cpu: ${cpuReqVal}\n`
+  const cpuLimitVal = qualityOfService === QualityOfService.GUARANTEED ? `\n  cpu: ${cpuReqVal}` : null
+
+  return `limits:\n  memory: ${memLimitVal}${cpuLimitVal}\nrequests:\n  memory: ${memReqVal}\n  cpu: ${cpuReqVal}\n`
 }
 
 export const getMemoryValueInGBFromExpression: (val: string | number) => number = val => {
