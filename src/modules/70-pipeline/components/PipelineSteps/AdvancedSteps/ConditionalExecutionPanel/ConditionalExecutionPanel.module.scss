@@ -19,3 +19,33 @@
     font-weight: 500;
   }
 }
+
+.disabled {
+  pointer-events: none;
+}
+
+.conditionMultiInput {
+  :global {
+    .MultiTypeInput--input {
+      margin-bottom: 0;
+    }
+    .bp3-input {
+      min-height: var(--spacing-12) !important;
+    }
+    .MultiTypeInput--btn.MultiTypeInput--btn {
+      height: var(--spacing-7) !important;
+      width: var(--spacing-7);
+
+      padding: 0;
+      position: absolute;
+      top: var(--spacing-3);
+      right: var(--spacing-3);
+      border: 1px solid var(--form-field-border);
+      border-radius: var(--spacing-2);
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+}

@@ -6,12 +6,20 @@
  */
 
 import React from 'react'
-import { Container, HarnessDocTooltip } from '@wings-software/uicore'
+import {
+  Container,
+  ExpressionAndRuntimeType,
+  getMultiTypeFromValue,
+  HarnessDocTooltip,
+  MultiTypeInputType,
+  Utils
+} from '@wings-software/uicore'
 import { Checkbox } from '@blueprintjs/core'
 import type { FormikProps } from 'formik'
 import cx from 'classnames'
 import { useStrings } from 'framework/strings'
 import { MonacoTextField } from '@common/components/MonacoTextField/MonacoTextField'
+import { ConfigureOptions } from '@common/components/ConfigureOptions/ConfigureOptions'
 import type { StepMode as Modes } from '@pipeline/utils/stepUtils'
 import { useVariablesExpression } from '../../../PipelineStudio/PiplineHooks/useVariablesExpression'
 import type { ConditionalExecutionOption } from './ConditionalExecutionPanelUtils'
@@ -22,12 +30,47 @@ interface ConditionalExecutionConditionProps {
   formikProps: FormikProps<ConditionalExecutionOption>
   mode: Modes
   isReadonly: boolean
+  enableConfigureOptions?: boolean
+}
+
+const MultiTypeMonacoTextFieldFixedTypeComponent = (props: { readonly: boolean; name: string }) => {
+  const { expressions } = useVariablesExpression()
+  const { readonly, name } = props
+  console.log('props props props - inner', props, expressions)
+
+  return (
+    <Container style={{ flexGrow: 1 }}>
+      <MonacoTextField name={name} expressions={expressions} disabled={readonly} />
+    </Container>
+  )
 }
 
 export default function ConditionalExecutionCondition(props: ConditionalExecutionConditionProps): React.ReactElement {
-  const { expressions } = useVariablesExpression()
   const { getString } = useStrings()
-  const { formikProps, mode, isReadonly } = props
+  const { formikProps, mode, isReadonly, enableConfigureOptions = true } = props
+
+  // Helps to reset the ExpressionAndRuntimeType controlled component when the value is changed due to
+  // external factors - example - enable disable toggle
+  const [conditionMultiInputResetKey, setConditionMultiInputKey] = React.useState(Utils.randomId())
+
+  const conditionValue = formikProps.values?.condition
+  const isDisabled = !formikProps.values.enableJEXL || isReadonly
+
+  const expressionAndRuntimeTypeComponent = (
+    <ExpressionAndRuntimeType
+      key={conditionMultiInputResetKey}
+      name={'condition'}
+      value={conditionValue}
+      fixedTypeComponentProps={{
+        readonly: isDisabled,
+        name: 'condition'
+      }}
+      fixedTypeComponent={MultiTypeMonacoTextFieldFixedTypeComponent}
+      style={{ flexGrow: 1 }}
+      allowableTypes={[MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME]}
+      onChange={val => formikProps.setFieldValue('condition', val)}
+    />
+  )
 
   return (
     <>
@@ -46,16 +89,34 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
           const isChecked = e.currentTarget.checked
           formikProps.setFieldValue('enableJEXL', isChecked)
           if (!isChecked) {
+            setConditionMultiInputKey(Utils.randomId())
             formikProps.setFieldValue('condition', null)
           }
         }}
       />
-      <Container padding={{ top: 'small', left: 'large' }}>
-        <MonacoTextField
-          name="condition"
-          expressions={expressions}
-          disabled={!formikProps.values.enableJEXL || isReadonly}
-        />
+      <Container
+        padding={{ top: 'small', left: 'large' }}
+        className={cx({ [css.disabled]: isDisabled }, css.conditionMultiInput)}
+      >
+        {enableConfigureOptions ? (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {expressionAndRuntimeTypeComponent}
+            {getMultiTypeFromValue(conditionValue) === MultiTypeInputType.RUNTIME && (
+              <ConfigureOptions
+                value={conditionValue as string}
+                type={getString('string')}
+                variableName={'condition'}
+                showRequiredField={false}
+                showDefaultField={false}
+                showAdvanced={true}
+                onChange={value => formikProps.setFieldValue('condition', value)}
+                isReadonly={isDisabled}
+              />
+            )}
+          </div>
+        ) : (
+          expressionAndRuntimeTypeComponent
+        )}
       </Container>
     </>
   )

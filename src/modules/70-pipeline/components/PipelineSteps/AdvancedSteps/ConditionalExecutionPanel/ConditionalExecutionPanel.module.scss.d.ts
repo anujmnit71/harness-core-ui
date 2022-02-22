@@ -9,6 +9,8 @@
 declare const styles: {
   readonly active: string
   readonly blackText: string
+  readonly conditionMultiInput: string
+  readonly disabled: string
   readonly expressionInput: string
 }
 export default styles
