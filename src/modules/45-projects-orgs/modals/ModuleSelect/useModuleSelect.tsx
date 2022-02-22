@@ -6,20 +6,38 @@
  */
 
 import React, { useCallback } from 'react'
-import { Button, Card, Container, Icon, Layout, Text, FontVariation, ButtonVariation } from '@wings-software/uicore'
+import {
+  Button,
+  Card,
+  Container,
+  Icon,
+  Layout,
+  Text,
+  FontVariation,
+  ButtonVariation,
+  useToaster
+} from '@wings-software/uicore'
 import { useModalHook } from '@harness/use-modal'
 import { Dialog, IDialogProps } from '@blueprintjs/core'
 import { useHistory, useParams } from 'react-router-dom'
 import { useStrings } from 'framework/strings'
-import { ModuleName } from 'framework/types/ModuleName'
+import { Module, ModuleName } from 'framework/types/ModuleName'
 import { getModuleLink } from '@projects-orgs/components/ModuleListCard/ModuleListCard'
 import type { AccountPathProps } from '@common/interfaces/RouteInterfaces'
 import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import { getModuleDescriptionsForModuleSelectionDialog, getModuleFullLengthTitle } from '@projects-orgs/utils/utils'
 import { getModuleIcon } from '@common/utils/utils'
-import type { Project } from 'services/cd-ng'
+import {
+  Project,
+  StartFreeLicenseQueryParams,
+  useStartTrialLicense,
+  useStartFreeLicense,
+  StartTrialDTO
+} from 'services/cd-ng'
 import ModuleSelectionFactory from '@projects-orgs/factories/ModuleSelectionFactory'
-import { useAppStore } from 'framework/AppStore/AppStoreContext'
+import { handleUpdateLicenseStore, useLicenseStore } from 'framework/LicenseStore/LicenseStoreContext'
+import { Editions, ModuleLicenseType } from '@common/constants/SubscriptionTypes'
+import routes from '@common/RouteDefinitions'
 import css from './useModuleSelect.module.scss'
 
 export interface UseModuleSelectModalProps {
@@ -34,7 +52,7 @@ export interface UseModuleSelectModalReturn {
 interface InfoCards {
   name: ModuleName
 }
-
+const modulesWithSubscriptions = [ModuleName.CD, ModuleName.CE, ModuleName.CF, ModuleName.CI]
 export const useModuleSelectModal = ({
   onSuccess,
   onCloseModal
@@ -45,13 +63,28 @@ export const useModuleSelectModal = ({
   const [selectedModuleName, setSelectedModuleName] = React.useState<ModuleName>()
   const [projectData, setProjectData] = React.useState<Project>()
   const { accountId } = useParams<AccountPathProps>()
-  const { currentUserInfo } = useAppStore()
-  const { NG_LICENSES_ENABLED } = useFeatureFlags()
-  const { accounts } = currentUserInfo
+  const { FREE_PLAN_ENABLED } = useFeatureFlags()
+  const { showError } = useToaster()
 
-  const createdFromNG = accounts?.find(account => account.uuid === accountId)?.createdFromNG
+  const { mutate: startTrial } = useStartTrialLicense({
+    queryParams: {
+      accountIdentifier: accountId
+    }
+  })
 
-  const showTrialPages = createdFromNG || NG_LICENSES_ENABLED
+  const { mutate: startFreePlan } = useStartFreeLicense({
+    queryParams: {
+      accountIdentifier: accountId,
+      moduleType: ModuleName.CD
+    },
+    requestOptions: {
+      headers: {
+        'content-type': 'application/json'
+      }
+    }
+  })
+
+  const { licenseInformation, updateLicenseStore } = useLicenseStore()
   const { CDNG_ENABLED, CVNG_ENABLED, CING_ENABLED, CENG_ENABLED, CFNG_ENABLED } = useFeatureFlags()
   const modalProps: IDialogProps = {
     isOpen: true,
@@ -90,6 +123,61 @@ export const useModuleSelectModal = ({
     infoCards.push({
       name: ModuleName.CV
     })
+  }
+  const gotoModule = (search: string) => {
+    if (selectedModuleName) {
+      switch (selectedModuleName) {
+        case ModuleName.CE: {
+          history.push({
+            pathname: routes.toModuleTrialHome({
+              accountId,
+              module: selectedModuleName.toLocaleLowerCase() as Module
+            }),
+            search: search
+          })
+          break
+        }
+        case ModuleName.CF: {
+          if (projectData) {
+            history.push({
+              pathname: routes.toCFOnboarding({
+                orgIdentifier: projectData?.orgIdentifier || '',
+                projectIdentifier: projectData.identifier,
+                accountId
+              })
+            })
+          }
+          break
+        }
+        case ModuleName.CD:
+        case ModuleName.CI: {
+          if (projectData) {
+            const pathname = routes.toPipelineStudio({
+              orgIdentifier: projectData.orgIdentifier || '',
+              projectIdentifier: projectData.identifier,
+              pipelineIdentifier: '-1',
+              accountId,
+              module: selectedModuleName.toLowerCase() as Module
+            })
+            history.push({
+              pathname,
+              search: `modal=${FREE_PLAN_ENABLED ? ModuleLicenseType.FREE : ModuleLicenseType.TRIAL}`
+            })
+          }
+          break
+        }
+        default: {
+          history.push({
+            pathname: routes.toModuleHome({
+              accountId,
+              module: selectedModuleName.toLocaleLowerCase() as Module
+            }),
+
+            search
+          })
+        }
+      }
+    }
   }
 
   const [showModal, hideModal] = useModalHook(
@@ -143,16 +231,29 @@ export const useModuleSelectModal = ({
                     </Text>
                     <Button
                       text={
-                        showTrialPages
-                          ? getString('common.startTrial', {
-                              module: selectedModuleName
-                            })
+                        !licenseInformation[selectedModuleName] && modulesWithSubscriptions.includes(selectedModuleName)
+                          ? FREE_PLAN_ENABLED
+                            ? getString('common.startFreePlan', {
+                                module: selectedModuleName
+                              })
+                            : getString('common.startTrial', {
+                                module: selectedModuleName
+                              })
                           : getString('projectsOrgs.goToModuleBtn')
                       }
-                      width={showTrialPages ? undefined : 150}
+                      width={
+                        !licenseInformation[selectedModuleName] && modulesWithSubscriptions.includes(selectedModuleName)
+                          ? undefined
+                          : 150
+                      }
                       variation={ButtonVariation.PRIMARY}
                       onClick={() => {
-                        if (projectData && projectData.orgIdentifier) {
+                        if (
+                          projectData &&
+                          projectData.orgIdentifier &&
+                          (licenseInformation[selectedModuleName] ||
+                            !modulesWithSubscriptions.includes(selectedModuleName))
+                        ) {
                           history.push(
                             getModuleLink({
                               module: selectedModuleName,
@@ -161,6 +262,44 @@ export const useModuleSelectModal = ({
                               accountId
                             })
                           )
+                        } else {
+                          if (FREE_PLAN_ENABLED) {
+                            startFreePlan(undefined, {
+                              queryParams: {
+                                accountIdentifier: accountId,
+                                moduleType: selectedModuleName as StartFreeLicenseQueryParams['moduleType']
+                              }
+                            })
+                              .then(planData => {
+                                handleUpdateLicenseStore(
+                                  { ...licenseInformation },
+                                  updateLicenseStore,
+                                  selectedModuleName.toLowerCase() as Module,
+                                  planData?.data
+                                )
+                                gotoModule(`?experience=${ModuleLicenseType.FREE}&&modal=${ModuleLicenseType.FREE}`)
+                              })
+                              .catch(err => {
+                                showError(err)
+                              })
+                          } else {
+                            startTrial({
+                              moduleType: selectedModuleName as StartTrialDTO['moduleType'],
+                              edition: Editions.ENTERPRISE
+                            })
+                              .then(planData => {
+                                handleUpdateLicenseStore(
+                                  { ...licenseInformation },
+                                  updateLicenseStore,
+                                  selectedModuleName.toLowerCase() as Module,
+                                  planData?.data
+                                )
+                                gotoModule(`?experience=${ModuleLicenseType.TRIAL}&&modal=${ModuleLicenseType.TRIAL}`)
+                              })
+                              .catch(err => {
+                                showError(err)
+                              })
+                          }
                         }
                       }}
                     ></Button>
