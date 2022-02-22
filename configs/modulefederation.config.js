@@ -38,7 +38,7 @@ module.exports = ({ enableGitOpsUI, enableSTO }) => {
     remotes.sto = "sto@[window.getApiBaseUrl('sto/remoteEntry.js')]"
   }
   
-  remotes.errortracking = "errortracking@http://localhost:3091/remoteEntry.js";
+  remotes.errortracking = "errortracking@[window.getApiBaseUrl('et/remoteEntry.js')]";
   
   return {
     name: 'nextgenui',
