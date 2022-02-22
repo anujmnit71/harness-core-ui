@@ -12,9 +12,9 @@ import type { MonacoEditorProps } from 'react-monaco-editor'
 import { StaticServices } from 'monaco-editor/esm/vs/editor/standalone/browser/standaloneServices'
 StaticServices.configurationService.get().updateValue('files.eol', '\n')
 //@ts-ignore
-import YamlWorker from 'worker-loader!@wings-software/monaco-yaml/lib/esm/yaml.worker'
+import YamlWorker from 'worker-loader?publicPath=ng/static/!@wings-software/monaco-yaml/lib/esm/yaml.worker'
 //@ts-ignore
-import EditorWorker from 'worker-loader!monaco-editor/esm/vs/editor/editor.worker'
+import EditorWorker from 'worker-loader?publicPath=ng/static/!monaco-editor/esm/vs/editor/editor.worker'
 
 export type ReactMonacoEditorRef =
   | ((instance: ReactMonacoEditor | null) => void)
