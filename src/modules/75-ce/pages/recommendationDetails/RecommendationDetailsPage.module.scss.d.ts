@@ -13,7 +13,6 @@ declare const styles: {
   readonly costContainer: string
   readonly customImage: string
   readonly detailsContainer: string
-  readonly infoText: string
   readonly mainContainer: string
   readonly pageBody: string
   readonly pillToggle: string

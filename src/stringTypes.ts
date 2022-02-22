@@ -3823,7 +3823,8 @@ export interface StringsMap {
   'ce.recommendation.detailsPage.costOptimizedCaps': string
   'ce.recommendation.detailsPage.costOptimizedDetails': string
   'ce.recommendation.detailsPage.currentResources': string
-  'ce.recommendation.detailsPage.customDetails': string
+  'ce.recommendation.detailsPage.customDetailsText1': string
+  'ce.recommendation.detailsPage.customDetailsText2': string
   'ce.recommendation.detailsPage.guaranteed': string
   'ce.recommendation.detailsPage.headerText': string
   'ce.recommendation.detailsPage.histogramText': string

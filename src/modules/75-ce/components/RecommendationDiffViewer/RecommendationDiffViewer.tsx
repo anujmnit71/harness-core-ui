@@ -19,7 +19,7 @@ interface DiffBlockProps {
   textColor: string
   resources: ResourceDetails
   border?: BorderProps
-  qualityOfService?: string
+  qualityOfService?: QualityOfService
   dataTestId?: string
 }
 
@@ -86,7 +86,7 @@ const DiffBlock: React.FC<DiffBlockProps> = ({
 interface RecommendationDiffViewerProps {
   recommendedResources: ResourceObject
   currentResources: ResourceObject
-  qualityOfService: string
+  qualityOfService: QualityOfService
 }
 
 const RecommendationDiffViewer: React.FC<RecommendationDiffViewerProps> = ({

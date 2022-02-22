@@ -9,7 +9,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Container, Layout, Text, Button, Icon, Popover, FontVariation, Color } from '@wings-software/uicore'
 import copy from 'copy-to-clipboard'
 import { PopoverInteractionKind, Position } from '@blueprintjs/core'
-import moment from 'moment'
 import cx from 'classnames'
 import { useStrings } from 'framework/strings'
 
@@ -25,6 +24,7 @@ import { RecommendationItem, TimeRangeValue, ResourceObject, QualityOfService } 
 import type { RecommendationOverviewStats } from 'services/ce/services'
 
 import formatCost from '@ce/utils/formatCost'
+import { getTimePeriodString } from '@ce/utils/momentUtils'
 import { RecommendationType, ChartColors, PercentileValues } from './constants'
 import RecommendationTabs from './RecommendationTabs'
 import RecommendationDiffViewer from '../RecommendationDiffViewer/RecommendationDiffViewer'
@@ -43,7 +43,7 @@ interface RecommendationDetailsProps {
   currentResources: ResourceObject
   timeRange: TimeRangeValue
   recommendationStats: RecommendationOverviewStats
-  qualityOfService: string
+  qualityOfService: QualityOfService
   timeRangeFilter: string[]
   cpuAndMemoryValueBuffer: number
 }
@@ -228,7 +228,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
             )}
             withoutRecommendationAmount={formatCost(recommendationStats?.totalMonthlyCost)}
             title={getString('ce.recommendation.listPage.monthlyPotentialCostText')}
-            spentBy={moment(timeRangeFilter[1]).format('MMM DD')}
+            spentBy={getTimePeriodString(timeRangeFilter[1], 'MMM DD')}
           />
         </Container>
         <Container width="100%">
@@ -239,7 +239,10 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
               recommendationStats?.totalMonthlySaving,
               recommendationStats?.totalMonthlyCost
             )}
-            subTitle={`${moment(timeRangeFilter[0]).format('MMM DD')} - ${moment(timeRangeFilter[1]).format('MMM DD')}`}
+            subTitle={`${getTimePeriodString(timeRangeFilter[0], 'MMM DD')} - ${getTimePeriodString(
+              timeRangeFilter[1],
+              'MMM DD'
+            )}`}
           />
         </Container>
       </Layout.Horizontal>
@@ -278,7 +281,8 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
                 const yamlVal = getRecommendationYaml(
                   addBufferToValue(cpuReqValue, cpuAndMemoryValueBuffer),
                   addBufferToValue(memReqValue, cpuAndMemoryValueBuffer),
-                  addBufferToValue(memLimitValue, cpuAndMemoryValueBuffer)
+                  addBufferToValue(memLimitValue, cpuAndMemoryValueBuffer),
+                  qualityOfService
                 )
                 copy(yamlVal)
               }}
@@ -287,7 +291,6 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
             />
           </Layout.Horizontal>
         </section>
-
         <RecommendationDiffViewer
           recommendedResources={{
             limits: {

@@ -20,7 +20,8 @@ import {
   FontVariation,
   ButtonVariation,
   ButtonSize,
-  PillToggle
+  PillToggle,
+  Icon
 } from '@wings-software/uicore'
 import { Position, Menu, MenuItem, Slider } from '@blueprintjs/core'
 import { NGBreadcrumbs } from '@common/components/NGBreadcrumbs/NGBreadcrumbs'
@@ -56,8 +57,8 @@ interface RecommendationDetails {
 interface WorkloadDetailsProps {
   workloadData: WorkloadDataType
   goToWorkloadDetails: () => void
-  qualityOfService: string
-  setQualityOfService: React.Dispatch<React.SetStateAction<string>>
+  qualityOfService: QualityOfService
+  setQualityOfService: React.Dispatch<React.SetStateAction<QualityOfService>>
   cpuAndMemoryValueBuffer: number
   setCpuAndMemoryValueBuffer: React.Dispatch<React.SetStateAction<number>>
 }
@@ -77,7 +78,7 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
     <Container padding="xlarge">
       <Layout.Vertical spacing="medium">
         <Layout.Horizontal margin={{ bottom: 'medium' }} flex={{ justifyContent: 'space-between' }}>
-          <Text font={{ variation: FontVariation.H5 }}>
+          <Text font={{ variation: FontVariation.H5 }} tooltipProps={{ dataTooltipId: 'workloadDetails' }}>
             {getString('ce.perspectives.workloadDetails.workloadDetailsText')}
           </Text>
           <Button variation={ButtonVariation.SECONDARY} size={ButtonSize.SMALL} onClick={goToWorkloadDetails}>
@@ -86,7 +87,7 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
         </Layout.Horizontal>
         <Layout.Vertical margin={{ bottom: 'medium' }}>
           <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_500}>
-            {getString('ce.recommendation.listPage.filters.clusterName')}
+            {getString('common.cluster')}
           </Text>
           <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.GREY_800}>
             {workloadData.clusterName}
@@ -153,15 +154,16 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
           </Container>
         </Card>
         <Container padding="medium" background={Color.BLUE_50}>
-          <Layout.Horizontal>
-            <Text
-              icon="info-messaging"
-              font={{ variation: FontVariation.SMALL }}
-              padding={{ right: 'small' }}
-              className={css.infoText}
-            >
-              {getString('ce.recommendation.detailsPage.customDetails')}
-            </Text>
+          <Layout.Horizontal spacing="small">
+            <Icon name="info-messaging" />
+            <Container>
+              <Text font={{ variation: FontVariation.SMALL }}>
+                {getString('ce.recommendation.detailsPage.customDetailsText1')}
+              </Text>
+              <Text font={{ variation: FontVariation.SMALL }} padding={{ top: 'small' }}>
+                {getString('ce.recommendation.detailsPage.customDetailsText2')}
+              </Text>
+            </Container>
             <img className={css.customImage} src={CustomizeRecommendationsImg} alt="custom-recommendation-img" />
           </Layout.Horizontal>
         </Container>
@@ -188,7 +190,7 @@ const RecommendationDetailsPage: React.FC = () => {
   const history = useHistory()
   const [timeRange, setTimeRange] = useState<TimeRangeValue>({ value: TimeRangeType.LAST_7, label: TimeRange.LAST_7 })
 
-  const [qualityOfService, setQualityOfService] = useState<string>(QualityOfService.BURSTABLE)
+  const [qualityOfService, setQualityOfService] = useState<QualityOfService>(QualityOfService.BURSTABLE)
   const [cpuAndMemoryValueBuffer, setCpuAndMemoryValueBuffer] = useState(0)
 
   useEffect(() => {
@@ -235,7 +237,7 @@ const RecommendationDetailsPage: React.FC = () => {
   return (
     <>
       <Page.Header
-        title={`${getString('ce.recommendation.detailsPage.headerText')} ${recommendationName}`}
+        title={recommendationName}
         breadcrumbs={
           <NGBreadcrumbs
             links={[
