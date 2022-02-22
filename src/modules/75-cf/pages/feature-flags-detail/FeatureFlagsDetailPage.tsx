@@ -105,35 +105,35 @@ const FeatureFlagsDetailPage: React.FC = () => {
   )
 
   return (
-    <Container flex height="100%">
-      <Layout.Vertical className={css.flagContainer} width={450}>
-        {featureFlag && (
-          <FlagActivationDetails
-            featureFlag={featureFlag}
-            refetchFlag={refetch}
-            gitSyncActionsComponent={gitSync?.isGitSyncActionsEnabled ? <GitSyncActionsComponent /> : undefined}
-            gitSync={gitSync}
-          />
-        )}
-      </Layout.Vertical>
-
-      <Layout.Horizontal
-        width="calc(100% - 450px + 20px)"
-        height="100%"
-        style={{ transform: 'translateX(-20px)', background: 'var(--white)' }}
-      >
-        <Layout.Vertical width="100%">
-          {!loading && featureFlag && (
-            <FlagActivation
-              refetchFlag={refetchFlag}
+    <div className={css.pageLayout}>
+      <section>
+        <Layout.Vertical className={css.flagActivationDetailsLayout}>
+          {featureFlag && (
+            <FlagActivationDetails
+              featureFlag={featureFlag}
+              refetchFlag={refetch}
+              gitSyncActionsComponent={gitSync?.isGitSyncActionsEnabled ? <GitSyncActionsComponent /> : undefined}
               gitSync={gitSync}
+<<<<<<< HEAD
               projectIdentifier={projectIdentifier as string}
               flagData={featureFlag}
+=======
+>>>>>>> aae4352b6a5d (feat: [FFM-1781]: (WIP) Added boilerplate for new tab content)
             />
           )}
         </Layout.Vertical>
-      </Layout.Horizontal>
-    </Container>
+      </section>
+      <section>
+        {!loading && featureFlag && (
+          <FlagActivation
+            refetchFlag={refetchFlag}
+            gitSync={gitSync}
+            project={projectIdentifier as string}
+            flagData={featureFlag}
+          />
+        )}
+      </section>
+    </div>
   )
 }
 

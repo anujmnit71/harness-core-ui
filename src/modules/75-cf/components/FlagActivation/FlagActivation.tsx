@@ -24,7 +24,6 @@ import {
 } from '@wings-software/uicore'
 import { useModalHook } from '@harness/use-modal'
 import { Dialog } from '@blueprintjs/core'
-import cx from 'classnames'
 import * as yup from 'yup'
 import {
   Feature,
@@ -53,6 +52,9 @@ import type { FeatureFlagPathProps, ProjectPathProps } from '@common/interfaces/
 import { AUTO_COMMIT_MESSAGES } from '@cf/constants/GitSyncConstants'
 import { GIT_SYNC_ERROR_CODE, UseGitSync } from '@cf/hooks/useGitSync'
 import usePlanEnforcement from '@cf/hooks/usePlanEnforcement'
+import { useFeatureFlag } from '@common/hooks/useFeatureFlag'
+import { FeatureFlag } from '@common/featureFlags'
+import TargetingRulesTab from '@cf/pages/feature-flags-detail/targeting-rules-tab/TargetingRulesTab'
 import FlagElemTest from '../CreateFlagWizard/FlagElemTest'
 import TabTargeting from '../EditFlagTabs/TabTargeting'
 import TabActivity from '../EditFlagTabs/TabActivity'
@@ -130,6 +132,8 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
       }
     }
   })
+
+  const FFM_1513 = useFeatureFlag(FeatureFlag.FFM_1513)
 
   const { gitSyncValidationSchema, gitSyncInitialValues } = gitSync?.getGitSyncFormMeta(
     AUTO_COMMIT_MESSAGES.UPDATED_FLAG_RULES
@@ -407,7 +411,7 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
 
     return errors
   }
-  const [openModalTestFlag, hideModalTestFlag] = useModalHook(() => (
+  const [hideModalTestFlag] = useModalHook(() => (
     <Dialog enforceFocus={false} onClose={hideModalTestFlag} isOpen={true} className={css.testFlagDialog}>
       <Container className={css.testFlagDialogContainer}>
         <FlagElemTest name="" fromWizard={false} />
@@ -506,12 +510,13 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
             <Container className={css.formContainer}>
               <Layout.Horizontal
                 flex
-                padding="large"
                 style={{
-                  backgroundColor: '#F4F6FF',
+                  //TODO move to class
+                  backgroundColor: '#FFFFFF',
                   mixBlendMode: 'normal',
-                  boxShadow: '0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16)',
-                  paddingLeft: 'var(--spacing-huge)'
+                  height: '70px',
+                  padding: '12px 24px 12px 24px',
+                  borderBottom: '1px solid #D9DAE6'
                 }}
               >
                 <FlexExpander />
@@ -519,10 +524,9 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
               </Layout.Horizontal>
               {isPlanEnforcementEnabled && <UsageLimitBanner />}
 
-              <Container
-                className={cx(css.tabContainer, (!editing || activeTabId !== FFDetailPageTab.TARGETING) && css.noEdit)}
-              >
+              <Container className={css.tabContainer}>
                 {flagData && (
+<<<<<<< HEAD
                   <>
                     <Tabs
                       id="editFlag"
@@ -565,8 +569,48 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
                       onClick={openModalTestFlag}
                       className={css.btnCode}
                       title={getString('cf.featureNotReady')}
+=======
+                  <Tabs
+                    id="editFlag"
+                    defaultSelectedTabId={activeTabId}
+                    onChange={(tabId: string) => setActiveTabId(tabId)}
+                  >
+                    <Tab
+                      id={FFDetailPageTab.TARGETING}
+                      title={<Text className={css.tabTitle}>{getString('cf.featureFlags.targeting')}</Text>}
+                      panel={
+                        <>
+                          {FFM_1513 ? (
+                            <TargetingRulesTab />
+                          ) : (
+                            // This will be deprecated when FFM_1513 epic is complete
+                            <TabTargeting
+                              formikProps={formikProps}
+                              editing={editing}
+                              projectIdentifier={project}
+                              environmentIdentifier={activeEnvironment}
+                              setEditing={setEditing}
+                              feature={flagData}
+                              org={orgIdentifier}
+                              accountIdentifier={accountId}
+                            />
+                          )}
+                        </>
+                      }
                     />
-                  </>
+                    <Tab
+                      id={FFDetailPageTab.METRICS}
+                      title={<Text className={css.tabTitle}>{getString('cf.featureFlags.metrics.title')}</Text>}
+                      panel={<MetricsView flagData={flagData} />}
+                    />
+
+                    <Tab
+                      id={FFDetailPageTab.ACTIVITY}
+                      title={<Text className={css.tabTitle}>{getString('cf.featureFlags.activity')}</Text>}
+                      panel={<TabActivity flagData={flagData} />}
+>>>>>>> aae4352b6a5d (feat: [FFM-1781]: (WIP) Added boilerplate for new tab content)
+                    />
+                  </Tabs>
                 )}
               </Container>
               {(editing || formikProps.values.state !== flagData.envProperties?.state) &&
