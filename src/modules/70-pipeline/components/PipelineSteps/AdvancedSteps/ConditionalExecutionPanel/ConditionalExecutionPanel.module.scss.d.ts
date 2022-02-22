@@ -9,7 +9,8 @@
 declare const styles: {
   readonly active: string
   readonly blackText: string
-  readonly conditionMultiInput: string
+  readonly conditionInputContainer: string
+  readonly conditionInputContainerForMultiTypeFixed: string
   readonly disabled: string
   readonly expressionInput: string
 }

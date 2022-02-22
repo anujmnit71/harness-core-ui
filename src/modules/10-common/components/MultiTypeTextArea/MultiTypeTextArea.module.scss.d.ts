@@ -8,6 +8,6 @@
 // this is an auto-generated file, do not update this manually
 declare const styles: {
   readonly input: string
-  readonly multiTypeTextAreaContainer: string
+  readonly textAreaContainerForFixedMultiType: string
 }
 export default styles

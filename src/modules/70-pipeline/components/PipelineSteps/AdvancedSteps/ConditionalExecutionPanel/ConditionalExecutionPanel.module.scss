@@ -24,16 +24,18 @@
   pointer-events: none;
 }
 
-.conditionMultiInput {
+.conditionInputContainer {
   :global {
     .MultiTypeInput--input {
       margin-bottom: 0;
     }
-    .bp3-input {
-      min-height: var(--spacing-12) !important;
-    }
+  }
+}
+
+.conditionInputContainerForMultiTypeFixed {
+  :global {
     .MultiTypeInput--btn.MultiTypeInput--btn {
-      height: var(--spacing-7) !important;
+      height: var(--spacing-7);
       width: var(--spacing-7);
 
       padding: 0;

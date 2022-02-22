@@ -5,7 +5,7 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Container,
   ExpressionAndRuntimeType,
@@ -36,7 +36,6 @@ interface ConditionalExecutionConditionProps {
 const MultiTypeMonacoTextFieldFixedTypeComponent = (props: { readonly: boolean; name: string }) => {
   const { expressions } = useVariablesExpression()
   const { readonly, name } = props
-  console.log('props props props - inner', props, expressions)
 
   return (
     <Container style={{ flexGrow: 1 }}>
@@ -56,6 +55,8 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
   const conditionValue = formikProps.values?.condition
   const isDisabled = !formikProps.values.enableJEXL || isReadonly
 
+  const [multiType, setMultiType] = useState<MultiTypeInputType>(getMultiTypeFromValue(conditionValue))
+
   const expressionAndRuntimeTypeComponent = (
     <ExpressionAndRuntimeType
       key={conditionMultiInputResetKey}
@@ -69,6 +70,7 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
       style={{ flexGrow: 1 }}
       allowableTypes={[MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME]}
       onChange={val => formikProps.setFieldValue('condition', val)}
+      onTypeChange={setMultiType}
     />
   )
 
@@ -89,19 +91,25 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
           const isChecked = e.currentTarget.checked
           formikProps.setFieldValue('enableJEXL', isChecked)
           if (!isChecked) {
+            // Reset form
             setConditionMultiInputKey(Utils.randomId())
             formikProps.setFieldValue('condition', null)
+            setMultiType(MultiTypeInputType.FIXED)
           }
         }}
       />
       <Container
         padding={{ top: 'small', left: 'large' }}
-        className={cx({ [css.disabled]: isDisabled }, css.conditionMultiInput)}
+        className={cx(
+          { [css.disabled]: isDisabled },
+          { [css.conditionInputContainerForMultiTypeFixed]: multiType === MultiTypeInputType.FIXED },
+          css.conditionInputContainer
+        )}
       >
         {enableConfigureOptions ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {expressionAndRuntimeTypeComponent}
-            {getMultiTypeFromValue(conditionValue) === MultiTypeInputType.RUNTIME && (
+            {multiType === MultiTypeInputType.RUNTIME && (
               <ConfigureOptions
                 value={conditionValue as string}
                 type={getString('string')}
