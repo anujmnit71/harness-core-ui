@@ -5,17 +5,21 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import type { ReactNode } from 'react'
 import { BannerType } from '@common/layouts/Constants'
 import type { CheckFeatureReturn } from 'framework/featureStore/featureStoreUtil'
 import { formatToCompactNumber } from '@cf/utils/CFUtils'
 import type { UseStringsReturn } from 'framework/strings'
 
+interface BannerText {
+  message: () => string
+  bannerType: BannerType
+}
+
 export const getBannerText = (
   getString: UseStringsReturn['getString'],
   monthlyActiveUsers: CheckFeatureReturn,
   additionalLicenseProps: Record<string, any>
-): ReactNode => {
+): BannerText => {
   const { isEnterpriseEdition, isFreeEdition, isTeamEdition } = additionalLicenseProps
 
   const clientMauUsageCount = Number(monthlyActiveUsers?.featureDetail?.count)
@@ -31,7 +35,7 @@ export const getBannerText = (
   let bannerType!: BannerType
 
   if (isFreeEdition) {
-    if (!showInfoBanner) {
+    if (showInfoBanner) {
       return {
         message: () =>
           getString('cf.planEnforcement.freePlan.approachingLimit', {
@@ -44,9 +48,10 @@ export const getBannerText = (
 
     if (showWarningBanner) {
       return {
-        message: getString('cf.planEnforcement.freePlan.upgradeRequired', {
-          clientMauPlanLimitFormatted
-        }),
+        message: () =>
+          getString('cf.planEnforcement.freePlan.upgradeRequired', {
+            clientMauPlanLimitFormatted
+          }),
         bannerType: BannerType.LEVEL_UP
       }
     }
@@ -72,7 +77,7 @@ export const getBannerText = (
   }
 
   return {
-    message,
+    message: () => message,
     bannerType
   }
 }
