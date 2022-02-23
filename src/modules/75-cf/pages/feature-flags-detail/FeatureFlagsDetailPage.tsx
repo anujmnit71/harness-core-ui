@@ -114,11 +114,6 @@ const FeatureFlagsDetailPage: React.FC = () => {
               refetchFlag={refetch}
               gitSyncActionsComponent={gitSync?.isGitSyncActionsEnabled ? <GitSyncActionsComponent /> : undefined}
               gitSync={gitSync}
-<<<<<<< HEAD
-              projectIdentifier={projectIdentifier as string}
-              flagData={featureFlag}
-=======
->>>>>>> aae4352b6a5d (feat: [FFM-1781]: (WIP) Added boilerplate for new tab content)
             />
           )}
         </Layout.Vertical>
@@ -128,7 +123,7 @@ const FeatureFlagsDetailPage: React.FC = () => {
           <FlagActivation
             refetchFlag={refetchFlag}
             gitSync={gitSync}
-            project={projectIdentifier as string}
+            projectIdentifier={projectIdentifier as string}
             flagData={featureFlag}
           />
         )}

@@ -79,17 +79,14 @@ const FlagToggleSwitch = (props: FlagToggleSwitchProps): ReactElement => {
             <Text inline font={{ variation: FontVariation.FORM_INPUT_TEXT }} padding={{ left: 'small' }}>
               {isFlagSwitchChanged
                 ? getString(switchOff ? 'cf.featureFlags.flagWillTurnOff' : 'cf.featureFlags.flagWillTurnOn')
-                : switchOff
-                ? getString('cf.featureFlags.flagOff')
-                : getString('cf.featureFlags.flagOn')}
+                : getString(switchOff ? 'cf.featureFlags.flagOff' : 'cf.featureFlags.flagOn')}
             </Text>
           }
           data-testid="flag-status-switch"
           onChange={handleToggle}
           alignIndicator="left"
           className={cx(Classes.LARGE, css.switch)}
-          // checked={currentState === FeatureFlagActivationStatus.ON}
-          checked={true}
+          checked={currentState === FeatureFlagActivationStatus.ON}
           disabled={switchDisabled || !canToggle}
         />
       </Text>

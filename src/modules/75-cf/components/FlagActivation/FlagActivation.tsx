@@ -526,7 +526,6 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
 
               <Container className={css.tabContainer}>
                 {flagData && (
-<<<<<<< HEAD
                   <>
                     <Tabs
                       id="editFlag"
@@ -537,16 +536,22 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
                         id={FFDetailPageTab.TARGETING}
                         title={<Text className={css.tabTitle}>{getString('cf.featureFlags.targeting')}</Text>}
                         panel={
-                          <TabTargeting
-                            formikProps={formikProps}
-                            editing={editing}
-                            projectIdentifier={projectIdentifier}
-                            environmentIdentifier={environmentIdentifier}
-                            setEditing={setEditing}
-                            feature={flagData}
-                            orgIdentifier={orgIdentifier}
-                            accountIdentifier={accountIdentifier}
-                          />
+                          <>
+                            {FFM_1513 ? (
+                              <TargetingRulesTab featureFlag={flagData} refetchFlag={refetchFlag} />
+                            ) : (
+                              <TabTargeting
+                                formikProps={formikProps}
+                                editing={editing}
+                                projectIdentifier={projectIdentifier}
+                                environmentIdentifier={environmentIdentifier}
+                                setEditing={setEditing}
+                                feature={flagData}
+                                orgIdentifier={orgIdentifier}
+                                accountIdentifier={accountIdentifier}
+                              />
+                            )}
+                          </>
                         }
                       />
                       <Tab
@@ -561,56 +566,7 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
                         panel={<TabActivity flagData={flagData} />}
                       />
                     </Tabs>
-                    <Button
-                      icon="code"
-                      disabled
-                      minimal
-                      intent="primary"
-                      onClick={openModalTestFlag}
-                      className={css.btnCode}
-                      title={getString('cf.featureNotReady')}
-=======
-                  <Tabs
-                    id="editFlag"
-                    defaultSelectedTabId={activeTabId}
-                    onChange={(tabId: string) => setActiveTabId(tabId)}
-                  >
-                    <Tab
-                      id={FFDetailPageTab.TARGETING}
-                      title={<Text className={css.tabTitle}>{getString('cf.featureFlags.targeting')}</Text>}
-                      panel={
-                        <>
-                          {FFM_1513 ? (
-                            <TargetingRulesTab />
-                          ) : (
-                            // This will be deprecated when FFM_1513 epic is complete
-                            <TabTargeting
-                              formikProps={formikProps}
-                              editing={editing}
-                              projectIdentifier={project}
-                              environmentIdentifier={activeEnvironment}
-                              setEditing={setEditing}
-                              feature={flagData}
-                              org={orgIdentifier}
-                              accountIdentifier={accountId}
-                            />
-                          )}
-                        </>
-                      }
-                    />
-                    <Tab
-                      id={FFDetailPageTab.METRICS}
-                      title={<Text className={css.tabTitle}>{getString('cf.featureFlags.metrics.title')}</Text>}
-                      panel={<MetricsView flagData={flagData} />}
-                    />
-
-                    <Tab
-                      id={FFDetailPageTab.ACTIVITY}
-                      title={<Text className={css.tabTitle}>{getString('cf.featureFlags.activity')}</Text>}
-                      panel={<TabActivity flagData={flagData} />}
->>>>>>> aae4352b6a5d (feat: [FFM-1781]: (WIP) Added boilerplate for new tab content)
-                    />
-                  </Tabs>
+                  </>
                 )}
               </Container>
               {(editing || formikProps.values.state !== flagData.envProperties?.state) &&
