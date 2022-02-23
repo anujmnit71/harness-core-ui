@@ -8,71 +8,68 @@
 import type { ReactNode } from 'react'
 import { BannerType } from '@common/layouts/Constants'
 import type { CheckFeatureReturn } from 'framework/featureStore/featureStoreUtil'
-// import { formatToCompactNumber } from '@cf/utils/CFUtils'
+import { formatToCompactNumber } from '@cf/utils/CFUtils'
+import type { UseStringsReturn } from 'framework/strings'
 
 export const getBannerText = (
+  getString: UseStringsReturn['getString'],
   monthlyActiveUsers: CheckFeatureReturn,
-  additionalLicenseProps: Record<string, boolean>
+  additionalLicenseProps: Record<string, any>
 ): ReactNode => {
-  const {
-    //   isEnterpriseEdition,
-    isFreeEdition
-    // isTeamEdition
-  } = additionalLicenseProps
+  const { isEnterpriseEdition, isFreeEdition, isTeamEdition } = additionalLicenseProps
 
   const clientMauUsageCount = Number(monthlyActiveUsers?.featureDetail?.count)
   const clientMauPlanLimit = Number(monthlyActiveUsers?.featureDetail?.limit)
 
   const clientMauUsagePercentage = Math.trunc((clientMauUsageCount / clientMauPlanLimit) * 100)
-  //   const clientMauPlanLimitFormatted = formatToCompactNumber(clientMauPlanLimit)
+  const clientMauPlanLimitFormatted = formatToCompactNumber(clientMauPlanLimit)
 
   const showInfoBanner = clientMauPlanLimit > 0 && clientMauUsagePercentage >= 90 && clientMauUsagePercentage < 100
-  //   const showWarningBanner = clientMauPlanLimit > 0 && clientMauUsagePercentage >= 100
+  const showWarningBanner = clientMauPlanLimit > 0 && clientMauUsagePercentage >= 100
 
   let message!: string
   let bannerType!: BannerType
 
   if (isFreeEdition) {
-    if (showInfoBanner) {
-      ;(message = 'show info banner'),
-        //     getString('cf.planEnforcement.freePlan.approachingLimit', {
-        //     clientMauUsagePercentage,
-        //     clientMauPlanLimitFormatted
-        //   })),
-        (bannerType = BannerType.INFO)
+    if (!showInfoBanner) {
+      return {
+        message: () =>
+          getString('cf.planEnforcement.freePlan.approachingLimit', {
+            clientMauUsagePercentage,
+            clientMauPlanLimitFormatted
+          }),
+        bannerType: BannerType.INFO
+      }
     }
 
-    // if (showWarningBanner) {
-    //   return {
-    //     message: () =>
-    //       getString('cf.planEnforcement.freePlan.upgradeRequired', {
-    //         clientMauPlanLimitFormatted
-    //       }),
-    //     bannerType: BannerType.LEVEL_UP
-    //   }
-    // }
+    if (showWarningBanner) {
+      return {
+        message: getString('cf.planEnforcement.freePlan.upgradeRequired', {
+          clientMauPlanLimitFormatted
+        }),
+        bannerType: BannerType.LEVEL_UP
+      }
+    }
   }
 
-  //   if (isTeamEdition || isEnterpriseEdition) {
-  //     if (showInfoBanner) {
-  //       return {
-  //         message: () =>
-  //           getString('cf.planEnforcement.teamEnterprisePlan.approachingLimit', {
-  //             clientMauUsagePercentage
-  //           }),
-  //         bannerType: BannerType.INFO
-  //       }
-  //     }
+  if (isTeamEdition || isEnterpriseEdition) {
+    if (showInfoBanner) {
+      return {
+        message: () =>
+          getString('cf.planEnforcement.teamEnterprisePlan.approachingLimit', {
+            clientMauUsagePercentage
+          }),
+        bannerType: BannerType.INFO
+      }
+    }
 
-  //     if (showWarningBanner) {
-  //       return {
-  //         message: () => getString('cf.planEnforcement.teamEnterprisePlan.upgradeRequired'),
-  //         bannerType: BannerType.LEVEL_UP
-  //       }
-  //     }
-  //   }
-
-  console.log('in usage limit utils message, bannerType', message, bannerType)
+    if (showWarningBanner) {
+      return {
+        message: () => getString('cf.planEnforcement.teamEnterprisePlan.upgradeRequired'),
+        bannerType: BannerType.LEVEL_UP
+      }
+    }
+  }
 
   return {
     message,
