@@ -96,8 +96,8 @@ export interface StringsMap {
   'common.bash': string
   'common.billed': string
   'common.blank': string
-  'common.by': string
   'common.branchName': string
+  'common.by': string
   'common.capsAll': string
   'common.ce.autostopping': string
   'common.ce.cost': string
