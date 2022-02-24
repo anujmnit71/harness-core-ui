@@ -864,8 +864,8 @@ runPipeline:
 buildInfra:
   poolId: Pool Id
 ci:
-  validPortRegex: Port can only contain digits
   validations:
+    port: Port can only contain digits
     serviceDependencyIdentifier: 'Identifier should match regex {{regex}}'
 imageVersionDeprecated: Image version outdated
 unsupportedImagesWarning: 'You are using unsupported Harness CI images. Harness allows builds to use these images, but we cannot ensure that builds will not fail. Please update the versions of the following image(s) {{summary}}'

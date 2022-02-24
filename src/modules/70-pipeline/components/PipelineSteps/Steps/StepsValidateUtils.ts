@@ -364,14 +364,14 @@ function generateSchemaForKeyValue(
           is: val => val?.length,
           then: yup
             .string()
-            .matches(portNumberRegex, getString('pipeline.ci.validPortRegex'))
+            .matches(portNumberRegex, getString('pipeline.ci.validations.port'))
             .required(getString('validation.keyRequired'))
         }),
         value: yup.string().when('key', {
           is: val => val?.length,
           then: yup
             .string()
-            .matches(portNumberRegex, getString('pipeline.ci.validPortRegex'))
+            .matches(portNumberRegex, getString('pipeline.ci.validations.port'))
             .required(getString('validation.valueRequired'))
         })
       },
