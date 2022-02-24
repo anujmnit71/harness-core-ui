@@ -181,7 +181,7 @@ ZeroNorthStep.args = {
     },
     variablesData: {
       type: StepType.ZeroNorth,
-      identifier: 'ZeroNorth',
+      identifier: 'Security',
       name: 'step-name',
       description: 'step-description',
       timeout: 'step-timeout',

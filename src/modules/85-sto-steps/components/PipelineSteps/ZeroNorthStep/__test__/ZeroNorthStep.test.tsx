@@ -8,12 +8,13 @@
 import React from 'react'
 import { render, act } from '@testing-library/react'
 import { RUNTIME_INPUT_VALUE } from '@wings-software/uicore'
+import type { StringKeys } from 'framework/strings'
 import { StepViewType, StepFormikRef } from '@pipeline/components/AbstractSteps/Step'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import type { UseGetReturnData } from '@common/utils/testUtils'
 import type { ResponseConnectorResponse } from 'services/cd-ng'
 import { factory, TestStepWidget } from '@pipeline/components/PipelineSteps/Steps/__tests__/StepTestUtil'
-import { ZeroNorthStep } from '../ZeroNorthStep'
+import { ZeroNorthStep, ZeroNorthStepData } from '../ZeroNorthStep'
 
 jest.mock('@common/components/YAMLBuilder/YamlBuilder')
 
@@ -105,8 +106,7 @@ describe('ZeroNorth Step', () => {
       expect(onUpdate).toHaveBeenCalledWith(initialValues)
     })
 
-    // eslint-disable-next-line jest/no-disabled-tests
-    xtest('edit mode works', async () => {
+    test('edit mode works', async () => {
       const initialValues = {
         identifier: 'My_ZeroNorth_Step',
         name: 'My ZeroNorth Step',
@@ -116,9 +116,10 @@ describe('ZeroNorth Step', () => {
           connectorRef: 'account.connectorRef',
           privileged: false,
           settings: {
-            key1: 'value1',
-            key2: 'value2',
-            key3: 'value3'
+            policy_type: 'orchestratedScan',
+            scan_type: 'repository',
+            product_name: 'x',
+            product_config_name: 'y'
           },
           // Right now we do not support Image Pull Policy but will do in the future
           // pull: 'always',
@@ -374,5 +375,42 @@ describe('ZeroNorth Step', () => {
 
       expect(container).toMatchSnapshot()
     })
+  })
+
+  test('validates input set correctly', () => {
+    const data: ZeroNorthStepData = {
+      identifier: 'id',
+      name: 'name',
+      description: 'desc',
+      type: 'type',
+      timeout: '1h',
+      spec: {
+        connectorRef: 'connector',
+        privileged: true,
+        settings: {
+          policy_type: 'orchestratedScan',
+          scan_type: 'repository',
+          product_name: 'x',
+          product_config_name: 'y'
+        },
+        imagePullPolicy: 'Always',
+        runAsUser: 'user',
+        resources: {
+          limits: {
+            memory: '1Gi',
+            cpu: '1000m'
+          }
+        }
+      }
+    }
+
+    const result = new ZeroNorthStep().validateInputSet({
+      data,
+      template: data,
+      getString: (key: StringKeys, _vars?: Record<string, any>) => key as string,
+      viewType: StepViewType.DeploymentForm
+    })
+
+    expect(result).toMatchSnapshot()
   })
 })
