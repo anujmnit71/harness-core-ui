@@ -162,7 +162,9 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
                 viewType: StepViewType.InputSet
               }) as any
 
-              if (isEmpty(errors.pipeline)) delete errors.pipeline
+              if (isEmpty(errors.pipeline)) {
+                delete errors.pipeline
+              }
             }
 
             if (!isEmpty(formErrors)) {
