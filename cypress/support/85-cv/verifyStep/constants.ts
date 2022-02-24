@@ -351,3 +351,10 @@ export const monitoresServicesResponse = {
   metaData: null,
   correlationId: 'd986946a-3521-4648-a787-53150e21aed7'
 }
+
+export const serviceEnvironmentNoMonitoredServicesResponse = {
+  status: 'SUCCESS',
+  data: null,
+  metaData: null,
+  correlationId: 'c8c2a3e5-4f73-4c03-8193-1dc7d99858d1'
+}

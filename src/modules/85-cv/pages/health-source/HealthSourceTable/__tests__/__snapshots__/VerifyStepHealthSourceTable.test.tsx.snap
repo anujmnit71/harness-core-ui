@@ -64,6 +64,7 @@ exports[`Verify VerifyStepHealthSourceTable should render with isRunTimeInput fa
         >
           <div
             class="TableV2--row TableV2--card"
+            data-testid="healthSourceTable_GCO Metrics"
             role="row"
           >
             <div
@@ -165,6 +166,7 @@ exports[`Verify VerifyStepHealthSourceTable should render with isRunTimeInput fa
           </div>
           <div
             class="TableV2--row TableV2--card"
+            data-testid="healthSourceTable_appd"
             role="row"
           >
             <div
@@ -316,6 +318,7 @@ exports[`Verify VerifyStepHealthSourceTable should render with isRunTimeInput tr
         >
           <div
             class="TableV2--row TableV2--card"
+            data-testid="healthSourceTable_GCO Metrics"
             role="row"
           >
             <div
@@ -417,6 +420,7 @@ exports[`Verify VerifyStepHealthSourceTable should render with isRunTimeInput tr
           </div>
           <div
             class="TableV2--row TableV2--card"
+            data-testid="healthSourceTable_appd"
             role="row"
           >
             <div
