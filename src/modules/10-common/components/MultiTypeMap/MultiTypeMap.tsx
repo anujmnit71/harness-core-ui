@@ -18,7 +18,7 @@ import {
   FontVariation
 } from '@wings-software/uicore'
 import { FieldArray, connect, FormikContext } from 'formik'
-import { get } from 'lodash-es'
+import { get, isEmpty } from 'lodash-es'
 import { ConfigureOptions, ConfigureOptionsProps } from '@common/components/ConfigureOptions/ConfigureOptions'
 import { useStrings } from 'framework/strings'
 import MultiTypeFieldSelector, {
@@ -47,6 +47,7 @@ export interface MultiTypeMapProps {
   appearance?: 'default' | 'minimal'
   keyLabel?: string
   valueLabel?: string
+  restrictToSingleEntry?: boolean
 }
 
 export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
@@ -62,6 +63,7 @@ export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
     appearance = 'default',
     keyLabel,
     valueLabel,
+    restrictToSingleEntry,
     ...restProps
   } = props
 
@@ -137,15 +139,17 @@ export const MultiTypeMap = (props: MultiTypeMapProps): React.ReactElement => {
                     </div>
                   ))}
 
-                <Button
-                  intent="primary"
-                  minimal
-                  text={getString('plusAdd')}
-                  data-testid={`add-${name}`}
-                  onClick={() => push({ id: uuid('', nameSpace()), key: '', value: '' })}
-                  disabled={disabled}
-                  style={{ padding: 0 }}
-                />
+                {restrictToSingleEntry && Array.isArray(value) && !isEmpty(value) && value.length === 1 ? null : (
+                  <Button
+                    intent="primary"
+                    minimal
+                    text={getString('plusAdd')}
+                    data-testid={`add-${name}`}
+                    onClick={() => push({ id: uuid('', nameSpace()), key: '', value: '' })}
+                    disabled={disabled}
+                    style={{ padding: 0 }}
+                  />
+                )}
               </>
             )}
           />

@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { Text, Formik, FormikForm, Accordion, Color, Container } from '@wings-software/uicore'
+import { Text, Formik, FormikForm, Accordion, Color, Container, Layout } from '@wings-software/uicore'
 import get from 'lodash/get'
 import type { K8sDirectInfraYaml } from 'services/ci'
 import MultiTypeMap from '@common/components/MultiTypeMap/MultiTypeMap'
@@ -28,7 +28,7 @@ import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterfa
 import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './DependencyFunctionConfigs'
 import type { DependencyProps, DependencyData, DependencyDataUI } from './Dependency'
 import { CIStep } from '../CIStep/CIStep'
-import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
+import { CIStepOptionalConfig, getOptionalSubLabel } from '../CIStep/CIStepOptionalConfig'
 import { useGetPropagatedStageById } from '../CIStep/StepUtils'
 import css from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
@@ -157,19 +157,24 @@ export const DependencyBase = (
                           valueMultiTextInputProps={{ expressions, allowableTypes }}
                           multiTypeFieldSelectorProps={{
                             label: (
-                              <Text
-                                style={{ display: 'flex', alignItems: 'center' }}
-                                className={css.inpLabel}
-                                color={Color.GREY_800}
-                                font={{ size: 'small', weight: 'semi-bold' }}
-                              >
-                                {getString('ci.portBindings')}
-                              </Text>
+                              <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
+                                <Text
+                                  style={{ display: 'flex', alignItems: 'center' }}
+                                  className={css.inpLabel}
+                                  color={Color.GREY_800}
+                                  font={{ size: 'small', weight: 'semi-bold' }}
+                                >
+                                  {getString('ci.portBindings')}
+                                </Text>
+                                &nbsp;
+                                {getOptionalSubLabel('portBindings', getString)}
+                              </Layout.Horizontal>
                             )
                           }}
                           disabled={readonly}
                           keyLabel={getString('ci.hostPort')}
                           valueLabel={getString('ci.containerPort')}
+                          restrictToSingleEntry={true}
                         />
                       ) : null}
                       <StepCommonFields
