@@ -88,7 +88,7 @@ export function PrometheusHealthSource(props: PrometheusHealthSourceProps): JSX.
     setCreatedMetrics,
     setGroupedCreatedMetrics
   } = useGroupedSideNaveHook({
-    defaultCustomMetricName: getString('cv.monitoringSources.appD.defaultAppDMetricName'),
+    defaultCustomMetricName: getString('cv.monitoringSources.prometheus.prometheusMetric'),
     initCustomMetricData: {},
     mappedServicesAndEnvs: transformedSourceData.mappedServicesAndEnvs
   })
