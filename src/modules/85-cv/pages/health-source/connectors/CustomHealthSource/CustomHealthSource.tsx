@@ -79,6 +79,39 @@ export function CustomHealthSource(props: CustomHealthSourceProps): JSX.Element 
           groupedCreatedMetricsList.indexOf(selectedMetric),
           values
         )
+import CustomMetric from '../../common/CustomMetric/CustomMetric'
+
+import type { CustomMappedMetric } from '../../common/CustomMetric/CustomMetric.types'
+import CustomHealthSourceForm from './CustomHealthSourceForm'
+  const {
+    createdMetrics,
+    mappedMetrics,
+    selectedMetric,
+    selectedMetricIndex,
+    groupedCreatedMetrics,
+    groupedCreatedMetricsList,
+    setMappedMetrics,
+    setCreatedMetrics,
+    setGroupedCreatedMetrics
+  } = useGroupedSideNaveHook({
+    defaultCustomMetricName: getString('cv.monitoringSources.appD.defaultAppDMetricName'),
+    initCustomMetricData: getInitCustomMetricData(''),
+    mappedServicesAndEnvs: transformedSourceData.mappedServicesAndEnvs as Map<string, CustomMappedMetric>
+  })
+        Object.keys(
+          validateMappings(
+            getString,
+            groupedCreatedMetricsList,
+            groupedCreatedMetricsList.indexOf(selectedMetric),
+            args.initialValues
+          )
+        ).length === 0
+        return validateMappings(
+          getString,
+          groupedCreatedMetricsList,
+          groupedCreatedMetricsList.indexOf(selectedMetric),
+          values
+        )
       }}
     >
       {formikProps => {
