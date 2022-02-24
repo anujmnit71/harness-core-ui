@@ -816,6 +816,7 @@ exports[`Use DNS for Setup option for creating new ALB should not be available f
       class="OverlaySpinner--overlaySpinner"
     >
       <form
+        action="#"
         class="FormikForm--main"
       >
         <div>

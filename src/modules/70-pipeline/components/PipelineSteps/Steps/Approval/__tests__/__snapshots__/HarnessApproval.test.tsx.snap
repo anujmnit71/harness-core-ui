@@ -2059,6 +2059,7 @@ exports[`Harness Approval tests MinimumCount should be greater than 1: minimum c
     class="OverlaySpinner--overlaySpinner"
   >
     <form
+      action="#"
       class="FormikForm--main"
     >
       <div>
