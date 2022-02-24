@@ -736,6 +736,8 @@ ceGcp:
     otherLinks: 'Other Links:'
     link1: 'https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup'
     link2: 'Harness Docs ()'
+  chooseRequirements:
+    heading: '{{$.connectors.ceAzure.steps.requirements}}'
   grantPermission:
     heading: 'Grant Permissions'
     bigQueryButtonText: 'Open BigQuery Page'

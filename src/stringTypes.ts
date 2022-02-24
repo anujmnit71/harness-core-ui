@@ -1634,6 +1634,7 @@ export interface StringsMap {
   'connectors.ceGcp.billingExtention.step5': string
   'connectors.ceGcp.billingExtention.step6': string
   'connectors.ceGcp.billingExtention.step7': string
+  'connectors.ceGcp.chooseRequirements.heading': string
   'connectors.ceGcp.grantPermission.bigQueryButtonText': string
   'connectors.ceGcp.grantPermission.heading': string
   'connectors.ceGcp.grantPermission.step1': string

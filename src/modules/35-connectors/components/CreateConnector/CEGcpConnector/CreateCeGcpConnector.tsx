@@ -15,6 +15,7 @@ import OverviewStep, { CEGcpConnectorDTO } from './steps/OverviewStep'
 import BillingExport from './steps/BillingExport'
 import GrantPermission from './steps/GrantPermission'
 import TestConnection from './steps/TestConnection'
+import ChooseRequirements from './steps/ChooseRequirements'
 import css from './CreateCeGcpConnector.module.scss'
 
 const CreateCeGcpConnector: React.FC<CreateConnectorModalProps> = props => {
@@ -33,6 +34,7 @@ const CreateCeGcpConnector: React.FC<CreateConnectorModalProps> = props => {
           connectorInfo={props.connectorInfo as CEGcpConnectorDTO}
         />
         <BillingExport name={getString('connectors.ceGcp.billingExport.heading')} />
+        <ChooseRequirements name={getString('connectors.ceGcp.chooseRequirements.heading')} />
         <GrantPermission name={getString('connectors.ceGcp.grantPermission.heading')}></GrantPermission>
         <TestConnection name={getString('connectors.ceGcp.testConnection.heading')} onClose={props.onClose} />
       </StepWizard>
