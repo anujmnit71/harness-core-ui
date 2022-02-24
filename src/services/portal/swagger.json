@@ -53423,6 +53423,9 @@
         "name": {
           "type": "string"
         },
+        "username": {
+          "type": "string"
+        },
         "jwtclaims": {
           "type": "object",
           "additionalProperties": {

@@ -12410,6 +12410,7 @@ export interface Principal {
     [key: string]: string
   }
   name?: string
+  username?: string
   type: 'USER' | 'SERVICE' | 'API_KEY' | 'SERVICE_ACCOUNT'
 }
 
