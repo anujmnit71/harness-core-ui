@@ -25,6 +25,7 @@ import { useVariablesExpression } from '../../../PipelineStudio/PiplineHooks/use
 import type { ConditionalExecutionOption } from './ConditionalExecutionPanelUtils'
 import { ModeEntityNameMap } from './ConditionalExecutionPanelUtils'
 import css from './ConditionalExecutionPanel.module.scss'
+import multiBtnCss from '@common/components/MultiTypeTextArea/MultiTypeTextArea.module.scss'
 
 interface ConditionalExecutionConditionProps {
   formikProps: FormikProps<ConditionalExecutionOption>
@@ -71,6 +72,7 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
       allowableTypes={[MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME]}
       onChange={val => formikProps.setFieldValue('condition', val)}
       onTypeChange={setMultiType}
+      btnClassName={multiType === MultiTypeInputType.FIXED ? multiBtnCss.multiButtonForFixedType : ''}
     />
   )
 
@@ -100,11 +102,7 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
       />
       <Container
         padding={{ top: 'small', left: 'large' }}
-        className={cx(
-          { [css.disabled]: isDisabled },
-          { [css.conditionInputContainerForMultiTypeFixed]: multiType === MultiTypeInputType.FIXED },
-          css.conditionInputContainer
-        )}
+        className={cx({ [css.disabled]: isDisabled }, css.conditionInputContainer)}
       >
         {enableConfigureOptions ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>

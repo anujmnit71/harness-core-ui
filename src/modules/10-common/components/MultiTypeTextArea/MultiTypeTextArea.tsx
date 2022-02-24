@@ -74,10 +74,11 @@ export const MultiTypeTextArea: React.FC<MultiTypeTextAreaProps> = props => {
       fixedTypeComponent={MultiTypeTextAreaFixedTypeComponent}
       style={{ flexGrow: 1 }}
       onTypeChange={setMultiType}
+      btnClassName={multiType === MultiTypeInputType.FIXED ? css.multiButtonForFixedType : ''}
     />
   )
   return (
-    <Container className={cx({ [css.textAreaContainerForFixedMultiType]: multiType === MultiTypeInputType.FIXED })}>
+    <Container>
       {enableConfigureOptions ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {expressionAndRuntimeTypeComponent}
