@@ -45,34 +45,14 @@ const RenderDelegateIcon: Renderer<CellProps<DelegateGroupDetailsCustom | Delega
 }
 
 const RenderDelegateName: Renderer<CellProps<DelegateGroupDetailsCustom | DelegateInnerCustom>> = ({ row }) => {
-  const {
-    delegateType = '',
-    groupHostName,
-    groupName,
-    delegateInstanceDetails,
-    sizeDetails
-  } = row.original as DelegateGroupDetailsCustom
-  const { getString } = useStrings()
-  let nameText = ''
-  let subText = ''
-  const groupNameSubText = getString('delegates.delegateInstances', {
-    current: delegateInstanceDetails?.length,
-    total: sizeDetails?.replicas
-  })
-  nameText = `${groupName} ${groupNameSubText}`
-  subText = groupHostName || ''
+  const { delegateType = '', groupName } = row.original as DelegateGroupDetailsCustom
   return (
     <Layout.Horizontal>
       <Icon name={delegateTypeToIcon(delegateType)} size={24} />
       <Layout.Vertical padding={{ left: 'small' }} width="85%" className={css.delegateNameContainer}>
-        <Tooltip position="top" content={nameText}>
+        <Tooltip position="top" content={groupName}>
           <Text color={Color.BLACK} className={css.delegateName}>
-            {nameText}
-          </Text>
-        </Tooltip>
-        <Tooltip position="top" content={subText}>
-          <Text color={Color.GREY_400} className={css.delegateName}>
-            {subText}
+            {groupName}
           </Text>
         </Tooltip>
       </Layout.Vertical>
@@ -136,7 +116,7 @@ export const DelegateSelectorTable: React.FC<DelegateSelectorTableProps> = props
           Header: getString('delegate.DelegateName').toLocaleUpperCase(),
           id: 'name',
           width: '35%',
-          accessor: (row: DelegateInnerCustom) => row.delegateName || row.hostName,
+          accessor: (row: DelegateInnerCustom) => row.groupName,
           Cell: RenderDelegateName
         },
         {

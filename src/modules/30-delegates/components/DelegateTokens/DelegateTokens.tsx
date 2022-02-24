@@ -106,7 +106,7 @@ export const DelegateListing: React.FC = () => {
   const RenderColumnCreatedBy: Renderer<CellProps<DelegateTokenDetails>> = ({ row }) => (
     <span className={css.tokenCellText}>
       {row.original.createdBy
-        ? row.original.createdBy?.name?.toLowerCase()
+        ? row.original?.createdByNgUser?.name?.toLowerCase()
         : getString('delegates.tokens.createdBySystem')}
     </span>
   )
