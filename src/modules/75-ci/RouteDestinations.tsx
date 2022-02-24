@@ -45,7 +45,8 @@ import {
   isFeatureOveruseActive,
   isFeatureCountActive,
   isFeatureWarningActive,
-  isFeatureLimitMet
+  isFeatureLimitMet,
+  getActiveUsageNumber
 } from '@common/layouts/FeatureBanner'
 import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
 import featureFactory from 'framework/featureStore/FeaturesFactory'
@@ -204,12 +205,7 @@ featureFactory.registerFeaturesByModule('ci', {
       maxTotalBuildsFeatureDetail?.featureDetail?.count &&
       maxTotalBuildsFeatureDetail.featureDetail.limit
     ) {
-      const usagePercent = Math.min(
-        Math.floor(
-          (maxTotalBuildsFeatureDetail.featureDetail.count / maxTotalBuildsFeatureDetail?.featureDetail.limit) * 100
-        ),
-        100
-      )
+      const usagePercent = getActiveUsageNumber(maxTotalBuildsFeatureDetail)
 
       warningMessageString = getString('pipeline.featureRestriction.maxTotalBuilds90PercentLimit', {
         usagePercent
@@ -220,12 +216,8 @@ featureFactory.registerFeaturesByModule('ci', {
       activeCommittersFeatureDetail.featureDetail.limit &&
       isTeamOrEnterprise
     ) {
-      const usagePercent = Math.min(
-        Math.floor(
-          (activeCommittersFeatureDetail.featureDetail.count / activeCommittersFeatureDetail?.featureDetail.limit) * 100
-        ),
-        100
-      )
+      const usagePercent = getActiveUsageNumber(maxTotalBuildsFeatureDetail)
+
       warningMessageString = getString('pipeline.featureRestriction.subscription90PercentLimit', { usagePercent })
     }
 
