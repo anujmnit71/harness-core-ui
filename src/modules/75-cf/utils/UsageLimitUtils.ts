@@ -17,7 +17,7 @@ interface BannerText {
 
 export const getBannerText = (
   getString: UseStringsReturn['getString'],
-  monthlyActiveUsers: CheckFeatureReturn,
+  monthlyActiveUsers: CheckFeatureReturn | undefined,
   additionalLicenseProps: Record<string, any>
 ): BannerText => {
   const { isEnterpriseEdition, isFreeEdition, isTeamEdition } = additionalLicenseProps

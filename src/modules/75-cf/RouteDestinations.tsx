@@ -8,7 +8,6 @@
 import React, { FC } from 'react'
 import { Redirect, useParams } from 'react-router-dom'
 import { RouteWithLayout } from '@common/router'
-// import SidebarProvider from '@common/navigation/SidebarProvider'
 import routes from '@common/RouteDefinitions'
 import {
   accountPathProps,
@@ -50,7 +49,7 @@ import { ResourceCategory, ResourceType } from '@rbac/interfaces/ResourceType'
 import { PermissionIdentifier } from '@rbac/interfaces/PermissionIdentifier'
 import featureFactory from 'framework/featureStore/FeaturesFactory'
 import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
-import { BannerType } from '@common/layouts/Constants'
+import { getBannerText } from '@cf/utils/UsageLimitUtils'
 import { String } from 'framework/strings'
 import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import { GovernanceRouteDestinations } from '@governance/RouteDestinations'
@@ -59,15 +58,12 @@ import GitSyncRepoTab from '@gitsync/pages/repos/GitSyncRepoTab'
 import GitSyncEntityTab from '@gitsync/pages/entities/GitSyncEntityTab'
 import GitSyncErrors from '@gitsync/pages/errors/GitSyncErrors'
 import GitSyncConfigTab from '@gitsync/pages/config/GitSyncConfigTab'
-import { formatToCompactNumber } from '@cf/utils/CFUtils'
 import { TargetsPage } from './pages/target-management/targets/TargetsPage'
 import { TargetDetailPage } from './pages/target-details/TargetDetailPage'
 import { SegmentsPage } from './pages/target-management/segments/SegmentsPage'
 import { SegmentDetailPage } from './pages/segment-details/SegmentDetailPage'
 import TargetGroupDetailPage from './pages/target-group-detail/TargetGroupDetailPage'
 import { OnboardingPage } from './pages/onboarding/OnboardingPage'
-import UsageLimitBannerText from './components/UsageLimitBanner/UsageLimitBannerText'
-
 import { OnboardingDetailPage } from './pages/onboarding/OnboardingDetailPage'
 import CFTrialHomePage from './pages/home/CFTrialHomePage'
 import FeatureFlagsLandingPage from './pages/feature-flags/FeatureFlagsLandingPage'
@@ -75,77 +71,12 @@ import FeatureFlagsLandingPage from './pages/feature-flags/FeatureFlagsLandingPa
 featureFactory.registerFeaturesByModule('cf', {
   features: [FeatureIdentifier.MAUS],
   renderMessage: (props, getString, additionalLicenseProps = {}) => {
-    const { isEnterpriseEdition, isFreeEdition, isTeamEdition } = additionalLicenseProps
-    const featuresMap = props.features
-    const monthlyActiveUsers = featuresMap.get(FeatureIdentifier.MAUS)
-
-    const clientMauUsageCount = Number(monthlyActiveUsers?.featureDetail?.count)
-    const clientMauPlanLimit = Number(monthlyActiveUsers?.featureDetail?.limit)
-
-    const clientMauUsagePercentage = Math.trunc((clientMauUsageCount / clientMauPlanLimit) * 100)
-    const clientMauPlanLimitFormatted = formatToCompactNumber(clientMauPlanLimit)
-
-    const showInfoBanner = clientMauPlanLimit > 0 && clientMauUsagePercentage >= 90 && clientMauUsagePercentage < 100
-    const showWarningBanner = clientMauPlanLimit > 0 && clientMauUsagePercentage >= 100
-
-    if (isFreeEdition) {
-      if (showInfoBanner) {
-        return {
-          // eslint-disable-next-line react/display-name
-          message: () => (
-            <UsageLimitBannerText
-              message={getString('cf.planEnforcement.freePlan.approachingLimit', {
-                clientMauUsagePercentage,
-                clientMauPlanLimitFormatted
-              })}
-            />
-          ),
-          bannerType: BannerType.INFO
-        }
-      }
-
-      if (showWarningBanner) {
-        return {
-          // eslint-disable-next-line react/display-name
-          message: () => (
-            <UsageLimitBannerText
-              message={getString('cf.planEnforcement.freePlan.upgradeRequired', { clientMauPlanLimitFormatted })}
-            />
-          ),
-          bannerType: BannerType.LEVEL_UP
-        }
-      }
-    }
-
-    if (isTeamEdition || isEnterpriseEdition) {
-      if (showInfoBanner) {
-        return {
-          // eslint-disable-next-line react/display-name
-          message: () => (
-            <UsageLimitBannerText
-              message={getString('cf.planEnforcement.teamEnterprisePlan.approachingLimit', {
-                clientMauUsagePercentage
-              })}
-            />
-          ),
-          bannerType: BannerType.INFO
-        }
-      }
-
-      if (showWarningBanner) {
-        return {
-          // eslint-disable-next-line react/display-name
-          message: () => (
-            <UsageLimitBannerText message={getString('cf.planEnforcement.teamEnterprisePlan.upgradeRequired')} />
-          ),
-          bannerType: BannerType.LEVEL_UP
-        }
-      }
-    }
+    const monthlyActiveUsers = props.features.get(FeatureIdentifier.MAUS)
+    const { message, bannerType } = getBannerText(getString, monthlyActiveUsers, additionalLicenseProps)
 
     return {
-      message: () => '',
-      bannerType: BannerType.LEVEL_UP
+      message,
+      bannerType
     }
   }
 })
