@@ -84,6 +84,7 @@ export function handleChangeInStrategies({
     /* istanbul ignore else */
     if (fs.length === 0) {
       // reset errors when all the tabs are deleted
+      // @ts-ignore
       setFormikState({ errors: {}, submitCount: 0 })
     }
   }

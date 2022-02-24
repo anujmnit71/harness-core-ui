@@ -192,6 +192,7 @@ export const NewEditEnvironmentModalYaml: React.FC<NewEditEnvironmentModalProps>
           })}
         >
           {formikProps => {
+            // @ts-ignore
             formikRef.current = formikProps
             return (
               <>

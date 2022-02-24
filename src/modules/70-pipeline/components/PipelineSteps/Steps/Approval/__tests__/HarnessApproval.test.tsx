@@ -208,6 +208,7 @@ describe('Harness Approval tests', () => {
 
     expect(container).toMatchSnapshot('minimum count as negative')
 
+    // @ts-ignore
     await act(() => ref.current?.submitForm())
     await waitFor(() => expect(queryByText('pipeline.approvalStep.validation.minimumCountOne')).toBeTruthy())
   })

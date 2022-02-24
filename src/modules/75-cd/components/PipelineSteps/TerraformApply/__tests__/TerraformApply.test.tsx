@@ -580,6 +580,7 @@ describe('Test TerraformApply', () => {
         onUpdate={onUpdate}
       />
     )
+    // @ts-ignore
     await act(() => ref.current?.submitForm())
     const errMsg = getByText('common.validation.provisionerIdentifierIsRequired')
     expect(errMsg).toBeInTheDocument()
@@ -647,6 +648,8 @@ describe('Test TerraformApply', () => {
         onUpdate={onUpdate}
       />
     )
+
+    // @ts-ignore
     await act(() => ref.current?.submitForm())
     const errMsg = getByText('common.validation.provisionerIdentifierPatternIsNotValid')
     expect(errMsg).toBeInTheDocument()
@@ -716,6 +719,7 @@ describe('Test TerraformApply', () => {
     )
     const input = getByPlaceholderText('<+expression>')
     fireEvent.change(input!, { target: { value: '' } })
+    // @ts-ignore
     await act(() => ref.current?.submitForm())
     const errMsg = getByText('common.validation.provisionerIdentifierIsRequired')
     expect(errMsg).toBeInTheDocument()
