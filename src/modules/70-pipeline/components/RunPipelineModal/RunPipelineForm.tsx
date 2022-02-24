@@ -78,8 +78,8 @@ import { useMutateAsGet, useQueryParams } from '@common/hooks'
 import { yamlStringify } from '@common/utils/YamlHelperMethods'
 import { PipelineActions } from '@common/constants/TrackingConstants'
 import { useTelemetry } from '@common/hooks/useTelemetry'
+import type { InputSetDTO } from '@pipeline/utils/types'
 import { useGetYamlWithTemplateRefsResolved } from 'services/template-ng'
-import type { InputSetDTO } from '../InputSetForm/InputSetForm'
 import { InputSetSelector, InputSetSelectorProps } from '../InputSetSelector/InputSetSelector'
 import {
   clearRuntimeInput,

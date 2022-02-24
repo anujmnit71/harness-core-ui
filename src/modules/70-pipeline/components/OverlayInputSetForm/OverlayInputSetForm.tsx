@@ -62,10 +62,10 @@ import GitContextForm, { GitContextProps } from '@common/components/GitContextFo
 import { useQueryParams } from '@common/hooks'
 import { AppStoreContext } from 'framework/AppStore/AppStoreContext'
 import { GitSyncStoreProvider } from 'framework/GitRepoStore/GitSyncStoreContext'
+import type { CreateUpdateInputSetsReturnType, InputSetDTO } from '@pipeline/utils/types'
 import { yamlStringify } from '@common/utils/YamlHelperMethods'
 import { getOverlayErrors } from '@pipeline/utils/runPipelineUtils'
 import { ErrorsStrip } from '../ErrorsStrip/ErrorsStrip'
-import type { InputSetDTO } from '../InputSetForm/InputSetForm'
 import { InputSetSelector, InputSetSelectorProps } from '../InputSetSelector/InputSetSelector'
 import {
   anyOneOf,
@@ -135,8 +135,6 @@ const yamlBuilderReadOnlyModeProps: YamlBuilderProps = {
 
 const clearNullUndefined = /* istanbul ignore next */ (data: OverlayInputSetDTO): OverlayInputSetDTO =>
   omitBy(omitBy(data, isUndefined), isNull)
-
-type StatusType = 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
 
 export function OverlayInputSetForm({
   hideForm,
@@ -364,10 +362,7 @@ export function OverlayInputSetForm({
     inputSetObj: InputSetDTO,
     gitDetails?: SaveToGitFormInterface,
     objectId = ''
-  ): Promise<{
-    status: StatusType
-    nextCallback: () => void
-  }> => {
+  ): CreateUpdateInputSetsReturnType => {
     let response: ResponseOverlayInputSetResponse | null = null
     try {
       const requestData = yamlStringify({ overlayInputSet: clearNullUndefined(inputSetObj) }) as any

@@ -6,27 +6,22 @@
  */
 
 import React from 'react'
-import * as Yup from 'yup'
 import { cloneDeep, defaultTo, isEmpty, isNull, isUndefined, omit, omitBy } from 'lodash-es'
 import {
-  Button,
-  Container,
-  Formik,
-  FormikForm,
   Layout,
   NestedAccordionProvider,
   FontVariation,
   Text,
   Color,
-  ButtonVariation,
   PageHeader,
   PageBody,
   VisualYamlSelectedView as SelectedView,
-  VisualYamlToggle
+  VisualYamlToggle,
+  getErrorInfoFromErrorObject
 } from '@wings-software/uicore'
 import { useHistory, useParams } from 'react-router-dom'
 import { parse } from 'yaml'
-import type { FormikErrors, FormikProps } from 'formik'
+import type { FormikProps } from 'formik'
 import type { PipelineInfoConfig } from 'services/cd-ng'
 import {
   useGetTemplateFromPipeline,
@@ -34,7 +29,6 @@ import {
   useCreateInputSetForPipeline,
   useGetInputSetForPipeline,
   useUpdateInputSetForPipeline,
-  InputSetResponse,
   ResponseInputSetResponse,
   useGetMergeInputSetFromPipelineTemplateWithListInput,
   ResponsePMSPipelineResponseDTO,
@@ -42,42 +36,27 @@ import {
 } from 'services/pipeline-ng'
 
 import { useToaster } from '@common/exports'
-import type { YamlBuilderHandlerBinding, YamlBuilderProps } from '@common/interfaces/YAMLBuilderProps'
+import type { YamlBuilderHandlerBinding } from '@common/interfaces/YAMLBuilderProps'
 import type { InputSetGitQueryParams, InputSetPathProps, PipelineType } from '@common/interfaces/RouteInterfaces'
-import { NameIdDescriptionTags } from '@common/components'
 import routes from '@common/RouteDefinitions'
 import { useDocumentTitle } from '@common/hooks/useDocumentTitle'
 import { getFormattedErrors } from '@pipeline/utils/runPipelineUtils'
 import { useStrings } from 'framework/strings'
 import { AppStoreContext } from 'framework/AppStore/AppStoreContext'
 import { GitSyncStoreProvider } from 'framework/GitRepoStore/GitSyncStoreContext'
-import { usePermission } from '@rbac/hooks/usePermission'
-import { ResourceType } from '@rbac/interfaces/ResourceType'
-import { PermissionIdentifier } from '@rbac/interfaces/PermissionIdentifier'
 import { useMutateAsGet, useQueryParams } from '@common/hooks'
 import { UseSaveSuccessResponse, useSaveToGitDialog } from '@common/modals/SaveToGitDialog/useSaveToGitDialog'
 import type { SaveToGitFormInterface } from '@common/components/SaveToGitForm/SaveToGitForm'
-import GitContextForm, { GitContextProps } from '@common/components/GitContextForm/GitContextForm'
-import { IdentifierSchema, NameSchema } from '@common/utils/Validation'
+import type { GitContextProps } from '@common/components/GitContextForm/GitContextForm'
 import { changeEmptyValuesToRunTimeInput } from '@pipeline/utils/stageHelpers'
 import { yamlStringify } from '@common/utils/YamlHelperMethods'
 import { NGBreadcrumbs } from '@common/components/NGBreadcrumbs/NGBreadcrumbs'
 import { useGetYamlWithTemplateRefsResolved } from 'services/template-ng'
-import { PipelineInputSetForm } from '../PipelineInputSetForm/PipelineInputSetForm'
-import { clearRuntimeInput, validatePipeline } from '../PipelineStudio/StepUtil'
-import { factory } from '../PipelineSteps/Steps/__tests__/StepTestUtil'
-import { YamlBuilderMemo } from '../PipelineStudio/PipelineYamlView/PipelineYamlView'
+import type { CreateUpdateInputSetsReturnType, InputSetDTO } from '@pipeline/utils/types'
+import { clearRuntimeInput } from '../PipelineStudio/StepUtil'
 import GitPopover from '../GitPopover/GitPopover'
-import { ErrorsStrip } from '../ErrorsStrip/ErrorsStrip'
-import { StepViewType } from '../AbstractSteps/Step'
+import FormikInputSetForm from './FormikInputSetForm'
 import css from './InputSetForm.module.scss'
-
-export interface InputSetDTO extends Omit<InputSetResponse, 'identifier' | 'pipeline'> {
-  pipeline?: PipelineInfoConfig
-  identifier?: string
-  repo?: string
-  branch?: string
-}
 
 interface SaveInputSetDTO {
   inputSet: InputSetDTO
@@ -98,29 +77,13 @@ const getDefaultInputSet = (
   branch: ''
 })
 
-const yamlBuilderReadOnlyModeProps: YamlBuilderProps = {
-  fileName: `input-set.yaml`,
-  entityType: 'InputSets',
-  width: 620,
-  height: 360,
-  showSnippetSection: false,
-  yamlSanityConfig: {
-    removeEmptyString: false,
-    removeEmptyObject: false,
-    removeEmptyArray: false
-  }
-}
-
 const clearNullUndefined = /* istanbul ignore next */ (data: InputSetDTO): InputSetDTO => {
   const omittedInputset = omitBy(omitBy(data, isUndefined), isNull)
   return changeEmptyValuesToRunTimeInput(cloneDeep(omittedInputset), '')
 }
-
 export interface InputSetFormProps {
   executionView?: boolean
 }
-
-type StatusType = 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
 
 export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   const { executionView } = props
@@ -153,25 +116,6 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     lazy: true
   })
 
-  const [isEditable] = usePermission(
-    {
-      resourceScope: {
-        projectIdentifier,
-        orgIdentifier,
-        accountIdentifier: accountId
-      },
-      resource: {
-        resourceType: ResourceType.PIPELINE,
-        resourceIdentifier: pipelineIdentifier
-      },
-      permissions: [PermissionIdentifier.EDIT_PIPELINE],
-      options: {
-        skipCache: true
-      }
-    },
-    [projectIdentifier, orgIdentifier, accountId, pipelineIdentifier]
-  )
-
   const [selectedView, setSelectedView] = React.useState<SelectedView>(SelectedView.VISUAL)
   const [yamlHandler, setYamlHandler] = React.useState<YamlBuilderHandlerBinding | undefined>()
   const [formErrors, setFormErrors] = React.useState<Record<string, any>>({})
@@ -190,7 +134,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
       repoIdentifier: inputSetRepoIdentifier,
       branch: inputSetBranch
     },
-    inputSetIdentifier: inputSetIdentifier || '',
+    inputSetIdentifier: defaultTo(inputSetIdentifier, ''),
     lazy: true
   })
 
@@ -271,7 +215,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     if (inputSetResponse?.data) {
       const inputSetObj = inputSetResponse?.data
 
-      const parsedInputSetObj = parse(inputSetObj?.inputSetYaml || '')
+      const parsedInputSetObj = parse(defaultTo(inputSetObj?.inputSetYaml, ''))
       /*
         Context of the below if block
         We need to populate existing values of input set in the form.
@@ -279,7 +223,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
         But if the merge API fails (due to invalid input set or any other reason) - we populate the value from the input set response recevied (parsedInputSetObj).
       */
       const parsedPipelineWithValues = mergeTemplate
-        ? parse(mergeTemplate || /* istanbul ignore next */ '')?.pipeline || /* istanbul ignore next */ {}
+        ? defaultTo(parse(defaultTo(mergeTemplate, ''))?.pipeline, {})
         : parsedInputSetObj?.inputSet?.pipeline
 
       if (isGitSyncEnabled && parsedInputSetObj && parsedInputSetObj.inputSet) {
@@ -298,17 +242,17 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
       return {
         name: inputSetObj.name,
         tags: inputSetObj.tags,
-        identifier: inputSetObj.identifier || /* istanbul ignore next */ '',
+        identifier: defaultTo(inputSetObj.identifier, ''),
         description: inputSetObj?.description,
         orgIdentifier,
         projectIdentifier,
         pipeline: clearRuntimeInput(parsedPipelineWithValues),
-        gitDetails: inputSetObj.gitDetails ?? {},
-        entityValidityDetails: inputSetObj.entityValidityDetails ?? {}
+        gitDetails: defaultTo(inputSetObj.gitDetails, {}),
+        entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
       }
     }
     return getDefaultInputSet(
-      clearRuntimeInput(parse(template?.data?.inputSetTemplateYaml || /* istanbul ignore next */ '')?.pipeline as any),
+      clearRuntimeInput(parse(defaultTo(template?.data?.inputSetTemplateYaml, ''))?.pipeline),
       orgIdentifier,
       projectIdentifier
     )
@@ -388,10 +332,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     inputSetObj: InputSetDTO,
     gitDetails?: SaveToGitFormInterface,
     objectId = ''
-  ): Promise<{
-    status: StatusType
-    nextCallback: () => void
-  }> => {
+  ): CreateUpdateInputSetsReturnType => {
     let response: ResponseInputSetResponse | null = null
     try {
       if (isEdit) {
@@ -439,11 +380,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
       }
       // This is done because when git sync is enabled, errors are displayed in a modal
       if (!isGitSyncEnabled) {
-        showError(
-          e?.data?.message || e?.message || getString('commonError'),
-          undefined,
-          'pipeline.update.create.inputset'
-        )
+        showError(getErrorInfoFromErrorObject(e), undefined, 'pipeline.update.create.inputset')
       } else {
         throw e
       }
@@ -486,200 +423,46 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     },
     [isEdit, updateInputSet, createInputSet, showSuccess, showError, isGitSyncEnabled, inputSetResponse, pipeline]
   )
-  const NameIdSchema = Yup.object({
-    name: NameSchema(),
-    identifier: IdentifierSchema()
-  })
 
-  const formRefDom = React.useRef<HTMLElement | undefined>()
-
-  const child = (
-    <Container className={css.inputSetForm}>
-      <Layout.Vertical
-        spacing="medium"
-        ref={ref => {
-          formRefDom.current = ref as HTMLElement
-        }}
-      >
-        <Formik<InputSetDTO & GitContextProps>
-          initialValues={{
-            ...omit(inputSet, 'gitDetails', 'entityValidityDetails'),
-            repo: defaultTo(repoIdentifier, ''),
-            branch: defaultTo(branch, '')
-          }}
-          enableReinitialize={true}
-          formName="inputSetForm"
-          validationSchema={NameIdSchema}
-          validate={async values => {
-            let errors: FormikErrors<InputSetDTO> = {}
-            try {
-              await NameIdSchema.validate(values)
-            } catch (err: any) {
-              if (err.name === 'ValidationError') {
-                errors = { [err.path]: err.message }
-              }
-            }
-            if (values.pipeline && template?.data?.inputSetTemplateYaml && pipeline?.data?.yamlPipeline) {
-              errors.pipeline = validatePipeline({
-                pipeline: values.pipeline,
-                template: parse(template.data.inputSetTemplateYaml).pipeline,
-                originalPipeline: parse(pipeline.data.yamlPipeline).pipeline,
-                getString,
-                viewType: StepViewType.InputSet
-              }) as any
-
-              if (isEmpty(errors.pipeline)) delete errors.pipeline
-            }
-
-            if (!isEmpty(formErrors)) {
-              setFormErrors(errors)
-            }
-
-            return errors
-          }}
-          onSubmit={values => {
-            handleSubmit(values, { repoIdentifier: values.repo, branch: values.branch })
-          }}
-        >
-          {formikProps => {
-            formikRef.current = formikProps
-            return (
-              <>
-                {selectedView === SelectedView.VISUAL ? (
-                  <div className={css.inputsetGrid}>
-                    <div>
-                      <ErrorsStrip formErrors={formErrors} domRef={formRefDom} />
-                      <FormikForm>
-                        {executionView ? null : (
-                          <Layout.Vertical className={css.content} padding="xlarge">
-                            <NameIdDescriptionTags
-                              className={css.nameiddescription}
-                              identifierProps={{
-                                inputLabel: getString('name'),
-                                isIdentifierEditable: !isEdit && isEditable,
-                                inputGroupProps: {
-                                  disabled: !isEditable
-                                }
-                              }}
-                              descriptionProps={{ disabled: !isEditable }}
-                              tagsProps={{
-                                disabled: !isEditable
-                              }}
-                              formikProps={formikProps}
-                            />
-                            {isGitSyncEnabled && (
-                              <GitSyncStoreProvider>
-                                <GitContextForm
-                                  formikProps={formikProps}
-                                  gitDetails={
-                                    isEdit
-                                      ? { ...inputSet.gitDetails, getDefaultFromOtherRepo: true }
-                                      : { repoIdentifier, branch, getDefaultFromOtherRepo: true }
-                                  }
-                                  className={css.gitContextForm}
-                                />
-                              </GitSyncStoreProvider>
-                            )}
-                            {templateRefsResolvedPipeline?.data?.mergedPipelineYaml &&
-                              template?.data?.inputSetTemplateYaml &&
-                              parse(template.data.inputSetTemplateYaml) && (
-                                <PipelineInputSetForm
-                                  path="pipeline"
-                                  readonly={!isEditable}
-                                  originalPipeline={parse(templateRefsResolvedPipeline?.data?.mergedPipelineYaml)}
-                                  template={parse(template.data?.inputSetTemplateYaml || '').pipeline}
-                                  viewType={StepViewType.InputSet}
-                                />
-                              )}
-                          </Layout.Vertical>
-                        )}
-                        <Layout.Horizontal className={css.footer} padding="xlarge">
-                          <Button
-                            variation={ButtonVariation.PRIMARY}
-                            type="submit"
-                            onClick={e => {
-                              e.preventDefault()
-                              formikProps.validateForm().then(errors => {
-                                setFormErrors(errors)
-                                if (
-                                  formikProps?.values?.name?.length &&
-                                  formikProps?.values?.identifier?.length &&
-                                  isEmpty(formikProps.errors)
-                                ) {
-                                  handleSubmit(formikProps.values, {
-                                    repoIdentifier: formikProps.values.repo,
-                                    branch: formikProps.values.branch
-                                  })
-                                }
-                              })
-                            }}
-                            text={getString('save')}
-                            disabled={!isEditable}
-                          />
-                          &nbsp; &nbsp;
-                          <Button
-                            variation={ButtonVariation.TERTIARY}
-                            onClick={() => {
-                              history.goBack()
-                            }}
-                            text={getString('cancel')}
-                          />
-                        </Layout.Horizontal>
-                      </FormikForm>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={css.editor}>
-                    <ErrorsStrip formErrors={formErrors} />
-                    <Layout.Vertical className={css.content} padding="xlarge">
-                      <YamlBuilderMemo
-                        {...yamlBuilderReadOnlyModeProps}
-                        existingJSON={{ inputSet: omit(formikProps?.values, 'inputSetReferences', 'repo', 'branch') }}
-                        bind={setYamlHandler}
-                        isReadOnlyMode={!isEditable}
-                        invocationMap={factory.getInvocationMap()}
-                        height="calc(100vh - 230px)"
-                        width="calc(100vw - 350px)"
-                        showSnippetSection={false}
-                        isEditModeSupported={isEditable}
-                      />
-                    </Layout.Vertical>
-                    <Layout.Horizontal className={css.footer} padding="xlarge">
-                      <Button
-                        variation={ButtonVariation.PRIMARY}
-                        type="submit"
-                        disabled={!isEditable}
-                        text={getString('save')}
-                        onClick={() => {
-                          const latestYaml = yamlHandler?.getLatestYaml() || /* istanbul ignore next */ ''
-                          const inputSetDto: InputSetDTO = parse(latestYaml)?.inputSet
-                          handleSubmit(inputSetDto, {
-                            repoIdentifier: formikProps.values.repo,
-                            branch: formikProps.values.branch
-                          })
-                        }}
-                      />
-                      &nbsp; &nbsp;
-                      <Button
-                        variation={ButtonVariation.TERTIARY}
-                        onClick={() => {
-                          history.goBack()
-                        }}
-                        text={getString('cancel')}
-                      />
-                    </Layout.Horizontal>
-                  </div>
-                )}
-              </>
-            )
-          }}
-        </Formik>
-      </Layout.Vertical>
-    </Container>
+  const child = React.useCallback(
+    () => (
+      <FormikInputSetForm
+        inputSet={inputSet}
+        template={template}
+        pipeline={pipeline}
+        templateRefsResolvedPipeline={templateRefsResolvedPipeline}
+        handleSubmit={handleSubmit}
+        formErrors={formErrors}
+        setFormErrors={setFormErrors}
+        yamlHandler={yamlHandler}
+        setYamlHandler={setYamlHandler}
+        formikRef={formikRef}
+        selectedView={selectedView}
+        executionView={executionView}
+        isEdit={isEdit}
+        isGitSyncEnabled={isGitSyncEnabled}
+      />
+    ),
+    [
+      inputSet,
+      template,
+      pipeline,
+      templateRefsResolvedPipeline,
+      handleSubmit,
+      formErrors,
+      setFormErrors,
+      yamlHandler,
+      setYamlHandler,
+      formikRef,
+      selectedView,
+      executionView,
+      isEdit,
+      isGitSyncEnabled
+    ]
   )
 
   return executionView ? (
-    child
+    child()
   ) : (
     <InputSetFormWrapper
       loading={
@@ -698,7 +481,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
       isGitSyncEnabled={isGitSyncEnabled}
       disableVisualView={disableVisualView}
     >
-      {child}
+      {child()}
     </InputSetFormWrapper>
   )
 }
@@ -745,7 +528,10 @@ export function InputSetFormWrapper(props: InputSetFormWrapperProps): React.Reac
                   : getString('inputSets.newInputSetLabel')}
               </Text>
               {isGitSyncEnabled && isEdit && (
-                <GitPopover data={inputSet.gitDetails || {}} iconProps={{ margin: { left: 'small', top: 'xsmall' } }} />
+                <GitPopover
+                  data={defaultTo(inputSet.gitDetails, {})}
+                  iconProps={{ margin: { left: 'small', top: 'xsmall' } }}
+                />
               )}
               <div className={css.optionBtns}>
                 <VisualYamlToggle
@@ -775,7 +561,7 @@ export function InputSetFormWrapper(props: InputSetFormWrapperProps): React.Reac
                     branch: pipeline?.data?.gitDetails?.branch,
                     repoIdentifier: pipeline?.data?.gitDetails?.repoIdentifier
                   }),
-                  label: parse(pipeline?.data?.yamlPipeline || '')?.pipeline.name || ''
+                  label: defaultTo(parse(defaultTo(pipeline?.data?.yamlPipeline, ''))?.pipeline.name, '')
                 }
               ]}
             />
