@@ -55,7 +55,7 @@ export const regexPositiveNumbers = /^[1-9]+[0-9]*$/
 
 export const regexIdentifier = /^[a-zA-Z_.][0-9a-zA-Z_$]*$/
 
-export const keyRegexIdentifier = /^[a-zA-Z_][0-9a-zA-Z_$]+(\.[0-9a-zA-Z_$]+)*$/
+export const keyRegexIdentifier = /^([a-zA-Z_])([0-9a-zA-Z_$]*)+((\.[0-9a-zA-Z_$]+)*)$/
 
 export const k8sLabelRegex = /[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/
 
@@ -100,3 +100,11 @@ export function getEntityNameFromType(entity: GitSyncEntityDTO['entityType']): s
 export const serviceDependencyIdRegex = /^[a-zA-Z][a-zA-Z0-9_]*$/
 
 export const portNumberRegex = /^[0-9]*$/
+
+export const joinAsASentence = (items: string[]): string => {
+  if (!items.length) {
+    return ''
+  }
+  const last = items.pop()
+  return items.join(', ') + ' and ' + last
+}

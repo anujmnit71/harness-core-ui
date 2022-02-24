@@ -30,7 +30,7 @@ const onClickNode = (e: React.MouseEvent<Element, MouseEvent>, node: GroupNodeMo
   node.fireEvent({}, Event.ClickNode)
 }
 
-export const GroupNodeWidget = (props: GroupNodeProps): JSX.Element => {
+export function GroupNodeWidget(props: GroupNodeProps): JSX.Element {
   const options = props.node.getOptions()
   const allowAdd = options.allowAdd ?? false
   const [showAdd, setVisibilityOfAdd] = React.useState(false)
@@ -75,7 +75,7 @@ export const GroupNodeWidget = (props: GroupNodeProps): JSX.Element => {
           width: options.width,
           height: options.height,
           marginTop: 15 - (options.height || 64) / 2,
-          marginLeft: 15
+          marginLeft: 30
         }}
       ></div>
       <div
@@ -85,7 +85,7 @@ export const GroupNodeWidget = (props: GroupNodeProps): JSX.Element => {
           width: options.width,
           height: options.height,
           marginTop: 20 - (options.height || 64) / 2,
-          marginLeft: 10
+          marginLeft: 25
         }}
       ></div>
       <div

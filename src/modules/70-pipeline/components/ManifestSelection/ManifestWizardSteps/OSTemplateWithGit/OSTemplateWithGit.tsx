@@ -52,7 +52,7 @@ interface OpenshiftTemplateWithGITPropType {
   isReadonly?: boolean
 }
 
-const OpenShiftTemplateWithGit: React.FC<StepProps<ConnectorConfigDTO> & OpenshiftTemplateWithGITPropType> = ({
+function OpenShiftTemplateWithGit({
   stepName,
   initialValues,
   handleSubmit,
@@ -62,7 +62,7 @@ const OpenShiftTemplateWithGit: React.FC<StepProps<ConnectorConfigDTO> & Openshi
   previousStep,
   manifestIdsList,
   isReadonly = false
-}) => {
+}: StepProps<ConnectorConfigDTO> & OpenshiftTemplateWithGITPropType): React.ReactElement {
   const { getString } = useStrings()
   const isActiveAdvancedStep: boolean = initialValues?.spec?.skipResourceVersioning || initialValues?.spec?.commandFlags
   const gitConnectionType: string = prevStepData?.store === ManifestStoreMap.Git ? 'connectionType' : 'type'
@@ -232,7 +232,6 @@ const OpenShiftTemplateWithGit: React.FC<StepProps<ConnectorConfigDTO> & Openshi
                     />
                     {getMultiTypeFromValue(formik.values?.branch) === MultiTypeInputType.RUNTIME && (
                       <ConfigureOptions
-                        style={{ alignSelf: 'center', marginBottom: 5 }}
                         value={formik.values?.branch as string}
                         type="String"
                         variableName="branch"
@@ -261,7 +260,6 @@ const OpenShiftTemplateWithGit: React.FC<StepProps<ConnectorConfigDTO> & Openshi
                     />
                     {getMultiTypeFromValue(formik.values?.commitId) === MultiTypeInputType.RUNTIME && (
                       <ConfigureOptions
-                        style={{ alignSelf: 'center', marginBottom: 5 }}
                         value={formik.values?.commitId as string}
                         type="String"
                         variableName="commitId"
@@ -291,7 +289,6 @@ const OpenShiftTemplateWithGit: React.FC<StepProps<ConnectorConfigDTO> & Openshi
                   />
                   {getMultiTypeFromValue(formik.values?.path) === MultiTypeInputType.RUNTIME && (
                     <ConfigureOptions
-                      style={{ alignSelf: 'center', marginBottom: 5 }}
                       value={formik.values?.path as string}
                       type="String"
                       variableName="path"

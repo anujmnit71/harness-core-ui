@@ -32,7 +32,7 @@ import { useMutateAsGet, useQueryParams } from '@common/hooks'
 import { InputSetListView } from './InputSetListView'
 import css from './InputSetList.module.scss'
 
-const InputSetList: React.FC = (): JSX.Element => {
+function InputSetList(): React.ReactElement {
   const [searchParam, setSearchParam] = React.useState('')
   const [page, setPage] = React.useState(0)
   const { repoIdentifier, branch } = useQueryParams<GitQueryParams>()
@@ -274,7 +274,7 @@ const InputSetList: React.FC = (): JSX.Element => {
         noData={{
           when: () => !inputSet?.data?.content?.length,
           icon: 'yaml-builder-input-sets',
-          message: getString('inputSets.aboutInputSets'),
+          message: getString('pipeline.inputSets.aboutInputSets'),
           buttonText: getString('inputSets.newInputSet'),
           onClick: () => goToInputSetForm(),
           buttonDisabled: !canUpdateInputSet || !pipelineHasRuntimeInputs,

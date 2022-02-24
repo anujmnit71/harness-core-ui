@@ -6,6 +6,8 @@ setup: Setup
 agent: Agent
 application: Application
 certificate: Certificate
+notEnabled: 'Not Enabled'
+apiStatus: 'API Status'
 gpgkey: 'GPG Key'
 sync: Sync
 accountSetup: Account Setup
@@ -13,6 +15,10 @@ projectSetup: Project Setup
 orgSetup: Org Setup
 delegateForTask: '{{delegate}} for {{taskName}}'
 noDelegateForTask: 'No delegate found for {{taskName}}'
+gitDetailsTitle: 'Git Details'
+lastConnected: 'Last Connected'
+harnessPlatform: 'Harness Platform'
+harnessDelegate: 'Harness Delegate'
 connectThroughPlatform: 'Connect through Harness Platform'
 connectThroughDelegate: 'Connect through a Harness Delegate'
 connectThroughPlatformInfo: 'Use this option to connect to a SaaS Git provider. Secure communication with the Git provider is done through the Harness Platform. All credentials are encrypted and stored in the Secret Manager configured in Harness.'
@@ -250,7 +256,7 @@ repo_provider:
   bitbucketLabel: BitBucket
   customLabel: Custom
   githubLabel: GitHub
-  gitlabLabel: GitLab
+  gitlabLabel: Gitlab
   codecommit: CodeCommit
   awscodecommit: AWS Code Commit
   azureDev: Azure Devops
@@ -775,3 +781,12 @@ currentlyAvailable: Currently Available
 supportedInFirstGeneration: Currently supported on Harness Continuous Delivery First Generation
 currentlySupportedOn: Currently supported on
 firstGeneration: Harness Continuous Delivery First Generation
+sourceBranch: Source Branch
+sourceBranchPlaceholder: Enter Source Branch
+targetBranch: Target Branch
+targetBranchPlaceholder: Enter Target Branch
+operator: Operator
+branchName: 'Branch Name'
+tagName: 'Tag Name'
+jexlCondition: 'JEXL Condition'
+triggersLabel: 'Triggers'

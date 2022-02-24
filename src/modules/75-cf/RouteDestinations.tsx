@@ -51,6 +51,7 @@ import { ResourceCategory, ResourceType } from '@rbac/interfaces/ResourceType'
 import { PermissionIdentifier } from '@rbac/interfaces/PermissionIdentifier'
 import { String } from 'framework/strings'
 import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
+import { GovernanceRouteDestinations } from '@governance/RouteDestinations'
 import GitSyncPage from '@gitsync/pages/GitSyncPage'
 import GitSyncRepoTab from '@gitsync/pages/repos/GitSyncRepoTab'
 import GitSyncEntityTab from '@gitsync/pages/entities/GitSyncEntityTab'
@@ -112,7 +113,7 @@ RbacFactory.registerResourceTypeHandler(ResourceType.FEATUREFLAG, {
   category: ResourceCategory.FEATUREFLAG_FUNCTIONS,
   permissionLabels: {
     [PermissionIdentifier.TOGGLE_FF_FEATUREFLAG]: <String stringID="cf.rbac.featureflag.toggle" />,
-    [PermissionIdentifier.EDIT_FF_FEATUREFLAG]: <String stringID="cf.rbac.featureflag.edit" />,
+    [PermissionIdentifier.EDIT_FF_FEATUREFLAG]: <String stringID="rbac.permissionLabels.createEdit" />,
     [PermissionIdentifier.DELETE_FF_FEATUREFLAG]: <String stringID="cf.rbac.featureflag.delete" />
   }
 })
@@ -122,7 +123,7 @@ RbacFactory.registerResourceTypeHandler(ResourceType.TARGETGROUP, {
   label: 'cf.rbac.targetgroup.label',
   category: ResourceCategory.FEATUREFLAG_FUNCTIONS,
   permissionLabels: {
-    [PermissionIdentifier.EDIT_FF_TARGETGROUP]: <String stringID="cf.rbac.targetgroup.edit" />,
+    [PermissionIdentifier.EDIT_FF_TARGETGROUP]: <String stringID="rbac.permissionLabels.createEdit" />,
     [PermissionIdentifier.DELETE_FF_TARGETGROUP]: <String stringID="cf.rbac.targetgroup.delete" />
   }
 })
@@ -431,6 +432,11 @@ const CFRoutes: FC = () => {
       </RouteWithLayout>
       <AdminRouteDestinations />
       <PipelineRouteDestinations />
+
+      {GovernanceRouteDestinations({
+        sidebarProps: CFSideNavProps,
+        pathProps: { ...accountPathProps, ...projectPathProps, ...cfModuleParams }
+      })}
     </>
   )
 }

@@ -48,8 +48,9 @@ import { TestStatus } from '@common/components/TestConnectionWidget/TestConnecti
 import { HARNESS_FOLDER_NAME_PLACEHOLDER, HARNESS_FOLDER_SUFFIX } from '@gitsync/common/Constants'
 import { getScopeFromDTO, ScopedObjectDTO } from '@common/components/EntityReference/EntityReference'
 import SCMCheck from '@common/components/SCMCheck/SCMCheck'
-import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import { GitSyncStoreProvider } from 'framework/GitRepoStore/GitSyncStoreContext'
+import { FeatureFlag } from '@common/featureFlags'
+import { useFeatureFlag } from '@common/hooks/useFeatureFlag'
 import RepoBranchSelect from './RepoBranchSelect'
 import RepoTestConnection from './RepoTestConnection'
 import css from './GitSyncRepoForm.module.scss'
@@ -93,13 +94,10 @@ const getConnectorIdentifierWithScope = (scope: Scope, identifier: string): stri
 const getConnectorTypeIcon = (isSelected: boolean, icon: ConnectorCardInterface['icon']): IconName =>
   isSelected ? icon?.selected : icon?.default
 
-// Need SCM only with FF for 1st repo
-const needToAddSCM = (isNewUser: boolean, fullSync = false): boolean => isNewUser && fullSync
-
 const GitSyncRepoForm: React.FC<ModalConfigureProps & GitSyncRepoFormProps> = props => {
   const { accountId, projectIdentifier, orgIdentifier, isNewUser, onClose } = props
-  const { NG_GIT_FULL_SYNC } = useFeatureFlags()
-  const [needSCM, setNeedSCM] = React.useState<boolean>(needToAddSCM(isNewUser, NG_GIT_FULL_SYNC))
+  const bitBucketSupported = useFeatureFlag(FeatureFlag.GIT_SYNC_WITH_BITBUCKET)
+  const [needSCM, setNeedSCM] = React.useState<boolean>(isNewUser)
   const [modalErrorHandler, setModalErrorHandler] = useState<ModalErrorHandlerBinding | undefined>()
   const [connectorIdentifierRef, setConnectorIdentifierRef] = useState<string>('')
   const [repositoryURL, setRepositoryURL] = useState<string | undefined>()
@@ -111,6 +109,8 @@ const GitSyncRepoForm: React.FC<ModalConfigureProps & GitSyncRepoFormProps> = pr
   const { mutate: createGitSyncRepo, loading: creatingGitSync } = usePostGitSync({
     queryParams: { accountIdentifier: accountId }
   })
+
+  const supportedProviders = bitBucketSupported ? gitCards : gitCards.filter(card => card.type !== Connectors.BITBUCKET)
 
   const defaultInitialFormData: GitSyncFormInterface = {
     gitConnectorType: Connectors.GITHUB as GitSyncConfig['gitConnectorType'],
@@ -141,7 +141,7 @@ const GitSyncRepoForm: React.FC<ModalConfigureProps & GitSyncRepoFormProps> = pr
 
   return (
     <Container height={'inherit'} className={css.modalContainer} margin="large">
-      {needToAddSCM(isNewUser, NG_GIT_FULL_SYNC) ? (
+      {isNewUser ? (
         <GitSyncStoreProvider>
           <SCMCheck profileLinkClickHandler={onClose} title={modalTitle} validateSCM={hasSCM => setNeedSCM(!hasSCM)} />
         </GitSyncStoreProvider>
@@ -208,26 +208,29 @@ const GitSyncRepoForm: React.FC<ModalConfigureProps & GitSyncRepoFormProps> = pr
                     </Text>
                   </Layout.Horizontal>
                   <Layout.Horizontal margin={{ bottom: 'medium', left: 'xlarge' }}>
-                    {gitCards.map((cardData: ConnectorCardInterface) => {
+                    {supportedProviders.map((cardData: ConnectorCardInterface) => {
                       const isSelected = cardData.type === formValues.gitConnectorType
                       return (
                         <Layout.Vertical key={cardData.type} className={css.cardWrapper}>
                           <Card
                             data-testid={`${cardData.type}-card`}
                             onMouseOver={noop}
-                            disabled={cardData.disabled}
                             interactive
                             className={cx(css.card, {
                               [css.selectedCard]: isSelected
                             })}
                             onClick={e => {
-                              if (cardData.disabled) return
-                              e.stopPropagation()
-                              setFieldValue('gitConnectorType', cardData.type)
-                              setFieldValue('gitConnector', '')
-                              setFieldValue('repo', '')
-                              setFieldValue('branch', '')
-                              setConnectorType(cardData.type as GitSyncConfig['gitConnectorType'])
+                              //Resetting all repo related field when user click different repo provider
+                              if (cardData.type !== connectorType) {
+                                e.stopPropagation()
+                                setFieldValue('gitConnectorType', cardData.type)
+                                setFieldValue('gitConnector', '')
+                                setFieldValue('repo', '')
+                                setFieldValue('branch', '')
+                                setConnectorType(cardData.type as GitSyncConfig['gitConnectorType'])
+                                setConnectorIdentifierRef('')
+                                setRepositoryURL('')
+                              }
                             }}
                           >
                             <Icon
@@ -369,6 +372,7 @@ const GitSyncRepoForm: React.FC<ModalConfigureProps & GitSyncRepoFormProps> = pr
                       )}
                     </Text>
                     <RepoBranchSelect
+                      key={repositoryURL} // Branch select must be reset if repositoryURL changes
                       connectorIdentifierRef={connectorIdentifierRef}
                       repoURL={repositoryURL}
                       modalErrorHandler={modalErrorHandler}

@@ -27,13 +27,13 @@ interface CanvasButtonsProps {
   layout?: 'horizontal' | 'vertical'
 }
 
-export const CanvasButtons: React.FC<CanvasButtonsProps> = ({
+export function CanvasButtons({
   engine,
   callback,
   className = '',
   tooltipPosition = 'left',
   layout = 'vertical'
-}) => {
+}: CanvasButtonsProps): React.ReactElement {
   const { getString } = useStrings()
   const zoomToFit = useCallback(
     e => {
@@ -51,7 +51,7 @@ export const CanvasButtons: React.FC<CanvasButtonsProps> = ({
       engine.getModel().setZoomLevel(100)
       engine.getModel().setOffset(0, 0)
       engine.repaintCanvas()
-      callback?.(CanvasButtonsActions.ZoomToFit)
+      callback?.(CanvasButtonsActions.Reset)
     },
     [engine, callback]
   )

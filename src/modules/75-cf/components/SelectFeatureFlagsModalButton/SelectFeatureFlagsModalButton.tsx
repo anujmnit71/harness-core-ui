@@ -35,7 +35,9 @@ import type { GitSyncFormValues, UseGitSync } from '@cf/hooks/useGitSync'
 import { FeatureFlagRow } from './FeatureFlagRow'
 import { NoDataFoundRow } from '../NoDataFoundRow/NoDataFoundRow'
 import SaveFlagToGitSubForm from '../SaveFlagToGitSubForm/SaveFlagToGitSubForm'
-import AddToFlagButton from './add-to-flag-butotn/AddToFlagButton'
+import AddToFlagButton from './add-to-flag-button/AddToFlagButton'
+
+import css from './SelectFeatureFlagsModalButton.module.scss'
 
 export interface SelectedFeatureFlag {
   feature: Feature
@@ -43,7 +45,7 @@ export interface SelectedFeatureFlag {
 }
 
 export interface SelectFeatureFlagsModalButtonProps extends Omit<ButtonProps, 'onClick' | 'onSubmit'> {
-  accountId: string
+  accountIdentifier: string
   orgIdentifier: string
   projectIdentifier: string
   environmentIdentifier: string
@@ -63,7 +65,7 @@ export interface SelectFeatureFlagsModalButtonProps extends Omit<ButtonProps, 'o
 }
 
 export const SelectFeatureFlagsModalButton: React.FC<SelectFeatureFlagsModalButtonProps> = ({
-  accountId,
+  accountIdentifier,
   orgIdentifier,
   projectIdentifier,
   targetIdentifier,
@@ -88,11 +90,10 @@ export const SelectFeatureFlagsModalButton: React.FC<SelectFeatureFlagsModalButt
 
     const queryParams = useMemo(
       () => ({
-        account: accountId,
-        accountIdentifier: accountId,
-        org: orgIdentifier,
-        project: projectIdentifier,
-        environment: environmentIdentifier,
+        accountIdentifier,
+        orgIdentifier,
+        projectIdentifier,
+        environmentIdentifier,
         name: queryString,
         sortOrder,
         sortByField,
@@ -180,7 +181,7 @@ export const SelectFeatureFlagsModalButton: React.FC<SelectFeatureFlagsModalButt
           </Container>
 
           {/* Table view */}
-          <Container style={{ height: 'fit-content', overflow: 'auto' }} margin={{ bottom: 'small', right: 'xxlarge' }}>
+          <Container className={css.container} margin={{ bottom: 'small', right: 'xxlarge' }}>
             {(error && (
               <PageError
                 message={getErrorMessage(error)}
@@ -248,6 +249,7 @@ export const SelectFeatureFlagsModalButton: React.FC<SelectFeatureFlagsModalButt
                 pageIndex={data?.pageIndex}
                 pageSize={CF_DEFAULT_PAGE_SIZE}
                 gotoPage={setPageNumber}
+                hidePageNumbers={!!data?.pageCount && data?.pageCount > 3}
               />
             )}
           </Container>

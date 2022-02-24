@@ -8,7 +8,7 @@
 import React, { useEffect, useState } from 'react'
 import { isEmpty } from 'lodash-es'
 import { useParams } from 'react-router-dom'
-import { Dialog } from '@blueprintjs/core'
+import { Dialog, Intent } from '@blueprintjs/core'
 import cx from 'classnames'
 import * as Yup from 'yup'
 import { FieldArray, FormikProps } from 'formik'
@@ -21,7 +21,8 @@ import {
   getMultiTypeFromValue,
   MultiTypeInputType,
   Text,
-  PageSpinner
+  PageSpinner,
+  FormError
 } from '@wings-software/uicore'
 import { useModalHook } from '@harness/use-modal'
 import { setFormikRef, StepFormikFowardRef, StepViewType } from '@pipeline/components/AbstractSteps/Step'
@@ -71,7 +72,7 @@ import { getNameAndIdentifierSchema } from '../StepsValidateUtils'
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 import css from './JiraCreate.module.scss'
 
-const FormContent = ({
+function FormContent({
   formik,
   refetchProjects,
   refetchProjectMetadata,
@@ -85,7 +86,7 @@ const FormContent = ({
   allowableTypes,
   stepViewType,
   readonly
-}: JiraCreateFormContentInterface): JSX.Element => {
+}: JiraCreateFormContentInterface): JSX.Element {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   const { accountId, projectIdentifier, orgIdentifier } =
@@ -241,22 +242,24 @@ const FormContent = ({
     )
   }, [projectOptions, connectorRefFixedValue, formik.values.spec.selectedFields, formik.values.spec.fields])
 
-  const AddFieldsButton = () => (
-    <Text
-      onClick={() => {
-        if (!isApprovalStepFieldDisabled(readonly)) {
-          showDynamicFieldsModal()
-        }
-      }}
-      style={{
-        cursor: isApprovalStepFieldDisabled(readonly) ? 'not-allowed' : 'pointer'
-      }}
-      tooltipProps={{ dataTooltipId: 'jiraCreateAddFields' }}
-      intent="primary"
-    >
-      {getString('pipeline.jiraCreateStep.fieldSelectorAdd')}
-    </Text>
-  )
+  function AddFieldsButton(): React.ReactElement {
+    return (
+      <Text
+        onClick={() => {
+          if (!isApprovalStepFieldDisabled(readonly)) {
+            showDynamicFieldsModal()
+          }
+        }}
+        style={{
+          cursor: isApprovalStepFieldDisabled(readonly) ? 'not-allowed' : 'pointer'
+        }}
+        tooltipProps={{ dataTooltipId: 'jiraCreateAddFields' }}
+        intent="primary"
+      >
+        {getString('pipeline.jiraCreateStep.fieldSelectorAdd')}
+      </Text>
+    )
+  }
 
   return (
     <React.Fragment>
@@ -381,6 +384,24 @@ const FormContent = ({
           />
         )}
       </div>
+      {projectsFetchError ? (
+        <FormError
+          className={css.marginTop}
+          errorMessage={
+            <Text
+              lineClamp={1}
+              width={350}
+              margin={{ bottom: 'medium' }}
+              intent={Intent.DANGER}
+              tooltipProps={{ isDark: true, popoverClassName: css.tooltip }}
+            >
+              {(projectsFetchError as any)?.data?.message}
+            </Text>
+          }
+          name="spec.projectKey"
+        ></FormError>
+      ) : null}
+
       <div className={cx(stepCss.formGroup, stepCss.lg)}>
         <FormInput.MultiTypeInput
           selectItems={

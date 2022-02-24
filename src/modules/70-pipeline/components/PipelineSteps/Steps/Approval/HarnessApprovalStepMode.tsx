@@ -42,13 +42,13 @@ import { getNameAndIdentifierSchema } from '../StepsValidateUtils'
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 import css from './HarnessApproval.module.scss'
 
-const FormContent = ({
+function FormContent({
   formik,
   isNewStep,
   readonly,
   allowableTypes,
   stepViewType
-}: HarnessApprovalFormContentProps) => {
+}: HarnessApprovalFormContentProps): React.ReactElement {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
 
@@ -175,6 +175,7 @@ const FormContent = ({
             <div className={stepCss.formGroup}>
               <FieldArray
                 name="spec.approverInputs"
+                validateOnChange={false}
                 render={({ push, remove }) => {
                   return (
                     <div>
@@ -256,7 +257,6 @@ function HarnessApprovalStepMode(
       onSubmit={values => onUpdate?.(values)}
       initialValues={props.initialValues}
       formName="harnessApproval"
-      enableReinitialize={true}
       validate={data => {
         onChange?.(data)
       }}

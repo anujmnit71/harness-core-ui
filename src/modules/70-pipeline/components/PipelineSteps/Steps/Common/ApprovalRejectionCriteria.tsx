@@ -41,7 +41,7 @@ import {
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 import css from './ApprovalRejectionCriteria.module.scss'
 
-const RenderValueSelects = ({
+function RenderValueSelects({
   condition,
   allowedValuesForFields,
   mode,
@@ -55,7 +55,7 @@ const RenderValueSelects = ({
   index: number
   expressions: string[]
   readonly?: boolean
-}) => {
+}) {
   const { getString } = useStrings()
   if (condition.operator === 'in' || condition.operator === 'not in') {
     return (
@@ -88,7 +88,7 @@ const RenderValueSelects = ({
   )
 }
 
-export const Conditions = ({
+export function Conditions({
   values,
   onChange,
   mode,
@@ -99,7 +99,7 @@ export const Conditions = ({
   fieldList,
   readonly,
   stepType
-}: ConditionsInterface) => {
+}: ConditionsInterface) {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   const name = `spec.${mode}.spec.conditions`
@@ -138,7 +138,7 @@ export const Conditions = ({
                       ? getString('pipeline.jiraApprovalStep.jiraField')
                       : getString('pipeline.approvalCriteria.field')}
                   </span>
-                  <span>{getString('pipeline.triggers.conditionsPanel.operator')}</span>
+                  <span>{getString('common.operator')}</span>
                   <span>{getString('valueLabel')}</span>
                 </div>
                 {values.spec.conditions?.map((condition: ApprovalRejectionCriteriaCondition, i: number) => (
@@ -221,7 +221,7 @@ export const Conditions = ({
   )
 }
 
-export const Jexl = (props: ApprovalRejectionCriteriaProps) => {
+export function Jexl(props: ApprovalRejectionCriteriaProps) {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   return (
@@ -244,7 +244,7 @@ export const Jexl = (props: ApprovalRejectionCriteriaProps) => {
   )
 }
 
-export const ApprovalRejectionCriteria: React.FC<ApprovalRejectionCriteriaProps> = props => {
+export function ApprovalRejectionCriteria(props: ApprovalRejectionCriteriaProps): React.ReactElement {
   const { values, onChange, title, readonly, stepType } = props
   const [type, setType] = useState<ApprovalRejectionCriteriaType>(values.type)
   const [allowedFieldKeys, setAllowedFieldKeys] = useState<SelectOption[]>([])

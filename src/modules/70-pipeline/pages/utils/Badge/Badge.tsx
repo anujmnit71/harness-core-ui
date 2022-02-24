@@ -34,7 +34,7 @@ interface BadgeTooltipContentInterface {
   overlaySetErrorDetails?: { [key: string]: string }
 }
 
-const TooltipContent: React.FC<BadgeTooltipContentInterface> = (props: BadgeTooltipContentInterface): JSX.Element => {
+function TooltipContent(props: BadgeTooltipContentInterface): React.ReactElement {
   const { iconName, entityName = '', entityType, uuidToErrorResponseMap, overlaySetErrorDetails } = props
   const { getString } = useStrings()
   const nonGitErrors = uuidToErrorResponseMap
@@ -54,7 +54,7 @@ const TooltipContent: React.FC<BadgeTooltipContentInterface> = (props: BadgeTool
           </Text>
           <div>
             {nonGitErrorStrings.map((errorMessage, index) => (
-              <Text width={500} lineClamp={1} color={Color.GREY_0} key={index} font={{ weight: 'semi-bold' }}>
+              <Text width={480} lineClamp={3} color={Color.GREY_0} key={index} font={{ weight: 'semi-bold' }}>
                 {errorMessage}
               </Text>
             ))}
@@ -80,7 +80,7 @@ const TooltipContent: React.FC<BadgeTooltipContentInterface> = (props: BadgeTool
   )
 }
 
-export const Badge: React.FC<BadgeProps> = (props: BadgeProps): JSX.Element => {
+export function Badge(props: BadgeProps): React.ReactElement {
   const {
     text,
     iconName,

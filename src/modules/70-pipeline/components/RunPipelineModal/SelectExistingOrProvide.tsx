@@ -17,28 +17,28 @@ interface SelectExistingInputsOrProvideNewProps {
   onExistingProvideRadioChange: (e: FormEvent<HTMLInputElement>) => void
 }
 
-const SelectExistingInputsOrProvideNew = ({
+function SelectExistingInputsOrProvideNew({
   existingProvide,
   onExistingProvideRadioChange
-}: SelectExistingInputsOrProvideNewProps): React.ReactElement => {
+}: SelectExistingInputsOrProvideNewProps): React.ReactElement {
   const { getString } = useStrings()
   return (
     <div>
       <Layout.Horizontal className={css.runModalSubHeading} id="use-input-set">
         <RadioGroup
           name="existingProvideRadio"
-          label={getString('pipeline.triggers.pipelineInputPanel.selectedExisitingOrProvide')}
+          label={getString('pipeline.pipelineInputPanel.selectedExisitingOrProvide')}
           inline
           selectedValue={existingProvide}
           onChange={onExistingProvideRadioChange}
         >
           <Radio
-            label={getString('pipeline.triggers.pipelineInputPanel.provide')}
+            label={getString('pipeline.pipelineInputPanel.provide')}
             value="provide"
             className={cx(css.valueProviderRadio, existingProvide === 'provide' ? css.selectedValueProvider : '')}
           />
           <Radio
-            label={getString('pipeline.triggers.pipelineInputPanel.existing')}
+            label={getString('pipeline.pipelineInputPanel.existing')}
             value="existing"
             className={cx(css.valueProviderRadio, existingProvide === 'existing' ? css.selectedValueProvider : '')}
           />
@@ -63,7 +63,7 @@ const SelectExistingInputsOrProvideNew = ({
               </Text>
             }
           >
-            {getString('pipeline.triggers.pipelineInputPanel.whatAreInputsets')}
+            {getString('pipeline.pipelineInputPanel.whatAreInputsets')}
           </Text>
         </span>
       </Layout.Horizontal>

@@ -665,8 +665,10 @@ const _initializeDb = async (dispatch: React.Dispatch<ActionReturnType>, version
             // logger.error('There was no DB found')
             dispatch(PipelineContextActions.error({ error: 'There was no DB found' }))
           }
-          const objectStore = db.createObjectStore(IdbPipelineStoreName, { keyPath: KeyPath, autoIncrement: false })
-          objectStore.createIndex(KeyPath, KeyPath, { unique: true })
+          if (!db.objectStoreNames.contains(IdbPipelineStoreName)) {
+            const objectStore = db.createObjectStore(IdbPipelineStoreName, { keyPath: KeyPath, autoIncrement: false })
+            objectStore.createIndex(KeyPath, KeyPath, { unique: true })
+          }
         },
         async blocked() {
           cleanUpDBRefs()
@@ -765,14 +767,24 @@ export const PipelineContext = React.createContext<PipelineContextInterface>({
   getStagePathFromPipeline: () => ''
 })
 
-export const PipelineProvider: React.FC<{
+export interface PipelineProviderProps {
   queryParams: GetPipelineQueryParams
   pipelineIdentifier: string
   stepsFactory: AbstractStepFactory
   stagesMap: StagesMap
   runPipeline: (identifier: string) => void
   renderPipelineStage: PipelineContextInterface['renderPipelineStage']
-}> = ({ queryParams, pipelineIdentifier, children, renderPipelineStage, stepsFactory, stagesMap, runPipeline }) => {
+}
+
+export function PipelineProvider({
+  queryParams,
+  pipelineIdentifier,
+  children,
+  renderPipelineStage,
+  stepsFactory,
+  stagesMap,
+  runPipeline
+}: React.PropsWithChildren<PipelineProviderProps>): React.ReactElement {
   const contextType = PipelineContextType.Pipeline
   const allowableTypes = [MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME, MultiTypeInputType.EXPRESSION]
   const { repoIdentifier, branch } = useQueryParams<GitQueryParams>()
