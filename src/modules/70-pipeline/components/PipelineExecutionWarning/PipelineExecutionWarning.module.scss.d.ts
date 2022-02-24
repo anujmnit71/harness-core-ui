@@ -7,10 +7,6 @@
  **/
 // this is an auto-generated file, do not update this manually
 declare const styles: {
-  readonly connector: string
-  readonly connectorLabel: string
-  readonly deploymentViewMedium: string
-  readonly marginTop: string
-  readonly tooltip: string
+  readonly warningBanner: string
 }
 export default styles

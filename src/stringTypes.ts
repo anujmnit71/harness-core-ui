@@ -2530,6 +2530,7 @@ export interface StringsMap {
   'pipeline.gitPullRequestNumber': string
   'pipeline.gitRepo': string
   'pipeline.imagePathLabel': string
+  'pipeline.imageVersionDeprecated': string
   'pipeline.infraSpecifications.initTimeout': string
   'pipeline.infraSpecifications.initTimeoutPlaceholder': string
   'pipeline.infraSpecifications.namespacePlaceholder': string
@@ -2907,6 +2908,7 @@ export interface StringsMap {
   'pipeline.testsReports.willBeDisplayedIfAvailable': string
   'pipeline.timeRemainingSuffix': string
   'pipeline.uniqueIdentifier': string
+  'pipeline.unsupportedImagesWarning': string
   'pipeline.variable.typePlaceholder': string
   'pipeline.variable.variableNamePlaceholder': string
   'pipeline.verification.analysisTab.logs': string
@@ -6619,10 +6621,6 @@ export interface StringsMap {
    * @deprecated migrate this string to module level file
    */
   inputName: string
-  /**
-   * @deprecated migrate this string to module level file
-   */
-  'inputSets.aboutInputSets': string
   /**
    * @deprecated migrate this string to module level file
    */

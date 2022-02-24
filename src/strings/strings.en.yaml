@@ -495,7 +495,6 @@ inputSets:
   searchInputSet: Search Input Set
   addInputSet: Add Input Set
   saveAsInputSet: Save as Input Set
-  aboutInputSets: Input Sets are collections of variables/values that must be provided to a Pipeline at runtime.
   confirmDeleteTitle: 'Delete {{type}}'
   overlayInputSet: Overlay Input Set
   inputFieldSummary: Input Field Summary
@@ -656,7 +655,7 @@ delegate:
   delegateSizeUndefined: 'Delegate Size is undefined'
   hostName: 'Hostname'
   useExistingSelectors: 'Use existing Delegate selectors'
-  verifyDelegateYamlCmnd: '$ kubectl apply -f harness-delegate.yaml'
+  verifyDelegateYamlCmnd: '$ kubectl apply -f harness-delegate.yml'
   delegateNameRequired: 'Delegate Name is Required.'
   delegateSizeRequired: 'Delegate Size is Required.'
   totalMem: 'Total Mem'
