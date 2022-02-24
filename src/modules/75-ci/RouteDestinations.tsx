@@ -44,7 +44,8 @@ import {
   isFeatureLimitBreached,
   isFeatureOveruseActive,
   isFeatureCountActive,
-  isFeatureWarningActive
+  isFeatureWarningActive,
+  isFeatureLimitMet
 } from '@common/layouts/FeatureBanner'
 import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
 import featureFactory from 'framework/featureStore/FeaturesFactory'
@@ -148,12 +149,12 @@ featureFactory.registerFeaturesByModule('ci', {
     } = additionalLicenseProps
     const isTeamOrEnterprise = isCIEnterprise || isCITeam
     const featuresMap = props.features
-    const maxTotalBuildsFeatureDetail = featuresMap.get(FeatureIdentifier.MAX_TOTAL_BUILDS)
+    const maxTotalBuildsFeatureDetail = featuresMap.get(FeatureIdentifier.MAX_TOTAL_BUILDS) // tested both
     const maxBuildsPerMonthFeatureDetail = featuresMap.get(FeatureIdentifier.MAX_BUILDS_PER_MONTH)
     const activeCommittersFeatureDetail = featuresMap.get(FeatureIdentifier.ACTIVE_COMMITTERS)
 
     // Check for limit breach
-    const isMaxBuildsPerMonthBreached = isFeatureLimitBreached(maxTotalBuildsFeatureDetail)
+    const isMaxBuildsPerMonthBreached = isFeatureLimitBreached(maxBuildsPerMonthFeatureDetail, true)
     let limitBreachMessageString = ''
     if (isMaxBuildsPerMonthBreached) {
       limitBreachMessageString = getString('pipeline.featureRestriction.maxBuildsPerMonth100PercentLimit')
@@ -166,21 +167,36 @@ featureFactory.registerFeaturesByModule('ci', {
       }
     }
 
+    // Checking for limit overuse warning
+    let overuseMessageString = ''
+    const isActiveCommittersOveruseActive = isFeatureOveruseActive(activeCommittersFeatureDetail)
+
+    if (isActiveCommittersOveruseActive && isTeamOrEnterprise) {
+      overuseMessageString = getString('pipeline.featureRestriction.subscriptionExceededLimit')
+    }
+    if (overuseMessageString) {
+      return {
+        message: () => overuseMessageString,
+        bannerType: BannerType.OVERUSE
+      }
+    }
+
     // Checking for limit usage warning
     let warningMessageString = ''
     const isMaxBuildsPerMonthCountActive = isFeatureCountActive(maxBuildsPerMonthFeatureDetail)
     const isMaxTotalBuildsWarningActive = isFeatureWarningActive(maxTotalBuildsFeatureDetail)
-    const isActiveCommittersWarningActive = isFeatureWarningActive(activeCommittersFeatureDetail)
-    const isMaxTotalBuildsOveruseActive = isFeatureOveruseActive(maxTotalBuildsFeatureDetail)
+    const isMaxTotalBuildsLimitMet = isFeatureLimitMet(maxTotalBuildsFeatureDetail)
+    const isActiveCommittersWarningActive = isFeatureWarningActive(activeCommittersFeatureDetail, true)
+
     if (
       isCIFree &&
+      isMaxTotalBuildsLimitMet &&
       isMaxBuildsPerMonthCountActive &&
-      isMaxTotalBuildsOveruseActive &&
-      typeof maxTotalBuildsFeatureDetail?.featureDetail?.count !== 'undefined'
+      typeof maxBuildsPerMonthFeatureDetail?.featureDetail?.count !== 'undefined'
     ) {
       warningMessageString = getString('pipeline.featureRestriction.numMonthlyBuilds', {
-        count: maxTotalBuildsFeatureDetail.featureDetail.count,
-        limit: maxTotalBuildsFeatureDetail.featureDetail.limit
+        count: maxBuildsPerMonthFeatureDetail.featureDetail.count,
+        limit: maxBuildsPerMonthFeatureDetail.featureDetail.limit
       })
     } else if (
       isCIFree &&
@@ -217,20 +233,6 @@ featureFactory.registerFeaturesByModule('ci', {
       return {
         message: () => warningMessageString,
         bannerType: BannerType.INFO
-      }
-    }
-
-    // Checking for limit overuse warning
-    let overuseMessageString = ''
-    const isActiveCommittersOveruseActive = isFeatureOveruseActive(activeCommittersFeatureDetail)
-
-    if (isActiveCommittersOveruseActive && isTeamOrEnterprise) {
-      overuseMessageString = getString('pipeline.featureRestriction.subscriptionExceededLimit')
-    }
-    if (overuseMessageString) {
-      return {
-        message: () => overuseMessageString,
-        bannerType: BannerType.OVERUSE
       }
     }
 

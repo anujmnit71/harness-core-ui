@@ -34,20 +34,24 @@ import css from './layouts.module.scss'
 
 export const BANNER_KEY = 'feature_banner_dismissed'
 
-export const isFeatureLimitBreached = (feature?: CheckFeatureReturn) => {
+export const isFeatureLimitBreached = (feature?: CheckFeatureReturn, includesExceeding = false): boolean => {
   const featureDetail = feature?.featureDetail
-  return featureDetail?.limit && featureDetail.count && featureDetail.count >= featureDetail.limit // @Nana should be >= in case some edge case and they get more count
+  return !!(
+    featureDetail?.limit &&
+    featureDetail.count &&
+    (includesExceeding ? featureDetail.count >= featureDetail.limit : featureDetail.count === featureDetail.limit)
+  )
 }
 
 export const FEATURE_USAGE_WARNING_LIMIT = 90
 
-export const isFeatureWarningActive = (feature?: CheckFeatureReturn) => {
+export const isFeatureWarningActive = (feature?: CheckFeatureReturn, includesLimit = false): boolean => {
   const featureDetail = feature?.featureDetail
-  return (
+  return !!(
     featureDetail?.limit &&
     featureDetail.count &&
     featureDetail.count > (featureDetail.limit * FEATURE_USAGE_WARNING_LIMIT) / 100 &&
-    featureDetail.count < featureDetail.limit
+    (includesLimit || (!includesLimit && featureDetail.count < featureDetail.limit))
   )
 }
 
@@ -59,6 +63,11 @@ export const isFeatureCountActive = (feature?: CheckFeatureReturn) => {
 export const isFeatureOveruseActive = (feature?: CheckFeatureReturn) => {
   const featureDetail = feature?.featureDetail
   return featureDetail?.limit && featureDetail.count && featureDetail.count > featureDetail.limit
+}
+
+export const isFeatureLimitMet = (feature?: CheckFeatureReturn) => {
+  const featureDetail = feature?.featureDetail
+  return featureDetail?.limit && featureDetail.count && featureDetail.count >= featureDetail.limit
 }
 
 export const getActiveUsageNumber = (feature?: CheckFeatureReturn) => {
