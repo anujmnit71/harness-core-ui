@@ -362,8 +362,11 @@ export function OverlayInputSetForm({
     inputSetObj: InputSetDTO,
     gitDetails?: SaveToGitFormInterface,
     objectId = ''
-  ) => {
-    let response: ResponseOverlayInputSetResponse | null
+  ): Promise<{
+    status: 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
+    nextCallback: () => void
+  }> => {
+    let response: ResponseOverlayInputSetResponse | null = null
     try {
       const requestData = yamlStringify({ overlayInputSet: clearNullUndefined(inputSetObj) }) as any
       const requestOptions = getCreateUpdateRequestBodyOptions({
@@ -403,16 +406,17 @@ export function OverlayInputSetForm({
       if (!isGitSyncEnabled) {
         closeForm()
       }
-    } catch (e: any) {
+    } catch (e) {
       const invaliderrors = getOverlayErrors(e?.data?.metadata?.invalidReferences)
       if (Object.keys(invaliderrors).length) {
         setFormErrors(invaliderrors)
       }
       // This is done because when git sync is enabled, errors are displayed in a modal
-      else if (!isGitSyncEnabled) {
+      if (!isGitSyncEnabled) {
         showError(getErrorInfoFromErrorObject(e), undefined, 'pipeline.common.error')
+      } else {
+        throw e
       }
-      throw e
     }
     return {
       status: response?.status,

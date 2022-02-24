@@ -382,7 +382,14 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     [yamlHandler?.getLatestYaml, inputSet]
   )
 
-  const createUpdateInputSet = async (inputSetObj: InputSetDTO, gitDetails?: SaveToGitFormInterface, objectId = '') => {
+  const createUpdateInputSet = async (
+    inputSetObj: InputSetDTO,
+    gitDetails?: SaveToGitFormInterface,
+    objectId = ''
+  ): Promise<{
+    status: 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
+    nextCallback: () => void
+  }> => {
     let response: ResponseInputSetResponse | null = null
     try {
       if (isEdit) {
@@ -429,12 +436,14 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
         setFormErrors(errors)
       }
       // This is done because when git sync is enabled, errors are displayed in a modal
-      else if (!isGitSyncEnabled) {
+      if (!isGitSyncEnabled) {
         showError(
           e?.data?.message || e?.message || getString('commonError'),
           undefined,
           'pipeline.update.create.inputset'
         )
+      } else {
+        throw e
       }
     }
     return {
