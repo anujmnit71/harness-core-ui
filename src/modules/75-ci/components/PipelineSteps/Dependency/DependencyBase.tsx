@@ -6,6 +6,7 @@
  */
 
 import React from 'react'
+import cx from 'classnames'
 import { Text, Formik, FormikForm, Accordion, Color, Container, Layout } from '@wings-software/uicore'
 import get from 'lodash/get'
 import type { K8sDirectInfraYaml } from 'services/ci'
@@ -152,30 +153,32 @@ export const DependencyBase = (
                         allowableTypes={allowableTypes}
                       />
                       {buildInfrastructureType === 'VM' ? (
-                        <MultiTypeMap
-                          name={'spec.portBindings'}
-                          valueMultiTextInputProps={{ expressions, allowableTypes }}
-                          multiTypeFieldSelectorProps={{
-                            label: (
-                              <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
-                                <Text
-                                  style={{ display: 'flex', alignItems: 'center' }}
-                                  className={css.inpLabel}
-                                  color={Color.GREY_800}
-                                  font={{ size: 'small', weight: 'semi-bold' }}
-                                >
-                                  {getString('ci.portBindings')}
-                                </Text>
-                                &nbsp;
-                                {getOptionalSubLabel('portBindings', getString)}
-                              </Layout.Horizontal>
-                            )
-                          }}
-                          disabled={readonly}
-                          keyLabel={getString('ci.hostPort')}
-                          valueLabel={getString('ci.containerPort')}
-                          restrictToSingleEntry={true}
-                        />
+                        <Container className={cx(css.formGroup, css.bottomMargin5)}>
+                          <MultiTypeMap
+                            name={'spec.portBindings'}
+                            valueMultiTextInputProps={{ expressions, allowableTypes }}
+                            multiTypeFieldSelectorProps={{
+                              label: (
+                                <Layout.Horizontal flex={{ justifyContent: 'flex-start', alignItems: 'baseline' }}>
+                                  <Text
+                                    style={{ display: 'flex', alignItems: 'center' }}
+                                    className={css.inpLabel}
+                                    color={Color.GREY_800}
+                                    font={{ size: 'small', weight: 'semi-bold' }}
+                                  >
+                                    {getString('ci.portBindings')}
+                                  </Text>
+                                  &nbsp;
+                                  {getOptionalSubLabel('portBindings', getString)}
+                                </Layout.Horizontal>
+                              )
+                            }}
+                            disabled={readonly}
+                            keyLabel={getString('ci.hostPort')}
+                            valueLabel={getString('ci.containerPort')}
+                            restrictToSingleEntry={true}
+                          />
+                        </Container>
                       ) : null}
                       <StepCommonFields
                         enableFields={['spec.imagePullPolicy']}
