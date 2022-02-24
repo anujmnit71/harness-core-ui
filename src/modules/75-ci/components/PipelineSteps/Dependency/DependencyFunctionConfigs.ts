@@ -4,7 +4,6 @@
  * that can be found in the licenses directory at the root of this repository, also available at
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
-import type { K8sDirectInfraYaml } from 'services/ci'
 import { Types as TransformValuesTypes } from '@pipeline/components/PipelineSteps/Steps/StepsTransformValuesUtils'
 import { Types as ValidationFieldTypes } from '@pipeline/components/PipelineSteps/Steps/StepsValidateUtils'
 
@@ -67,7 +66,7 @@ export const transformValuesFieldsConfig = [
   }
 ]
 
-export const getEditViewValidateFieldsConfig = (buildInfrastructureType: K8sDirectInfraYaml['type']) => [
+export const editViewValidateFieldsConfig = [
   {
     name: 'identifier',
     type: ValidationFieldTypes.Identifier,
@@ -103,8 +102,7 @@ export const getEditViewValidateFieldsConfig = (buildInfrastructureType: K8sDire
   {
     name: 'spec.portBindings',
     type: ValidationFieldTypes.KeyValue,
-    label: 'ci.portBindings',
-    isRequired: buildInfrastructureType === 'VM'
+    label: 'ci.portBindings'
   },
   {
     name: 'spec.entrypoint',

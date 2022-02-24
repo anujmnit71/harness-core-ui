@@ -25,7 +25,7 @@ import {
 } from '@pipeline/components/PipelineSteps/Steps/StepsTransformValuesUtils'
 import { validate } from '@pipeline/components/PipelineSteps/Steps/StepsValidateUtils'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
-import { transformValuesFieldsConfig, getEditViewValidateFieldsConfig } from './DependencyFunctionConfigs'
+import { transformValuesFieldsConfig, editViewValidateFieldsConfig } from './DependencyFunctionConfigs'
 import type { DependencyProps, DependencyData, DependencyDataUI } from './Dependency'
 import { CIStep } from '../CIStep/CIStep'
 import { CIStepOptionalConfig } from '../CIStep/CIStepOptionalConfig'
@@ -65,7 +65,7 @@ export const DependencyBase = (
         onChange?.(schemaValues)
         return validate(
           valuesToValidate,
-          getEditViewValidateFieldsConfig(buildInfrastructureType),
+          editViewValidateFieldsConfig,
           {
             initialValues,
             steps: currentStage?.stage?.spec?.execution?.steps || [],
@@ -134,27 +134,6 @@ export const DependencyBase = (
                   }
                 }}
               />
-              {buildInfrastructureType === 'VM' ? (
-                <MultiTypeMap
-                  name={'spec.portBindings'}
-                  valueMultiTextInputProps={{ expressions, allowableTypes }}
-                  multiTypeFieldSelectorProps={{
-                    label: (
-                      <Text
-                        style={{ display: 'flex', alignItems: 'center' }}
-                        className={css.inpLabel}
-                        color={Color.GREY_800}
-                        font={{ size: 'small', weight: 'semi-bold' }}
-                      >
-                        {getString('ci.portBindings')}
-                      </Text>
-                    )
-                  }}
-                  disabled={readonly}
-                  keyLabel={getString('ci.hostPort')}
-                  valueLabel={getString('ci.containerPort')}
-                />
-              ) : null}
               <Accordion className={css.accordion}>
                 <Accordion.Panel
                   id="optional-config"
@@ -172,6 +151,27 @@ export const DependencyBase = (
                         }}
                         allowableTypes={allowableTypes}
                       />
+                      {buildInfrastructureType === 'VM' ? (
+                        <MultiTypeMap
+                          name={'spec.portBindings'}
+                          valueMultiTextInputProps={{ expressions, allowableTypes }}
+                          multiTypeFieldSelectorProps={{
+                            label: (
+                              <Text
+                                style={{ display: 'flex', alignItems: 'center' }}
+                                className={css.inpLabel}
+                                color={Color.GREY_800}
+                                font={{ size: 'small', weight: 'semi-bold' }}
+                              >
+                                {getString('ci.portBindings')}
+                              </Text>
+                            )
+                          }}
+                          disabled={readonly}
+                          keyLabel={getString('ci.hostPort')}
+                          valueLabel={getString('ci.containerPort')}
+                        />
+                      ) : null}
                       <StepCommonFields
                         enableFields={['spec.imagePullPolicy']}
                         withoutTimeout
