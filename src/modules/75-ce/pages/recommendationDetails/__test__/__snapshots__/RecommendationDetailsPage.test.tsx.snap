@@ -241,7 +241,7 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="diffContainer"
           >
             <p
-              class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-variation-table-headers StyledProps--font-align-center StyledProps--background-grey100"
+              class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers StyledProps--font-align-center StyledProps--background-grey100"
             >
               ce.recommendation.detailsPage.resourceChanges
             </p>
@@ -454,7 +454,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               style="align-items: baseline; justify-content: center;"
             >
               <p
-                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers"
+                class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers"
               >
                 ce.recommendation.detailsPage.costOptimizedCaps
               </p>
@@ -473,12 +473,12 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </span>
               </span>
               <p
-                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers StyledProps--font-align-center"
+                class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers StyledProps--font-align-center"
               >
                 ce.recommendation.detailsPage.timeChangeText
               </p>
               <p
-                class="StyledProps--font StyledProps--main actionText StyledProps--font-variation-table-headers"
+                class="StyledProps--font StyledProps--main actionText StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers"
               >
                 LAST 7 DAYS
               </p>
@@ -808,22 +808,26 @@ exports[`test cases for Recommendation details Page should be able to render the
               <div
                 class="StyledProps--font StyledProps--main"
               >
-                <p
-                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
+                <div
+                  class="Layout--horizontal Layout--layout-spacing-small StyledProps--main"
                 >
-                  ce.recommendation.detailsPage.customDetailsText1
-                </p>
+                  <p
+                    class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
+                  >
+                    ce.recommendation.detailsPage.customDetailsText1
+                  </p>
+                  <img
+                    alt="custom-recommendation-img"
+                    class="customImage"
+                    src="test-file-stub"
+                  />
+                </div>
                 <p
                   class="StyledProps--font StyledProps--main StyledProps--font-variation-small StyledProps--padding-top-small"
                 >
                   ce.recommendation.detailsPage.customDetailsText2
                 </p>
               </div>
-              <img
-                alt="custom-recommendation-img"
-                class="customImage"
-                src="test-file-stub"
-              />
             </div>
           </div>
         </div>
@@ -1074,7 +1078,7 @@ exports[`test cases for Recommendation details Page should be able to render the
             class="diffContainer"
           >
             <p
-              class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--font-variation-table-headers StyledProps--font-align-center StyledProps--background-grey100"
+              class="StyledProps--font StyledProps--main StyledProps--padding-xsmall StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers StyledProps--font-align-center StyledProps--background-grey100"
             >
               ce.recommendation.detailsPage.resourceChanges
             </p>
@@ -1287,7 +1291,7 @@ exports[`test cases for Recommendation details Page should be able to render the
               style="align-items: baseline; justify-content: center;"
             >
               <p
-                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers"
+                class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers"
               >
                 ce.recommendation.detailsPage.costOptimizedCaps
               </p>
@@ -1306,12 +1310,12 @@ exports[`test cases for Recommendation details Page should be able to render the
                 </span>
               </span>
               <p
-                class="StyledProps--font StyledProps--main StyledProps--font-variation-table-headers StyledProps--font-align-center"
+                class="StyledProps--font StyledProps--main StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers StyledProps--font-align-center"
               >
                 ce.recommendation.detailsPage.timeChangeText
               </p>
               <p
-                class="StyledProps--font StyledProps--main actionText StyledProps--font-variation-table-headers"
+                class="StyledProps--font StyledProps--main actionText StyledProps--color StyledProps--color-grey700 StyledProps--font-variation-table-headers"
               >
                 LAST 7 DAYS
               </p>
@@ -1641,22 +1645,26 @@ exports[`test cases for Recommendation details Page should be able to render the
               <div
                 class="StyledProps--font StyledProps--main"
               >
-                <p
-                  class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
+                <div
+                  class="Layout--horizontal Layout--layout-spacing-small StyledProps--main"
                 >
-                  ce.recommendation.detailsPage.customDetailsText1
-                </p>
+                  <p
+                    class="StyledProps--font StyledProps--main StyledProps--font-variation-small"
+                  >
+                    ce.recommendation.detailsPage.customDetailsText1
+                  </p>
+                  <img
+                    alt="custom-recommendation-img"
+                    class="customImage"
+                    src="test-file-stub"
+                  />
+                </div>
                 <p
                   class="StyledProps--font StyledProps--main StyledProps--font-variation-small StyledProps--padding-top-small"
                 >
                   ce.recommendation.detailsPage.customDetailsText2
                 </p>
               </div>
-              <img
-                alt="custom-recommendation-img"
-                class="customImage"
-                src="test-file-stub"
-              />
             </div>
           </div>
         </div>

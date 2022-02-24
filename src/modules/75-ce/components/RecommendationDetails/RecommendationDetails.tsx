@@ -259,7 +259,12 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
         isCostOptimizedCustomized={isCostOptimizedCustomized}
       />
       <section className={css.diffContainer}>
-        <Text padding="xsmall" font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }} background="grey100">
+        <Text
+          padding="xsmall"
+          color={Color.GREY_700}
+          font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}
+          background={Color.GREY_100}
+        >
           {getString('ce.recommendation.detailsPage.resourceChanges')}
         </Text>
         <section className={css.diffHeader}>
@@ -321,7 +326,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
           }}
           spacing="xsmall"
         >
-          <Text font={{ variation: FontVariation.TABLE_HEADERS }}>
+          <Text color={Color.GREY_700} font={{ variation: FontVariation.TABLE_HEADERS }}>
             {selectedRecommendation === RecommendationType.CostOptimized
               ? getString('ce.recommendation.detailsPage.costOptimizedCaps')
               : getString('ce.recommendation.detailsPage.performanceOptimizedCaps')}
@@ -342,11 +347,7 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
                   <img width="235" src={histogramImg} />
                   <Text>{getString('ce.recommendation.detailsPage.histogramTextDetails1')}</Text>
                 </Layout.Horizontal>
-                <Text
-                  padding={{
-                    top: 'small'
-                  }}
-                >
+                <Text padding={{ top: 'small' }}>
                   {getString('ce.recommendation.detailsPage.histogramTextDetails2')}
                 </Text>
               </Container>
@@ -356,10 +357,10 @@ const RecommendationDetails: React.FC<RecommendationDetailsProps> = ({
               {getString('ce.recommendation.detailsPage.histogramText')}
             </Text>
           </Popover>
-          <Text font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}>
+          <Text color={Color.GREY_700} font={{ variation: FontVariation.TABLE_HEADERS, align: 'center' }}>
             {getString('ce.recommendation.detailsPage.timeChangeText')}
           </Text>
-          <Text font={{ variation: FontVariation.TABLE_HEADERS }} className={css.actionText}>
+          <Text color={Color.GREY_700} font={{ variation: FontVariation.TABLE_HEADERS }} className={css.actionText}>
             {timeRange?.label}
           </Text>
         </Layout.Horizontal>

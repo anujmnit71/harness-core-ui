@@ -157,14 +157,16 @@ const WorkloadDetails: React.FC<WorkloadDetailsProps> = props => {
           <Layout.Horizontal spacing="small">
             <Icon name="info-messaging" />
             <Container>
-              <Text font={{ variation: FontVariation.SMALL }}>
-                {getString('ce.recommendation.detailsPage.customDetailsText1')}
-              </Text>
+              <Layout.Horizontal spacing="small">
+                <Text font={{ variation: FontVariation.SMALL }}>
+                  {getString('ce.recommendation.detailsPage.customDetailsText1')}
+                </Text>
+                <img className={css.customImage} src={CustomizeRecommendationsImg} alt="custom-recommendation-img" />
+              </Layout.Horizontal>
               <Text font={{ variation: FontVariation.SMALL }} padding={{ top: 'small' }}>
                 {getString('ce.recommendation.detailsPage.customDetailsText2')}
               </Text>
             </Container>
-            <img className={css.customImage} src={CustomizeRecommendationsImg} alt="custom-recommendation-img" />
           </Layout.Horizontal>
         </Container>
       </Layout.Vertical>
