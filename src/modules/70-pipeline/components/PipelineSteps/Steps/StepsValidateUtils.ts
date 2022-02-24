@@ -446,7 +446,7 @@ export function generateSchemaFields(
         if (buildInfrastructureType === 'VM' && type === Types.Identifier) {
           validationRule = validationRule.matches(
             serviceDependencyIdRegex,
-            `Identifier should match regex ${serviceDependencyIdRegex}`
+            getString('pipeline.ci.validations.serviceDependencyIdentifier', { regex: serviceDependencyIdRegex.source })
           )
         }
       } else if (stepViewType !== StepViewType.Template && type !== Types.Identifier && type !== Types.Name) {
