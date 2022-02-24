@@ -136,6 +136,8 @@ const yamlBuilderReadOnlyModeProps: YamlBuilderProps = {
 const clearNullUndefined = /* istanbul ignore next */ (data: OverlayInputSetDTO): OverlayInputSetDTO =>
   omitBy(omitBy(data, isUndefined), isNull)
 
+type StatusType = 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
+
 export function OverlayInputSetForm({
   hideForm,
   identifier,
@@ -363,7 +365,7 @@ export function OverlayInputSetForm({
     gitDetails?: SaveToGitFormInterface,
     objectId = ''
   ): Promise<{
-    status: 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
+    status: StatusType
     nextCallback: () => void
   }> => {
     let response: ResponseOverlayInputSetResponse | null = null

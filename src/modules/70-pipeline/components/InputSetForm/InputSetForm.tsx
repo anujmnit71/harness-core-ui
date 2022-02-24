@@ -120,6 +120,8 @@ export interface InputSetFormProps {
   executionView?: boolean
 }
 
+type StatusType = 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
+
 export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   const { executionView } = props
   const { getString } = useStrings()
@@ -387,7 +389,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     gitDetails?: SaveToGitFormInterface,
     objectId = ''
   ): Promise<{
-    status: 'SUCCESS' | 'FAILURE' | 'ERROR' | undefined
+    status: StatusType
     nextCallback: () => void
   }> => {
     let response: ResponseInputSetResponse | null = null
