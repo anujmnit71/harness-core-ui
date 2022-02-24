@@ -783,6 +783,7 @@ anomalyDetection:
     whitelistResource: Whitelist resource
     falseAnomaly: This is false anomaly
   userFeedbackSuccessMsg: 'Thanks for your feedback!'
+  trend: '(+{{ trend }}%)'
   tooltip:
     countText: '{{ count }} Anomalies'
     anomaliesRedirectionText: View anomalies

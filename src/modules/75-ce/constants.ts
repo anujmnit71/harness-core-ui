@@ -143,3 +143,18 @@ export enum AdvancedConfigTabs {
   deps = 'deps',
   schedules = 'schedules'
 }
+
+export const allCloudProvidersList = [
+  {
+    label: 'AWS',
+    value: 'aws'
+  },
+  {
+    label: 'Azure',
+    value: 'azure'
+  },
+  {
+    label: 'GCP',
+    value: 'gcp'
+  }
+]
