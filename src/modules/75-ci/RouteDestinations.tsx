@@ -39,7 +39,15 @@ import type {
 import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import DeploymentsList from '@pipeline/pages/deployments-list/DeploymentsList'
 import { EmptyLayout, MinimalLayout } from '@common/layouts'
-
+import { BannerType } from '@common/layouts/Constants'
+import {
+  isFeatureLimitBreached,
+  isFeatureOveruseActive,
+  isFeatureCountActive,
+  isFeatureWarningActive
+} from '@common/layouts/FeatureBanner'
+import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
+import featureFactory from 'framework/featureStore/FeaturesFactory'
 import PipelinesPage from '@pipeline/pages/pipelines/PipelinesPage'
 import type { SidebarContext } from '@common/navigation/SidebarProvider'
 
@@ -124,6 +132,115 @@ executionFactory.registerSummary(StageType.BUILD, {
 
 executionFactory.registerStageDetails(StageType.BUILD, {
   component: CIStageDetails
+})
+
+featureFactory.registerFeaturesByModule('ci', {
+  features: [
+    FeatureIdentifier.MAX_TOTAL_BUILDS,
+    FeatureIdentifier.MAX_BUILDS_PER_MONTH,
+    FeatureIdentifier.ACTIVE_COMMITTERS
+  ],
+  renderMessage: (props, getString, additionalLicenseProps = {}) => {
+    const {
+      isFreeEdition: isCIFree,
+      isTeamEdition: isCITeam,
+      isEnterpriseEdition: isCIEnterprise
+    } = additionalLicenseProps
+    const isTeamOrEnterprise = isCIEnterprise || isCITeam
+    const featuresMap = props.features
+    const maxTotalBuildsFeatureDetail = featuresMap.get(FeatureIdentifier.MAX_TOTAL_BUILDS)
+    const maxBuildsPerMonthFeatureDetail = featuresMap.get(FeatureIdentifier.MAX_BUILDS_PER_MONTH)
+    const activeCommittersFeatureDetail = featuresMap.get(FeatureIdentifier.ACTIVE_COMMITTERS)
+
+    // Check for limit breach
+    const isMaxBuildsPerMonthBreached = isFeatureLimitBreached(maxTotalBuildsFeatureDetail)
+    let limitBreachMessageString = ''
+    if (isMaxBuildsPerMonthBreached) {
+      limitBreachMessageString = getString('pipeline.featureRestriction.maxBuildsPerMonth100PercentLimit')
+    }
+
+    if (limitBreachMessageString) {
+      return {
+        message: () => limitBreachMessageString,
+        bannerType: BannerType.LEVEL_UP
+      }
+    }
+
+    // Checking for limit usage warning
+    let warningMessageString = ''
+    const isMaxBuildsPerMonthCountActive = isFeatureCountActive(maxBuildsPerMonthFeatureDetail)
+    const isMaxTotalBuildsWarningActive = isFeatureWarningActive(maxTotalBuildsFeatureDetail)
+    const isActiveCommittersWarningActive = isFeatureWarningActive(activeCommittersFeatureDetail)
+    const isMaxTotalBuildsOveruseActive = isFeatureOveruseActive(maxTotalBuildsFeatureDetail)
+    if (
+      isCIFree &&
+      isMaxBuildsPerMonthCountActive &&
+      isMaxTotalBuildsOveruseActive &&
+      typeof maxTotalBuildsFeatureDetail?.featureDetail?.count !== 'undefined'
+    ) {
+      warningMessageString = getString('pipeline.featureRestriction.numMonthlyBuilds', {
+        count: maxTotalBuildsFeatureDetail.featureDetail.count,
+        limit: maxTotalBuildsFeatureDetail.featureDetail.limit
+      })
+    } else if (
+      isCIFree &&
+      isMaxTotalBuildsWarningActive &&
+      maxTotalBuildsFeatureDetail?.featureDetail?.count &&
+      maxTotalBuildsFeatureDetail.featureDetail.limit
+    ) {
+      const usagePercent = Math.min(
+        Math.floor(
+          (maxTotalBuildsFeatureDetail.featureDetail.count / maxTotalBuildsFeatureDetail?.featureDetail.limit) * 100
+        ),
+        100
+      )
+
+      warningMessageString = getString('pipeline.featureRestriction.maxTotalBuilds90PercentLimit', {
+        usagePercent
+      })
+    } else if (
+      isActiveCommittersWarningActive &&
+      activeCommittersFeatureDetail?.featureDetail?.count &&
+      activeCommittersFeatureDetail.featureDetail.limit &&
+      isTeamOrEnterprise
+    ) {
+      const usagePercent = Math.min(
+        Math.floor(
+          (activeCommittersFeatureDetail.featureDetail.count / activeCommittersFeatureDetail?.featureDetail.limit) * 100
+        ),
+        100
+      )
+      warningMessageString = getString('pipeline.featureRestriction.subscription90PercentLimit', { usagePercent })
+    }
+
+    if (warningMessageString) {
+      return {
+        message: () => warningMessageString,
+        bannerType: BannerType.INFO
+      }
+    }
+
+    // Checking for limit overuse warning
+    let overuseMessageString = ''
+    const isActiveCommittersOveruseActive = isFeatureOveruseActive(activeCommittersFeatureDetail)
+
+    if (isActiveCommittersOveruseActive && isTeamOrEnterprise) {
+      overuseMessageString = getString('pipeline.featureRestriction.subscriptionExceededLimit')
+    }
+    if (overuseMessageString) {
+      return {
+        message: () => overuseMessageString,
+        bannerType: BannerType.OVERUSE
+      }
+    }
+
+    // If neither of limit breach/ warning/ overuse needs to be shown, return with an empty string.
+    // This will ensure no banner is shown
+    return {
+      message: () => '',
+      bannerType: BannerType.LEVEL_UP
+    }
+  }
 })
 
 const RedirectToAccessControlHome = (): React.ReactElement => {

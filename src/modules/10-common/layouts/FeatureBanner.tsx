@@ -36,7 +36,7 @@ export const BANNER_KEY = 'feature_banner_dismissed'
 
 export const isFeatureLimitBreached = (feature?: CheckFeatureReturn) => {
   const featureDetail = feature?.featureDetail
-  return featureDetail?.limit && featureDetail.count && featureDetail.count === featureDetail.limit
+  return featureDetail?.limit && featureDetail.count && featureDetail.count >= featureDetail.limit // @Nana should be >= in case some edge case and they get more count
 }
 
 export const FEATURE_USAGE_WARNING_LIMIT = 90
@@ -49,6 +49,11 @@ export const isFeatureWarningActive = (feature?: CheckFeatureReturn) => {
     featureDetail.count > (featureDetail.limit * FEATURE_USAGE_WARNING_LIMIT) / 100 &&
     featureDetail.count < featureDetail.limit
   )
+}
+
+export const isFeatureCountActive = (feature?: CheckFeatureReturn) => {
+  const featureDetail = feature?.featureDetail
+  return featureDetail?.limit && typeof featureDetail.count !== 'undefined'
 }
 
 export const isFeatureOveruseActive = (feature?: CheckFeatureReturn) => {
@@ -107,7 +112,7 @@ function getBannerBodyByType({
   }
 
   return (
-    <Layout.Horizontal width="95%" padding={{ left: 'large' }}>
+    <Layout.Horizontal width="95%" padding={{ left: 'large' }} style={{ minWidth: '800px' }}>
       {getText()}
       {buttons}
     </Layout.Horizontal>
