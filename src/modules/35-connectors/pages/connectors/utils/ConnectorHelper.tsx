@@ -215,6 +215,9 @@ export const getConnectorIconByType = (type: string): IconName => {
       return 'service-custom-connector'
     case Connectors.ERROR_TRACKING:
       return 'placeholder'
+    case Connectors.AZURE:
+      // TODO: add new icon from uicore
+      return 'service-azure'
     default:
       return 'placeholder'
   }

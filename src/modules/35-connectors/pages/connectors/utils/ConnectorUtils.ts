@@ -624,15 +624,20 @@ export const setupArtifactoryFormData = async (
 }
 
 export const setupAzureFormData = async (connectorInfo: ConnectorInfoDTO, accountId: string): Promise<FormData> => {
+  const connectorInfoSpec = connectorInfo?.spec
   const scopeQueryParams: GetSecretV2QueryParams = {
     accountIdentifier: accountId,
     projectIdentifier: connectorInfo.projectIdentifier,
     orgIdentifier: connectorInfo.orgIdentifier
   }
 
+  const secretKey = await setSecretField(connectorInfoSpec.secretKey, scopeQueryParams)
+
   const formData = {
-    delegateType: connectorInfo.spec.credential.type,
-    password: await setSecretField(connectorInfo.spec.credential?.spec?.secretKeyRef, scopeQueryParams)
+    environment: connectorInfoSpec.environment || undefined,
+    clientId: connectorInfoSpec.clientId || undefined,
+    tenantId: connectorInfoSpec.tenantId || undefined,
+    secretKey: secretKey || undefined
   }
 
   return formData
@@ -1016,18 +1021,18 @@ export const buildAzurePayload = (formData: FormData) => {
     identifier: formData.identifier,
     orgIdentifier: formData.orgIdentifier,
     tags: formData.tags,
-    type: Connectors.GCP,
+    type: Connectors.AZURE,
     spec: {
       ...(formData?.delegateSelectors ? { delegateSelectors: formData.delegateSelectors } : {}),
-      credential: {
-        type: formData?.delegateType,
-        spec:
-          formData?.delegateType === DelegateTypes.DELEGATE_OUT_CLUSTER
-            ? {
-                secretKeyRef: formData.password.referenceString
-              }
-            : null
-      }
+      spec:
+        formData?.delegateType === DelegateTypes.DELEGATE_OUT_CLUSTER
+          ? {
+              environment: formData.environment,
+              clientId: formData.clientId,
+              tenantId: formData.tenantId,
+              secretKeyRef: formData.password.referenceString
+            }
+          : null
     }
   }
 

@@ -1372,6 +1372,9 @@ export interface StringsMap {
   'connectors.awsKms.validation.selectDelegate': string
   'connectors.awsKms.validation.selectRegion': string
   'connectors.awsSecretManager.secretNamePrefix': string
+  'connectors.azure.clientId': string
+  'connectors.azure.clientIdPlaceholder': string
+  'connectors.azure.tenantIdPlaceholder': string
   'connectors.azureKeyVault.labels.fetchVault': string
   'connectors.azureKeyVault.labels.setupVault': string
   'connectors.azureKeyVault.labels.subscription': string
@@ -1681,6 +1684,7 @@ export interface StringsMap {
   'connectors.ceK8.secretCreationStep.step3': string
   'connectors.ceK8.secretCreationStep.step4': string
   'connectors.ceK8.selectConnectorLabel': string
+  'connectors.chooseMethodForAzureConnection': string
   'connectors.chooseMethodForGCPConnection': string
   'connectors.chooseMethodForK8sConnection': string
   'connectors.click': string

@@ -16,7 +16,9 @@ import {
   Container,
   PageSpinner,
   ThumbnailSelect,
-  FontVariation
+  FontVariation,
+  FormInput,
+  SelectOption
 } from '@wings-software/uicore'
 import * as Yup from 'yup'
 import { useParams } from 'react-router-dom'
@@ -49,6 +51,9 @@ interface StepConfigureProps {
 
 interface AzureFormInterface {
   delegateType?: string
+  environment: string | undefined
+  clientId: string | undefined
+  tenantId: string | undefined
   password: SecretReferenceInterface | void
 }
 const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthenticationProps> = props => {
@@ -57,6 +62,9 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
   const { getString } = useStrings()
 
   const defaultInitialFormData: AzureFormInterface = {
+    environment: undefined,
+    clientId: undefined,
+    tenantId: undefined,
     password: undefined
   }
 
@@ -74,6 +82,11 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
     }
   ]
 
+  const ENVIRONMENTS: SelectOption[] = [
+    { label: 'Azure Global', value: 'AZURE_GLOBAL' },
+    { label: 'US Government', value: 'US_GOVERNMENT' }
+  ]
+
   useEffect(() => {
     if (loadingConnectorSecrets) {
       if (props.isEditMode) {
@@ -87,6 +100,7 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingConnectorSecrets])
 
   const handleSubmit = (formData: ConnectorConfigDTO) => {
@@ -107,8 +121,9 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
           ...props.prevStepData
         }}
         formName="azureAuthForm"
+        // TODO: required fileds schema
         validationSchema={Yup.object().shape({
-          delegateType: Yup.string().required(getString('connectors.chooseMethodForGCPConnection')),
+          delegateType: Yup.string().required(getString('connectors.chooseMethodForAzureConnection')),
           password: Yup.object().when('delegateType', {
             is: DelegateTypes.DELEGATE_OUT_CLUSTER,
             then: Yup.object().required(getString('validation.encryptedKey'))
@@ -129,7 +144,25 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
                 }}
               />
               {DelegateTypes.DELEGATE_OUT_CLUSTER === formikProps.values.delegateType ? (
-                <SecretInput name={'password'} label={getString('encryptedKeyLabel')} type={'SecretFile'} />
+                <>
+                  <FormInput.Select
+                    name="environment"
+                    label={getString('environment')}
+                    items={ENVIRONMENTS}
+                    style={{ width: 120 }}
+                  />
+                  <FormInput.Text
+                    name={'clientId'}
+                    placeholder={getString('connectors.azure.clientId')}
+                    label={getString('connectors.azure.clientIdPlaceholder')}
+                  />
+                  <FormInput.Text
+                    name={'tenantId'}
+                    placeholder={getString('connectors.tenantId')}
+                    label={getString('connectors.azure.tenantIdPlaceholder')}
+                  />
+                  <SecretInput name={'password'} label={getString('encryptedKeyLabel')} type={'SecretFile'} />
+                </>
               ) : null}
             </Container>
             <Button type="submit" intent="primary" text={getString('continue')} rightIcon="chevron-right" />

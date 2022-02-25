@@ -27,7 +27,7 @@ const CreateAzureConnector: React.FC<CreateConnectorModalProps> = props => {
   const commonProps = pick(props, ['isEditMode', 'setIsEditMode', 'accountId', 'orgIdentifier', 'projectIdentifier'])
   return (
     <StepWizard
-      icon={getConnectorIconByType(Connectors.Azure)}
+      icon={getConnectorIconByType(Connectors.AZURE)}
       iconProps={{ size: 37 }}
       title={getString(getConnectorTitleIdByType(Connectors.Azure))}
     >

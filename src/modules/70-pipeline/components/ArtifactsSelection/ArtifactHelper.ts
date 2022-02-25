@@ -24,7 +24,7 @@ export const ArtifactIconByType: Record<ArtifactType, IconName> = {
   Ecr: 'ecr-step',
   NexusRegistry: 'service-nexus',
   ArtifactoryRegistry: 'service-artifactory',
-  Acr: 'ecr-step'
+  Acr: 'service-azure'
 }
 export const ArtifactTitleIdByType: Record<ArtifactType, StringKeys> = {
   DockerRegistry: 'dockerRegistry',

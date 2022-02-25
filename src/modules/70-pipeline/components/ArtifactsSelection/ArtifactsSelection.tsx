@@ -43,6 +43,7 @@ import StepAWSAuthentication from '@connectors/components/CreateConnector/AWSCon
 import {
   buildArtifactoryPayload,
   buildAWSPayload,
+  buildAzurePayload,
   buildDockerPayload,
   buildGcpPayload,
   buildNexusPayload
@@ -55,6 +56,7 @@ import { ArtifactActions } from '@common/constants/TrackingConstants'
 import type { DeploymentStageElementConfig, StageElementWrapper } from '@pipeline/utils/pipelineTypes'
 import StepNexusAuthentication from '@connectors/components/CreateConnector/NexusConnector/StepAuth/StepNexusAuthentication'
 import StepArtifactoryAuthentication from '@connectors/components/CreateConnector/ArtifactoryConnector/StepAuth/StepArtifactoryAuthentication'
+import AzureAuthentication from '@connectors/components/CreateConnector/AzureConnector/StepAuth/AzureAuthentication'
 import { getStageIndexFromPipeline, getFlattenedStages } from '../PipelineStudio/StageBuilder/StageBuilderUtil'
 import ArtifactWizard from './ArtifactWizard/ArtifactWizard'
 import { DockerRegistryArtifact } from './ArtifactRepository/ArtifactLastSteps/DockerRegistryArtifact/DockerRegistryArtifact'
@@ -651,8 +653,8 @@ export default function ArtifactsSelection({
         return (
           <StepWizard title={stepWizardTitle}>
             <ConnectorDetailsStep type={ArtifactToConnectorMap[selectedArtifact]} {...connectorDetailStepProps} />
-            <StepDockerAuthentication name={getString('details')} {...authenticationStepProps} />
-            <DelegateSelectorStep buildPayload={buildDockerPayload} {...delegateStepProps} />
+            <AzureAuthentication name={getString('details')} {...authenticationStepProps} />
+            <DelegateSelectorStep buildPayload={buildAzurePayload} {...delegateStepProps} />
             <VerifyOutOfClusterDelegate
               type={ArtifactToConnectorMap[selectedArtifact]}
               {...verifyOutofClusterDelegateProps}
