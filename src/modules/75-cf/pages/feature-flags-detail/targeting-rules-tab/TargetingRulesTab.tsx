@@ -5,11 +5,12 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import { Button, ButtonVariation, Card, Formik, FormikForm, Layout } from '@harness/uicore'
+import { Button, ButtonVariation, Card, Container, Formik, FormikForm, Layout } from '@harness/uicore'
 import React, { ReactElement } from 'react'
 import FlagToggleSwitch from '@cf/components/EditFlagTabs/FlagToggleSwitch'
 import type { Feature, Serve } from 'services/cf'
 import { FeatureFlagActivationStatus } from '@cf/utils/CFUtils'
+import { useStrings } from 'framework/strings'
 import usePatchFeatureFlag from './hooks/usePatchFeatureFlag'
 import css from './TargetingRulesTab.module.scss'
 
@@ -19,10 +20,11 @@ export interface TargetingRulesFormValues {
 
 interface TargetingRulesTabProps {
   featureFlag: Feature
-  refetchFlag: () => Promise<unknown>
 }
 
-const TargetingRulesTab = ({ featureFlag, refetchFlag }: TargetingRulesTabProps): ReactElement => {
+const TargetingRulesTab = ({ featureFlag }: TargetingRulesTabProps): ReactElement => {
+  const { getString } = useStrings()
+
   const initialValues = {
     state: featureFlag.envProperties?.state as string,
     onVariation: featureFlag.envProperties?.defaultServe.variation
@@ -34,15 +36,14 @@ const TargetingRulesTab = ({ featureFlag, refetchFlag }: TargetingRulesTabProps)
       featureFlag.envProperties?.variationMap?.filter(variationMapItem => !!variationMapItem?.targets?.length) ?? [],
     flagName: featureFlag.name,
     flagIdentifier: featureFlag.identifier
-    // gitDetails: gitSyncInitialValues.gitDetails,
-    // autoCommit: gitSyncInitialValues.autoCommit
   }
 
-  const { saveChanges } = usePatchFeatureFlag({
+  const { saveChanges, loading } = usePatchFeatureFlag({
     initialValues,
-    refetchFlag,
     featureFlagIdentifier: featureFlag.identifier
   })
+
+  const formDisabled = loading
 
   return (
     <Formik
@@ -51,22 +52,18 @@ const TargetingRulesTab = ({ featureFlag, refetchFlag }: TargetingRulesTabProps)
       validateOnBlur={false}
       formName="targeting-rules-form"
       initialValues={initialValues}
-      // validate={validateForm}
-      // validationSchema={yup.object().shape({
-      //   gitDetails: gitSyncValidationSchema
-      // })}
-      // onSubmit={onSaveChanges}
-      onSubmit={values => {
-        saveChanges(values)
+      onSubmit={(values, formikBag) => {
+        saveChanges(values, () => formikBag.resetForm({ ...values }))
       }}
     >
       {formikProps => {
         return (
-          <FormikForm style={{ height: '60vh' }}>
-            <Layout.Vertical padding={{ left: 'xlarge', right: 'xlarge' }} height="100%">
-              <Layout.Vertical spacing="small">
+          <FormikForm>
+            <Container className={css.tabContainer}>
+              <Layout.Vertical spacing="small" padding={{ left: 'xlarge', right: 'xlarge' }}>
                 <Card elevation={0}>
                   <FlagToggleSwitch
+                    disabled={formDisabled}
                     currentState={formikProps.values.state}
                     currentEnvironmentState={featureFlag.envProperties?.state}
                     handleToggle={() =>
@@ -82,37 +79,33 @@ const TargetingRulesTab = ({ featureFlag, refetchFlag }: TargetingRulesTabProps)
                 <Card>ON default rules section</Card>
                 <Card>OFF rules section</Card>
               </Layout.Vertical>
-            </Layout.Vertical>
-            {formikProps.dirty && (
-              <Layout.Horizontal padding="medium" spacing="small" className={css.actionButtons}>
-                <Button
-                  type="submit"
-                  text="Save Changes"
-                  variation={ButtonVariation.PRIMARY}
-                  onClick={e => {
-                    e.preventDefault()
-                    return formikProps.submitForm()
-                  }}
-                  //   text={getString('save')}
-                  //   onClick={event => {
-                  //     if (gitSync?.isGitSyncEnabled && !gitSync?.isAutoCommitEnabled) {
-                  //       event.preventDefault()
-                  //       setIsGitSyncModalOpen(true)
-                  //     }
-                  //   }}
-                />
-                <Button
-                  variation={ButtonVariation.TERTIARY}
-                  text="Cancel"
-                  //   text={getString('cancel')}
-                  //   onClick={(e: MouseEvent) => {
-                  //     e.preventDefault()
-                  //     onCancelEditHandler()
-                  //     formikProps.handleReset()
-                  //   }}
-                />
-              </Layout.Horizontal>
-            )}
+
+              {formikProps.dirty && (
+                <Layout.Horizontal padding="medium" spacing="small" className={css.actionButtons}>
+                  <Button
+                    type="submit"
+                    text={getString('save')}
+                    loading={formDisabled}
+                    disabled={formDisabled}
+                    variation={ButtonVariation.PRIMARY}
+                    onClick={e => {
+                      e.preventDefault()
+                      formikProps.submitForm()
+                    }}
+                  />
+
+                  <Button
+                    variation={ButtonVariation.TERTIARY}
+                    text={getString('cancel')}
+                    disabled={formDisabled}
+                    onClick={e => {
+                      e.preventDefault()
+                      formikProps.handleReset()
+                    }}
+                  />
+                </Layout.Horizontal>
+              )}
+            </Container>
           </FormikForm>
         )
       }}

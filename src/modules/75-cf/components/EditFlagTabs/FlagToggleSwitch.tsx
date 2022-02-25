@@ -27,10 +27,11 @@ export interface FlagToggleSwitchProps {
   currentState: string
   currentEnvironmentState: FeatureState | undefined
   handleToggle: () => void
+  disabled?: boolean
 }
 
 const FlagToggleSwitch = (props: FlagToggleSwitchProps): ReactElement => {
-  const { currentEnvironmentState, handleToggle, currentState } = props
+  const { currentEnvironmentState, handleToggle, currentState, disabled } = props
 
   const { activeEnvironment } = useActiveEnvironment()
   const { getString } = useStrings()
@@ -57,14 +58,14 @@ const FlagToggleSwitch = (props: FlagToggleSwitchProps): ReactElement => {
     }
   })
 
-  const switchDisabled = isPlanEnforcementEnabled && !enabled && isFreePlan
+  const disabledByPlanEnforcement = isPlanEnforcementEnabled && !enabled && isFreePlan
 
   const getTooltip = (): ReactElement | undefined => {
     if (!canToggle) {
       return (
         <RBACTooltip permission={PermissionIdentifier.TOGGLE_FF_FEATUREFLAG} resourceType={ResourceType.ENVIRONMENT} />
       )
-    } else if (switchDisabled) {
+    } else if (disabledByPlanEnforcement) {
       return <FeatureWarningTooltip featureName={FeatureIdentifier.MAUS} />
     }
 
@@ -76,7 +77,7 @@ const FlagToggleSwitch = (props: FlagToggleSwitchProps): ReactElement => {
       <Text tooltip={getTooltip()}>
         <Switch
           labelElement={
-            <Text inline font={{ variation: FontVariation.FORM_INPUT_TEXT }} padding={{ left: 'small' }}>
+            <Text inline font={{ variation: FontVariation.FORM_INPUT_TEXT }}>
               {isFlagSwitchChanged
                 ? getString(switchOff ? 'cf.featureFlags.flagWillTurnOff' : 'cf.featureFlags.flagWillTurnOn')
                 : getString(switchOff ? 'cf.featureFlags.flagOff' : 'cf.featureFlags.flagOn')}
@@ -87,7 +88,7 @@ const FlagToggleSwitch = (props: FlagToggleSwitchProps): ReactElement => {
           alignIndicator="left"
           className={cx(Classes.LARGE, css.switch)}
           checked={currentState === FeatureFlagActivationStatus.ON}
-          disabled={switchDisabled || !canToggle}
+          disabled={disabledByPlanEnforcement || !canToggle || disabled}
         />
       </Text>
     </>

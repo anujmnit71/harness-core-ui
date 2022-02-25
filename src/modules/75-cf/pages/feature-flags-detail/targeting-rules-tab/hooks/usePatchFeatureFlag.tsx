@@ -11,28 +11,30 @@ import { get } from 'lodash-es'
 import patch from '@cf/utils/instructions'
 import { FeatureState, PatchFeatureQueryParams, usePatchFeature } from 'services/cf'
 import useActiveEnvironment from '@cf/hooks/useActiveEnvironment'
+import { showToaster } from '@cf/utils/CFUtils'
+import { useStrings } from 'framework/strings'
 import type { TargetingRulesFormValues } from '../TargetingRulesTab'
 
 interface UsePatchFeatureFlagProps {
   featureFlagIdentifier: string
   initialValues: TargetingRulesFormValues
-  refetchFlag: () => Promise<unknown>
 }
 
 interface UsePatchFeatureFlagReturn {
-  saveChanges: (values: TargetingRulesFormValues) => void
+  saveChanges: (values: TargetingRulesFormValues, onSuccess: () => void) => void
+  loading: boolean
 }
 
 const usePatchFeatureFlag = ({
   featureFlagIdentifier,
-  initialValues,
-  refetchFlag
+  initialValues
 }: UsePatchFeatureFlagProps): UsePatchFeatureFlagReturn => {
   const { projectIdentifier, orgIdentifier, accountId: accountIdentifier } = useParams<Record<string, string>>()
   const { activeEnvironment: environmentIdentifier } = useActiveEnvironment()
   const { showError } = useToaster()
+  const { getString } = useStrings()
 
-  const { mutate: patchFeature } = usePatchFeature({
+  const { mutate: patchFeature, loading } = usePatchFeature({
     identifier: featureFlagIdentifier as string,
     queryParams: {
       projectIdentifier,
@@ -42,7 +44,7 @@ const usePatchFeatureFlag = ({
     } as PatchFeatureQueryParams
   })
 
-  const saveChanges = (values: TargetingRulesFormValues): void => {
+  const saveChanges = (values: TargetingRulesFormValues, onSuccess: () => void): void => {
     if (values.state !== initialValues.state) {
       patch.feature.addInstruction(patch.creators.setFeatureFlagState(values?.state as FeatureState))
     }
@@ -50,7 +52,10 @@ const usePatchFeatureFlag = ({
     try {
       patch.feature.onPatchAvailable(async data => {
         await patchFeature(data)
-        refetchFlag()
+
+        showToaster(getString('cf.messages.flagUpdated'))
+
+        onSuccess()
       })
 
       patch.feature.reset()
@@ -58,9 +63,9 @@ const usePatchFeatureFlag = ({
       showError(get(error, 'data.message', error?.message), 0)
     }
   }
-
   return {
-    saveChanges
+    saveChanges,
+    loading
   }
 }
 

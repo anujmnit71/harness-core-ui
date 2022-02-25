@@ -9,5 +9,6 @@
 declare const styles: {
   readonly flagActivationDetailsLayout: string
   readonly pageLayout: string
+  readonly spinner: string
 }
 export default styles

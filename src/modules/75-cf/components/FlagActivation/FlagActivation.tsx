@@ -45,7 +45,6 @@ import { useQueryParams } from '@common/hooks'
 import { useEnvironmentSelectV2 } from '@cf/hooks/useEnvironmentSelectV2'
 import { FFDetailPageTab, getErrorMessage, rewriteCurrentLocationWithActiveEnvironment } from '@cf/utils/CFUtils'
 import routes from '@common/RouteDefinitions'
-import { ContainerSpinner } from '@common/components/ContainerSpinner/ContainerSpinner'
 import useActiveEnvironment from '@cf/hooks/useActiveEnvironment'
 import type { FeatureFlagPathProps, ProjectPathProps } from '@common/interfaces/RouteInterfaces'
 
@@ -103,7 +102,7 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
   const { flagData, projectIdentifier, refetchFlag, gitSync } = props
   const { showError } = useToaster()
   const [editing, setEditing] = useState(false)
-  const [loadingFlags, setLoadingFlags] = useState(false)
+  const [, setLoadingFlags] = useState(false)
   const { orgIdentifier, accountId: accountIdentifier } = useParams<Record<string, string>>()
   const { activeEnvironment: environmentIdentifier, withActiveEnvironment } = useActiveEnvironment()
   const { mutate: patchFeature } = usePatchFeature({
@@ -349,7 +348,7 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
         })
         .onEmptyPatch(() => setEditing(false))
     },
-    [initialValues, patchFeature, refetchFlag, showError]
+    [initialValues, patchFeature, showError]
   )
 
   type RuleErrors = { [K: number]: { [P: number]: 'required' } }
@@ -427,7 +426,7 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
   ))
   const { tab = FFDetailPageTab.TARGETING } = useQueryParams<{ tab?: string }>()
   const [activeTabId, setActiveTabId] = useState(tab)
-  const [newEnvironmentCreateLoading, setNewEnvironmentCreateLoading] = useState(false)
+  const [, setNewEnvironmentCreateLoading] = useState(false)
   const { getString } = useStrings()
   const history = useHistory()
   const pathParams = useParams<ProjectPathProps & FeatureFlagPathProps>()
@@ -439,23 +438,6 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
       history.replace(withActiveEnvironment(routes.toCFFeatureFlagsDetail(pathParams) + `?tab=${activeTabId}`))
     }
   }, [activeTabId, history, pathParams, tab, withActiveEnvironment])
-
-  if (envsLoading || newEnvironmentCreateLoading || loadingFlags) {
-    return (
-      <Container
-        style={{
-          position: 'fixed',
-          top: '64px',
-          left: 0,
-          bottom: 0,
-          right: 0,
-          zIndex: 1
-        }}
-      >
-        <ContainerSpinner />
-      </Container>
-    )
-  }
 
   if (envsError) {
     return <PageError message={getErrorMessage(envsError)} onClick={() => refetchEnvironments()} />
@@ -538,7 +520,7 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
                         panel={
                           <>
                             {FFM_1513 ? (
-                              <TargetingRulesTab featureFlag={flagData} refetchFlag={refetchFlag} />
+                              <TargetingRulesTab featureFlag={flagData} />
                             ) : (
                               <TabTargeting
                                 formikProps={formikProps}

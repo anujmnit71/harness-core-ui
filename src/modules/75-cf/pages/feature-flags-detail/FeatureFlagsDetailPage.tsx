@@ -6,7 +6,7 @@
  */
 
 import React, { ReactElement, useState } from 'react'
-import { Layout, Container, PageError } from '@wings-software/uicore'
+import { Layout, PageError } from '@wings-software/uicore'
 import { useParams } from 'react-router-dom'
 import { GetFeatureFlagQueryParams, useGetFeatureFlag } from 'services/cf'
 import { getErrorMessage } from '@cf/utils/CFUtils'
@@ -53,20 +53,7 @@ const FeatureFlagsDetailPage: React.FC = () => {
   const gitSync = useGitSync()
 
   if (loading && !skipLoading) {
-    return (
-      <Container
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: '290px',
-          width: 'calc(100% - 290px)',
-          height: 'calc(100% - 144px)',
-          zIndex: 1
-        }}
-      >
-        <ContainerSpinner />
-      </Container>
-    )
+    return <ContainerSpinner className={css.spinner} />
   }
 
   if (error) {

@@ -15,6 +15,11 @@
   display: flex;
   gap: var(--spacing-large);
 }
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .page-layout {
   display: grid;
