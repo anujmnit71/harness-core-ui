@@ -54,7 +54,7 @@ interface ManifestStorePropType {
   handleStoreChange: (store: ManifestStores) => void
 }
 
-const ManifestStore: React.FC<StepProps<ConnectorConfigDTO> & ManifestStorePropType> = ({
+function ManifestStore({
   handleConnectorViewChange,
   handleStoreChange,
   stepName,
@@ -66,7 +66,7 @@ const ManifestStore: React.FC<StepProps<ConnectorConfigDTO> & ManifestStorePropT
   allowableTypes,
   prevStepData,
   nextStep
-}) => {
+}: StepProps<ConnectorConfigDTO> & ManifestStorePropType): React.ReactElement {
   const { accountId, projectIdentifier, orgIdentifier } = useParams<ProjectPathProps>()
   const { repoIdentifier, branch } = useQueryParams<GitQueryParams>()
   const { getString } = useStrings()
@@ -134,13 +134,9 @@ const ManifestStore: React.FC<StepProps<ConnectorConfigDTO> & ManifestStorePropT
         initialValues={getInitialValues()}
         formName="manifestStore"
         validationSchema={Yup.object().shape({
-          connectorRef: Yup.string()
-            .trim()
-            .required(
-              `${ManifestToConnectorMap[selectedStore]} ${getString(
-                'pipelineSteps.build.create.connectorRequiredError'
-              )}`
-            )
+          connectorRef: Yup.mixed().required(
+            `${ManifestToConnectorMap[selectedStore]} ${getString('pipelineSteps.build.create.connectorRequiredError')}`
+          )
         })}
         onSubmit={formData => {
           submitFirstStep({ ...formData })

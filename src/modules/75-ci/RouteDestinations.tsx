@@ -38,7 +38,7 @@ import type {
 } from '@common/interfaces/RouteInterfaces'
 import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import DeploymentsList from '@pipeline/pages/deployments-list/DeploymentsList'
-import { MinimalLayout } from '@common/layouts'
+import { EmptyLayout, MinimalLayout } from '@common/layouts'
 
 import PipelinesPage from '@pipeline/pages/pipelines/PipelinesPage'
 import type { SidebarContext } from '@common/navigation/SidebarProvider'
@@ -64,15 +64,15 @@ import DelegateConfigurations from '@delegates/pages/delegates/DelegateConfigura
 
 import PipelineDetails from '@pipeline/pages/pipeline-details/PipelineDetails'
 import InputSetList from '@pipeline/pages/inputSet-list/InputSetList'
-import TriggersPage from '@pipeline/pages/triggers/TriggersPage'
+import TriggersPage from '@triggers/pages/triggers/TriggersPage'
 import { EnhancedInputSetForm } from '@pipeline/components/InputSetForm/InputSetForm'
-import TriggerDetails from '@pipeline/pages/trigger-details/TriggerDetails'
+import TriggerDetails from '@triggers/pages/trigger-details/TriggerDetails'
 import ExecutionArtifactsView from '@pipeline/pages/execution/ExecutionArtifactsView/ExecutionArtifactsView'
 import ExecutionInputsView from '@pipeline/pages/execution/ExecutionInputsView/ExecutionInputsView'
 import ExecutionLandingPage from '@pipeline/pages/execution/ExecutionLandingPage/ExecutionLandingPage'
 import ExecutionPipelineView from '@pipeline/pages/execution/ExecutionPipelineView/ExecutionPipelineView'
-import TriggersWizardPage from '@pipeline/pages/triggers/TriggersWizardPage'
-import TriggersDetailPage from '@pipeline/pages/triggers/TriggersDetailPage'
+import TriggersWizardPage from '@triggers/pages/triggers/TriggersWizardPage'
+import TriggersDetailPage from '@triggers/pages/triggers/TriggersDetailPage'
 import CreateSecretFromYamlPage from '@secrets/pages/createSecretFromYaml/CreateSecretFromYamlPage'
 
 import './components/PipelineSteps'
@@ -102,6 +102,7 @@ import { TemplateStudioWrapper } from '@templates-library/components/TemplateStu
 import ExecutionPolicyEvaluationsView from '@pipeline/pages/execution/ExecutionPolicyEvaluationsView/ExecutionPolicyEvaluationsView'
 import GitSyncConfigTab from '@gitsync/pages/config/GitSyncConfigTab'
 import ExecutionSecurityView from '@pipeline/pages/execution/ExecutionSecurityView/ExecutionSecurityView'
+import FullPageLogView from '@pipeline/pages/full-page-log-view/FullPageLogView'
 import CIHomePage from './pages/home/CIHomePage'
 import CIDashboardPage from './pages/dashboard/CIDashboardPage'
 import CIPipelineStudio from './pages/pipeline-studio/CIPipelineStudio'
@@ -546,6 +547,21 @@ export default (
       <PipelineDetails>
         <CIPipelineStudio />
       </PipelineDetails>
+    </RouteWithLayout>
+    <RouteWithLayout
+      exact
+      layout={EmptyLayout}
+      licenseRedirectData={licenseRedirectData}
+      sidebarProps={CISideNavProps}
+      path={routes.toPipelineLogs({
+        ...accountPathProps,
+        ...executionPathProps,
+        ...pipelineModuleParams,
+        stageIdentifier: ':stageIdentifier',
+        stepIndentifier: ':stepIndentifier'
+      })}
+    >
+      <FullPageLogView />
     </RouteWithLayout>
     <RouteWithLayout
       exact

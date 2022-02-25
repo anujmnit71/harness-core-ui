@@ -221,6 +221,9 @@ export default function BuildInfraSpecifications({ children }: React.PropsWithCh
   )
 
   React.useEffect(() => {
+    if (!propagatedStage) {
+      setCurrentMode(Modes.NewConfiguration)
+    }
     if (CI_VM_INFRASTRUCTURE) {
       const stageBuildInfraType = (stage?.stage?.spec?.infrastructure as K8sDirectInfraYaml)?.type
       const propagatedStageType = (propagatedStage?.stage?.spec?.infrastructure as K8sDirectInfraYaml)?.type
@@ -713,7 +716,7 @@ export default function BuildInfraSpecifications({ children }: React.PropsWithCh
 
   return (
     <div className={css.wrapper}>
-      <ErrorsStripBinded />
+      <ErrorsStripBinded domRef={scrollRef as React.MutableRefObject<HTMLElement | undefined>} />
       <div className={css.contentSection} ref={scrollRef}>
         <Formik
           initialValues={getInitialValues}

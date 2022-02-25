@@ -30,6 +30,7 @@ import { useVariablesExpression } from '@pipeline/components/PipelineStudio/Pipl
 import { ConfigureOptions } from '@common/components/ConfigureOptions/ConfigureOptions'
 import { FormMultiTypeTextAreaField } from '@common/components/MultiTypeTextArea/MultiTypeTextArea'
 import { FormMultiTypeUserGroupInput } from '@common/components/UserGroupsInput/FormMultitypeUserGroupInput'
+import { regexPositiveNumbers } from '@common/utils/StringUtils'
 import { isApprovalStepFieldDisabled } from '../Common/ApprovalCommons'
 import type {
   ApproverInputsSubmitCallInterface,
@@ -41,13 +42,13 @@ import { getNameAndIdentifierSchema } from '../StepsValidateUtils'
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 import css from './HarnessApproval.module.scss'
 
-const FormContent = ({
+function FormContent({
   formik,
   isNewStep,
   readonly,
   allowableTypes,
   stepViewType
-}: HarnessApprovalFormContentProps) => {
+}: HarnessApprovalFormContentProps): React.ReactElement {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
 
@@ -174,6 +175,7 @@ const FormContent = ({
             <div className={stepCss.formGroup}>
               <FieldArray
                 name="spec.approverInputs"
+                validateOnChange={false}
                 render={({ push, remove }) => {
                   return (
                     <div>
@@ -255,7 +257,6 @@ function HarnessApprovalStepMode(
       onSubmit={values => onUpdate?.(values)}
       initialValues={props.initialValues}
       formName="harnessApproval"
-      enableReinitialize={true}
       validate={data => {
         onChange?.(data)
       }}
@@ -266,7 +267,18 @@ function HarnessApprovalStepMode(
           approvalMessage: Yup.string().trim().required(getString('pipeline.approvalStep.validation.approvalMessage')),
           approvers: Yup.object().shape({
             userGroups: Yup.string().required(getString('pipeline.approvalStep.validation.userGroups')),
-            minimumCount: Yup.string().required(getString('pipeline.approvalStep.validation.minimumCountRequired'))
+            minimumCount: Yup.string()
+              .required(getString('pipeline.approvalStep.validation.minimumCountRequired'))
+              .test({
+                test(value: string) {
+                  if (getMultiTypeFromValue(value) === MultiTypeInputType.FIXED && !value.match(regexPositiveNumbers)) {
+                    return this.createError({
+                      message: getString('pipeline.approvalStep.validation.minimumCountOne')
+                    })
+                  }
+                  return true
+                }
+              })
           })
         })
       })}

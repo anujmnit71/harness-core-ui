@@ -36,7 +36,7 @@ import {
 } from './types'
 import css from './JiraDynamicFieldsSelector.module.scss'
 
-const SelectFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
+function SelectFieldList(props: JiraDynamicFieldsSelectorContentInterface) {
   const { getString } = useStrings()
   const {
     connectorRef,
@@ -44,6 +44,7 @@ const SelectFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
     projectMetaResponse,
     fetchingProjectMetadata,
     showProjectDisclaimer,
+    jiraType,
     selectedProjectKey: selectedProjectKeyInit,
     selectedIssueTypeKey: selectedIssueTypeKeyInit
   } = props
@@ -60,11 +61,13 @@ const SelectFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
     value: selectedProjectKeyInit,
     label: selectedProjectKeyInit
   })
+
   const [issueTypeValue, setIssueTypeValue] = useState<JiraProjectSelectOption>({
     key: selectedIssueTypeKeyInit,
     value: selectedIssueTypeKeyInit,
     label: selectedIssueTypeKeyInit
   })
+
   const [projectMetadata, setProjectMetadata] = useState<JiraProjectNG>()
   const [fieldList, setFieldList] = useState<JiraFieldNG[]>([])
 
@@ -90,8 +93,13 @@ const SelectFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
       const fieldListToSet: JiraFieldNG[] = []
       const fieldKeys = Object.keys(issueTypeData?.fields || {})
       fieldKeys.sort().forEach(keyy => {
-        if (issueTypeData?.fields[keyy] && keyy !== 'Summary' && keyy !== 'Description') {
-          fieldListToSet.push(issueTypeData?.fields[keyy])
+        if (issueTypeData?.fields[keyy]) {
+          if (
+            (jiraType === 'createMode' && keyy !== 'Summary' && keyy !== 'Description') ||
+            jiraType === 'updateMode'
+          ) {
+            fieldListToSet.push(issueTypeData?.fields[keyy])
+          }
         }
       })
       setFieldList(fieldListToSet)
@@ -166,7 +174,7 @@ const SelectFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
           ) : null}
           <JiraFieldSelector
             fields={fieldList}
-            selectedFields={[]}
+            selectedFields={props?.selectedFields || []}
             onCancel={props.onCancel}
             addSelectedFields={fields => props.addSelectedFields(fields, selectedProjectKey, selectedIssueTypeKey)}
           />
@@ -176,7 +184,7 @@ const SelectFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
   )
 }
 
-const ProvideFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
+function ProvideFieldList(props: JiraDynamicFieldsSelectorContentInterface) {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   return (
@@ -254,7 +262,7 @@ const ProvideFieldList = (props: JiraDynamicFieldsSelectorContentInterface) => {
   )
 }
 
-const Content = (props: JiraDynamicFieldsSelectorContentInterface) => {
+function Content(props: JiraDynamicFieldsSelectorContentInterface) {
   const { getString } = useStrings()
   const { connectorRef } = props
   const [type, setType] = useState<JiraCreateFormFieldSelector>(
@@ -288,7 +296,7 @@ const Content = (props: JiraDynamicFieldsSelectorContentInterface) => {
   )
 }
 
-export const JiraDynamicFieldsSelector = (props: JiraDynamicFieldsSelectorInterface) => {
+export function JiraDynamicFieldsSelector(props: JiraDynamicFieldsSelectorInterface) {
   const { accountId, projectIdentifier, orgIdentifier } =
     useParams<PipelineType<PipelinePathProps & AccountPathProps>>()
   const commonParams = {

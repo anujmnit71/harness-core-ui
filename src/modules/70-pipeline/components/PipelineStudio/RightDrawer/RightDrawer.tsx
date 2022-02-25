@@ -189,7 +189,7 @@ const updateWithNodeIdentifier = async (
   drawerType: DrawerTypes,
   processNode: StepElementConfig & TemplateStepNode,
   updatePipelineView: (data: PipelineViewData) => void,
-  updateStage: (stage: StageElementConfig, existingStage?: StageElementConfig | undefined) => Promise<void>,
+  updateStage: (stage: StageElementConfig) => Promise<void>,
   data: any,
   pipelineView: PipelineViewData
 ): Promise<void> => {
@@ -232,7 +232,7 @@ const onSubmitStep = async (
   trackEvent: TrackEvent,
   selectedStage: StageElementWrapper<StageElementConfig> | undefined,
   updatePipelineView: (data: PipelineViewData) => void,
-  updateStage: (stage: StageElementConfig, existingStage?: StageElementConfig | undefined) => Promise<void>,
+  updateStage: (stage: StageElementConfig) => Promise<void>,
   stageType: string | undefined,
   setSelectedStepId: (selectedStepId: string | undefined) => void,
   pipelineView: PipelineViewData
@@ -324,7 +324,7 @@ const closeDrawer = (
   setSelectedStepId(undefined)
 }
 
-export const RightDrawer: React.FC = (): JSX.Element => {
+export function RightDrawer(): React.ReactElement {
   const {
     state: {
       templateTypes,
@@ -600,6 +600,7 @@ export const RightDrawer: React.FC = (): JSX.Element => {
       selectedTemplateRef: getIdentifierFromValue(
         defaultTo((data?.stepConfig?.node as TemplateStepNode)?.template?.templateRef, '')
       ),
+      selectedVersionLabel: (data?.stepConfig?.node as TemplateStepNode)?.template?.versionLabel,
       onUseTemplate: async (template: TemplateSummaryResponse, isCopied = false) => {
         closeTemplateSelector()
         const node = drawerData.data?.stepConfig?.node as StepOrStepGroupOrTemplateStepData

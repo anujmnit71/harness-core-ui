@@ -1,0 +1,18 @@
+{
+  "status": "SUCCESS",
+  "data": {
+    "accountIdentifier": "dummy",
+    "orgIdentifier": "default",
+    "projectIdentifier": "sunnyFullSync",
+    "baseBranch": "master",
+    "branch": "master",
+    "prTitle": "Syncing Harness entities",
+    "createPullRequest": true,
+    "repoIdentifier": "gitSyncRepoTest",
+    "targetBranch": "fe/b567",
+    "rootFolder": "/src1/.harness/",
+    "newBranch": false
+  },
+  "metaData": null,
+  "correlationId": "correlationId"
+}

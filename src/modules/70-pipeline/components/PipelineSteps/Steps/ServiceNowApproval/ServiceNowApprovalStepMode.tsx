@@ -56,13 +56,14 @@ import {
   getGenuineValue
 } from '@pipeline/components/PipelineSteps/Steps/ServiceNowApproval/helper'
 import { StringKeys, useStrings } from 'framework/strings'
+import { ConnectorRefSchema } from '@common/utils/Validation'
 import { ServiceNowApprovalRejectionCriteria } from './ServiceNowApprovalRejectionCriteria'
 import css from '@pipeline/components/PipelineSteps/Steps/ServiceNowApproval/ServiceNowApproval.module.scss'
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 
 const fetchingTicketTypesPlaceholder: StringKeys = 'pipeline.serviceNowApprovalStep.fetchingTicketTypesPlaceholder'
 
-const FormContent = ({
+function FormContent({
   formik,
   isNewStep,
   readonly,
@@ -74,7 +75,7 @@ const FormContent = ({
   serviceNowMetadataResponse,
   serviceNowTicketTypesFetchError,
   refetchServiceNowMetadata
-}: ServiceNowFormContentInterface): JSX.Element => {
+}: ServiceNowFormContentInterface): JSX.Element {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   const { accountId, projectIdentifier, orgIdentifier } =
@@ -387,7 +388,9 @@ function ServiceNowApprovalStepMode(
         ...getNameAndIdentifierSchema(getString, stepViewType),
         timeout: getDurationValidationSchema({ minimum: '10s' }).required(getString('validation.timeout10SecMinimum')),
         spec: Yup.object().shape({
-          connectorRef: Yup.string().required(getString('pipeline.serviceNowApprovalStep.validations.connectorRef')),
+          connectorRef: ConnectorRefSchema({
+            requiredErrorMsg: getString('pipeline.serviceNowApprovalStep.validations.connectorRef')
+          }),
           ticketType: Yup.string().required(getString('pipeline.serviceNowApprovalStep.validations.ticketType')),
           ticketNumber: Yup.string().required(getString('pipeline.serviceNowApprovalStep.validations.issueNumber')),
           approvalCriteria: Yup.object().shape({

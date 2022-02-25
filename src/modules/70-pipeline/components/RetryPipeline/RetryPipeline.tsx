@@ -62,7 +62,7 @@ import { yamlStringify } from '@common/utils/YamlHelperMethods'
 import { useToaster } from '@common/exports'
 import routes from '@common/RouteDefinitions'
 import { useMutateAsGet, useQueryParams } from '@common/hooks'
-import { mergeTemplateWithInputSetData } from '@pipeline/utils/runPipelineUtils'
+import { getFeaturePropsForRunPipelineButton, mergeTemplateWithInputSetData } from '@pipeline/utils/runPipelineUtils'
 import { useGetYamlWithTemplateRefsResolved } from 'services/template-ng'
 import { ErrorsStrip } from '../ErrorsStrip/ErrorsStrip'
 import GitPopover from '../GitPopover/GitPopover'
@@ -89,14 +89,16 @@ export interface ParallelStageOption extends SelectOption {
 interface RetryPipelineProps {
   executionIdentifier: string
   pipelineIdentifier: string
+  modules?: string[]
   onClose: () => void
 }
 
-const RetryPipeline = ({
+function RetryPipeline({
   executionIdentifier: executionId,
   pipelineIdentifier: pipelineIdf,
+  modules,
   onClose
-}: RetryPipelineProps): React.ReactElement => {
+}: RetryPipelineProps): React.ReactElement {
   const { isGitSyncEnabled } = useAppStore()
   const { getString } = useStrings()
   const { showSuccess, showWarning, showError } = useToaster()
@@ -177,7 +179,10 @@ const RetryPipeline = ({
         accountIdentifier: accountId,
         orgIdentifier,
         pipelineIdentifier,
-        projectIdentifier
+        projectIdentifier,
+        repoIdentifier,
+        branch,
+        getDefaultFromOtherRepo: true
       },
       body: {
         originalEntityYaml: yamlStringify(parse(pipelineResponse?.data?.yamlPipeline || '')?.pipeline)
@@ -588,10 +593,11 @@ const RetryPipeline = ({
     }
   }
 
+  const formRefDom = React.useRef<HTMLElement | undefined>()
+
   if (loadingPipeline || loadingResolvedPipeline || loadingTemplate || inputSetLoading || loadingRetry) {
     return <PageSpinner />
   }
-
   return (
     <Formik
       initialValues={(currentPipeline?.pipeline ? clearRuntimeInput(currentPipeline.pipeline) : {}) as Values}
@@ -661,10 +667,15 @@ const RetryPipeline = ({
                   />
                 </div>
               </div>
-              <ErrorsStrip formErrors={formErrors} />
+              <ErrorsStrip formErrors={formErrors} domRef={formRefDom} />
             </>
             {selectedView === SelectedView.VISUAL ? (
-              <div className={css.runModalFormContent}>
+              <div
+                className={css.runModalFormContent}
+                ref={ref => {
+                  formRefDom.current = ref as HTMLElement
+                }}
+              >
                 <FormikForm>
                   {!retryStageLoading && stageResponse?.data && (
                     <SelectStagetoRetry
@@ -776,6 +787,7 @@ const RetryPipeline = ({
                       submitForm()
                     }
                   }}
+                  featuresProps={getFeaturePropsForRunPipelineButton({ modules, getString })}
                   permission={{
                     resource: {
                       resourceIdentifier: pipeline?.identifier as string,

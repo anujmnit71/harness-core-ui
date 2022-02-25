@@ -103,7 +103,8 @@ const buildAuthTypePayload = (formData: FormData) => {
       }
     case AuthTypes.SERVICE_ACCOUNT:
       return {
-        serviceAccountTokenRef: formData.serviceAccountToken.referenceString
+        serviceAccountTokenRef: formData.serviceAccountToken.referenceString,
+        caCertRef: formData.clientKeyCACertificate?.referenceString // optional
       }
     case AuthTypes.OIDC:
       return {
@@ -789,9 +790,27 @@ export const buildVaultPayload = (formData: FormData): BuildVaultPayloadReturnTy
     tags: formData.tags,
     type: Connectors.VAULT,
     spec: {
-      ...pick(formData, ['basePath', 'vaultUrl', 'namespace', 'readOnly', 'default', 'delegateSelectors']),
+      ...pick(formData, [
+        'basePath',
+        'vaultUrl',
+        'namespace',
+        'readOnly',
+        'default',
+        'delegateSelectors',
+        'xvaultAwsIamServerId',
+        'vaultAwsIamRole',
+        'awsRegion'
+      ]),
+      xvaultAwsIamServerId:
+        formData.accessType === HashiCorpVaultAccessTypes.AWS_IAM
+          ? formData.xvaultAwsIamServerId?.referenceString
+          : undefined,
+      useAwsIam: formData.accessType === HashiCorpVaultAccessTypes.AWS_IAM,
       renewalIntervalMinutes:
-        formData.accessType !== HashiCorpVaultAccessTypes.VAULT_AGENT ? formData.renewalIntervalMinutes : 10,
+        formData.accessType !== HashiCorpVaultAccessTypes.VAULT_AGENT &&
+        formData.accessType !== HashiCorpVaultAccessTypes.AWS_IAM
+          ? formData.renewalIntervalMinutes
+          : 10,
       authToken:
         formData.accessType === HashiCorpVaultAccessTypes.TOKEN ? formData.authToken?.referenceString : undefined,
       appRoleId: formData.accessType === HashiCorpVaultAccessTypes.APP_ROLE ? formData.appRoleId : undefined,
@@ -1524,6 +1543,7 @@ export const setupVaultFormData = async (connectorInfo: ConnectorInfoDTO, accoun
   }
   const secretId = await setSecretField(connectorInfoSpec?.secretId, scopeQueryParams)
   const authToken = await setSecretField(connectorInfoSpec?.authToken, scopeQueryParams)
+  const xvaultAwsIamServerId = await setSecretField(connectorInfoSpec.xvaultAwsIamServerId, scopeQueryParams)
   return {
     vaultUrl: connectorInfoSpec?.vaultUrl || '',
     basePath: connectorInfoSpec?.basePath || '',
@@ -1535,7 +1555,11 @@ export const setupVaultFormData = async (connectorInfo: ConnectorInfoDTO, accoun
     secretId: secretId || undefined,
     authToken: authToken || undefined,
     sinkPath: connectorInfoSpec?.sinkPath || '',
-    renewalIntervalMinutes: connectorInfoSpec?.renewalIntervalMinutes || 10
+    renewalIntervalMinutes: connectorInfoSpec?.renewalIntervalMinutes || 10,
+    vaultAwsIamRole: connectorInfoSpec.vaultAwsIamRole,
+    xvaultAwsIamServerId,
+    useAwsIam: connectorInfoSpec.useAwsIam,
+    awsRegion: connectorInfoSpec.awsRegion
   }
 }
 

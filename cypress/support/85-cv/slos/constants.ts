@@ -39,6 +39,8 @@ export const getMonitoredService = `/cv/api/monitored-service/cvng_prod?routingI
 export const deleteSLOData = `/cv/api/slo/SLO1?routingId=${accountId}&accountId=${accountId}&orgIdentifier=${orgIdentifier}&projectIdentifier=${projectIdentifier}`
 export const saveSLO = `/cv/api/slo?routingId=${accountId}&accountId=${accountId}`
 export const updateSLO = `/cv/api/slo/SLO1?routingId=${accountId}&accountId=${accountId}&orgIdentifier=${orgIdentifier}&projectIdentifier=${projectIdentifier}`
+export const errorBudgetResetHistory = `/cv/api/slo/SLO1/errorBudgetResetHistory?routingId=${accountId}&accountId=${accountId}&orgIdentifier=${orgIdentifier}&projectIdentifier=${projectIdentifier}`
+export const resetErrorBudget = `/cv/api/slo/SLO1/resetErrorBudget?routingId=${accountId}&accountId=${accountId}&orgIdentifier=${orgIdentifier}&projectIdentifier=${projectIdentifier}`
 
 export const listSLOsCallResponse = {
   status: 'SUCCESS',
@@ -81,7 +83,7 @@ export const listMonitoredServicesCallResponse = {
       name: 'cvng_prod',
       healthSources: [
         { name: 'appd_manager', identifier: 'appd_manager' },
-        { name: 'appd_cvng_prod', identifier: 'appd_cvng_prod' },
+        { name: healthSource, identifier: healthSource },
         { name: 'New Relic Health source', identifier: 'New_Relic_Health_source' }
       ]
     },
@@ -104,6 +106,22 @@ export const listSLOMetricsCallResponse = {
   responseMessages: []
 }
 
+export const listRiskCountDataEmptyResponse = {
+  status: 'SUCCESS',
+  data: {
+    totalCount: 0,
+    riskCounts: [
+      { count: 0, displayName: 'Exhausted', identifier: 'EXHAUSTED' },
+      { count: 0, displayName: 'Unhealthy', identifier: 'UNHEALTHY' },
+      { count: 0, displayName: 'Need Attention', identifier: 'NEED_ATTENTION' },
+      { count: 0, displayName: 'Observe', identifier: 'OBSERVE' },
+      { count: 0, displayName: 'Healthy', identifier: 'HEALTHY' }
+    ]
+  },
+  metaData: null,
+  correlationId: 'eaada616-a1d7-4246-9c18-1e25cf9ca6be'
+}
+
 export const updatedListSLOsCallResponse = {
   status: 'SUCCESS',
   data: {
@@ -117,8 +135,8 @@ export const updatedListSLOsCallResponse = {
         title: 'SLO-1',
         monitoredServiceIdentifier: 'cvng_prod',
         monitoredServiceName: 'cvng_prod',
-        healthSourceIdentifier: 'appd_cvng_prod',
-        healthSourceName: 'appd_cvng_prod',
+        healthSourceIdentifier: healthSource,
+        healthSourceName: healthSource,
         serviceIdentifier: 'cvng',
         environmentIdentifier: 'prod',
         environmentName: 'prod',
@@ -169,6 +187,36 @@ export const getSLODashboardWidgetsAfterEdit = {
   }
 }
 
+export const sloDashboardWidgetResponseForCalender = {
+  ...updatedListSLOsCallResponse,
+  data: {
+    ...updatedListSLOsCallResponse.data,
+    content: [
+      {
+        ...updatedListSLOsCallResponse.data.content[0],
+        sloTargetType: 'Calender'
+      }
+    ]
+  }
+}
+
+export const getTwoSLODashboardWidgets = {
+  ...updatedListSLOsCallResponse,
+  data: {
+    ...updatedListSLOsCallResponse.data,
+    totalItems: 2,
+    pageItemCount: 2,
+    content: [
+      updatedListSLOsCallResponse.data.content[0],
+      {
+        ...updatedListSLOsCallResponse.data.content[0],
+        sloIdentifier: 'SLO2',
+        title: 'SLO-2'
+      }
+    ]
+  }
+}
+
 export const getSLORiskCountResponse = {
   status: 'SUCCESS',
   data: {
@@ -176,6 +224,40 @@ export const getSLORiskCountResponse = {
     riskCounts: [
       {
         count: 1,
+        displayName: 'Healthy',
+        identifier: 'HEALTHY'
+      },
+      {
+        count: 0,
+        displayName: 'Observe',
+        identifier: 'OBSERVE'
+      },
+      {
+        count: 0,
+        displayName: 'Need Attention',
+        identifier: 'NEED_ATTENTION'
+      },
+      {
+        count: 0,
+        displayName: 'Unhealthy',
+        identifier: 'UNHEALTHY'
+      },
+      {
+        count: 0,
+        displayName: 'Exhausted',
+        identifier: 'EXHAUSTED'
+      }
+    ]
+  }
+}
+
+export const getTwoSLOsRiskCountResponse = {
+  status: 'SUCCESS',
+  data: {
+    totalCount: 2,
+    riskCounts: [
+      {
+        count: 2,
         displayName: 'Healthy',
         identifier: 'HEALTHY'
       },
@@ -212,7 +294,7 @@ export const getServiceLevelObjectiveResponse = {
       tags: {},
       userJourneyRef: 'newone',
       monitoredServiceRef: 'cvng_prod',
-      healthSourceRef: 'appd_cvng_prod',
+      healthSourceRef: healthSource,
       orgIdentifier: 'default',
       projectIdentifier: 'project1',
       serviceLevelIndicators: [
@@ -252,8 +334,8 @@ export const getMonitoredServiceResponse = {
       sources: {
         healthSources: [
           {
-            name: 'appd_cvng_prod',
-            identifier: 'appd_cvng_prod',
+            name: healthSource,
+            identifier: healthSource,
             type: 'AppDynamics',
             spec: {
               connectorRef: 'AppD_Connector_102',
@@ -293,4 +375,23 @@ export const errorResponseSLODuplication = {
     correlationId: 'ca0bf961-8c50-4967-97fb-fd69f6ca8072',
     metadata: null
   }
+}
+
+export const errorBudgetResetHistoryResponse = {
+  resource: [
+    {
+      errorBudgetAtReset: 75,
+      remainingErrorBudgetAtReset: 60,
+      errorBudgetIncrementPercentage: 50,
+      createdAt: 1643328000000,
+      reason: 'REASON'
+    },
+    {
+      errorBudgetAtReset: 50,
+      remainingErrorBudgetAtReset: 60,
+      errorBudgetIncrementPercentage: 50,
+      createdAt: 1643241600000,
+      reason: 'REASON'
+    }
+  ]
 }

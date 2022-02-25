@@ -78,6 +78,12 @@ allowpaths:
   - /newrelic/applications
   - /newrelic/metric-data
   - /newrelic/fetch-sample-data
+  - /dynatrace/metric-data
+  - /dynatrace/fetch-sample-data
+  - /dynatrace/metric-data
+  - /dynatrace/metrics
+  - /dynatrace/service-details
+  - /dynatrace/services
   - /cvng-log
   - /verification-job/eligible-cdng-verification-jobs
   - /verification-job/{identifier}
@@ -128,6 +134,9 @@ allowpaths:
   - /slo-dashboard/risk-count
   - /verify-step/{verifyStepExecutionId}/all-transaction-names
   - /verify-step/{verifyStepExecutionId}/all-node-names
+  - /verify-step/{verifyStepExecutionId}/deployment-activity-summary
+  - /verify-step/{verifyStepExecutionId}/healthSources
+  - /change-event/monitored-service-timeline
 operationIdOverrides:
   /appdynamics/applications.get: getAppDynamicsApplications
   /appdynamics/metric-data.post: getAppDynamicsMetricData

@@ -5,6 +5,8 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
+import type { InitCustomHealthSourceInterface } from './CustomHealthSource.types'
+
 export const CustomHealthSourceFieldNames = {
   METRIC_NAME: 'metricName',
   METRIC_IDENTIFIER: 'metricIdentifier',
@@ -32,7 +34,25 @@ export const CustomHealthSourceFieldNames = {
 }
 
 export const defaultMetricName = 'CustomHealth Metric'
-export const QueryType = {
-  SERVICE_BASED: 'SERVICE_BASED',
-  HOST_BASED: 'HOST_BASED'
+
+export const INITFORMDATA: InitCustomHealthSourceInterface = {
+  sli: false,
+  healthScore: false,
+  continuousVerification: false,
+  serviceInstanceMetricPath: '',
+  metricIdentifier: '',
+  baseURL: '',
+  pathURL: '',
+  metricValue: '',
+  timestamp: '',
+  timestampFormat: '',
+  queryType: '',
+  query: '',
+  requestMethod: '',
+  startTime: {
+    timestampFormat: 'SECONDS'
+  },
+  endTime: {
+    timestampFormat: 'SECONDS'
+  }
 }

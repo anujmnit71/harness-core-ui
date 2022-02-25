@@ -9,10 +9,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Container, Icon, Color, Text, PageError } from '@wings-software/uicore'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
-import { useGetDeploymentActivitySummary } from 'services/cv'
+import { useGetVerifyStepDeploymentActivitySummary } from 'services/cv'
 import type { ProjectPathProps } from '@common/interfaces/RouteInterfaces'
-import { isExecutionWaitingForIntervention } from '@pipeline/utils/statusHelpers'
-import { ManualInterventionTab } from '@pipeline/components/execution/StepDetails/tabs/ManualInterventionTab/ManualInterventionTab'
 import { allowedStrategiesAsPerStep } from '@pipeline/components/PipelineSteps/AdvancedSteps/FailureStrategyPanel/StrategySelection/StrategyConfig'
 import { StepMode } from '@pipeline/utils/stepUtils'
 import { Strategy } from '@pipeline/utils/FailureStrategyUtils'
@@ -22,6 +20,8 @@ import { getErrorMessage } from '../DeploymentMetrics/DeploymentMetrics.utils'
 import { DeploymentProgressAndNodes } from '../DeploymentProgressAndNodes/DeploymentProgressAndNodes'
 import type { VerifyExecutionProps } from './ExecutionVerificationSummary.types'
 import { getActivityId } from '../../ExecutionVerificationView.utils'
+import { ManualInterventionVerifyStep } from '../ManualInterventionVerifyStep/ManualInterventionVerifyStep'
+import InterruptedHistory from '../InterruptedHistory/InterruptedHistory'
 import css from './ExecutionVerificationSummary.module.scss'
 
 const POLLING_INTERVAL = 15000
@@ -32,13 +32,12 @@ export function ExecutionVerificationSummary(props: VerifyExecutionProps): JSX.E
   const [pollingIntervalId, setPollingIntervalId] = useState(-1)
   const [showSpinner, setShowSpinner] = useState(true)
   const activityId = useMemo(() => getActivityId(step), [step])
-  const { data, error, refetch } = useGetDeploymentActivitySummary({
+  const { data, error, refetch } = useGetVerifyStepDeploymentActivitySummary({
     queryParams: { accountId },
-    activityId,
+    verifyStepExecutionId: activityId,
     lazy: true
   })
   const { deploymentVerificationJobInstanceSummary = {} } = data?.resource || {}
-  const isManualInterruption = isExecutionWaitingForIntervention(step.status)
   const failureStrategies = allowedStrategiesAsPerStep(stageType || StageType.DEPLOY)[StepMode.STEP].filter(
     st => st !== Strategy.ManualIntervention
   )
@@ -98,10 +97,6 @@ export function ExecutionVerificationSummary(props: VerifyExecutionProps): JSX.E
     )
   }
 
-  if (isManualInterruption) {
-    return <ManualInterventionTab step={step} allowedStrategies={failureStrategies} />
-  }
-
   return (
     <Container
       className={cx(css.main, className, {
@@ -117,6 +112,12 @@ export function ExecutionVerificationSummary(props: VerifyExecutionProps): JSX.E
         >
           {step.failureInfo.message}
         </Text>
+      )}
+      {!isConsoleView && (
+        <>
+          <ManualInterventionVerifyStep step={step} allowedStrategies={failureStrategies} />
+          <InterruptedHistory interruptedHistories={step?.interruptHistories} />
+        </>
       )}
       <DeploymentProgressAndNodes
         deploymentSummary={deploymentVerificationJobInstanceSummary}

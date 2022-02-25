@@ -47,7 +47,7 @@ interface HelmWithHttpPropType {
   deploymentType?: string
 }
 
-const HelmWithHttp: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropType> = ({
+function HelmWithHttp({
   stepName,
   prevStepData,
   expressions,
@@ -58,7 +58,7 @@ const HelmWithHttp: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropTyp
   manifestIdsList,
   isReadonly = false,
   deploymentType
-}) => {
+}: StepProps<ConnectorConfigDTO> & HelmWithHttpPropType): React.ReactElement {
   const { getString } = useStrings()
   const isActiveAdvancedStep: boolean = initialValues?.spec?.skipResourceVersioning || initialValues?.spec?.commandFlags
 
@@ -179,7 +179,6 @@ const HelmWithHttp: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropTyp
                   />
                   {getMultiTypeFromValue(formik.values?.chartName) === MultiTypeInputType.RUNTIME && (
                     <ConfigureOptions
-                      style={{ alignSelf: 'center', marginBottom: 3 }}
                       value={formik.values?.chartName as string}
                       type="String"
                       variableName="chartName"
@@ -209,7 +208,6 @@ const HelmWithHttp: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropTyp
                   />
                   {getMultiTypeFromValue(formik.values?.chartVersion) === MultiTypeInputType.RUNTIME && (
                     <ConfigureOptions
-                      style={{ alignSelf: 'center', marginBottom: 4 }}
                       value={formik.values?.chartVersion}
                       type="String"
                       variableName="chartVersion"

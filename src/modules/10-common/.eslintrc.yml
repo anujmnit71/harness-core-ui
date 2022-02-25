@@ -7,7 +7,6 @@ rules:
         - modules/15-notifications/*
         - modules/18-audit-trail/*
         - modules/20-rbac/*
-        - modules/22-resource-center/*
         - modules/25-governance/*
         - modules/27-sto/*
         - modules/30-delegates/*
@@ -20,6 +19,7 @@ rules:
         - modules/45-projects-orgs/*
         - modules/70-pipeline/*
         - modules/72-templates-library/*
+        - modules/72-triggers/*
         - modules/75-cd/*
         - modules/75-ce/*
         - modules/75-cf/*
@@ -28,7 +28,6 @@ rules:
         - '@notifications/*'
         - '@audit-trail/*'
         - '@rbac/*'
-        - '@resource-center/*'
         - '@governance/*'
         - '@sto/*'
         - '@delegates/*'
@@ -41,6 +40,7 @@ rules:
         - '@projects-orgs/*'
         - '@pipeline/*'
         - '@templates-library/*'
+        - '@triggers/*'
         - '@cd/*'
         - '@ce/*'
         - '@cf/*'

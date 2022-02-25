@@ -5,8 +5,9 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
-import React from 'react'
-import { defaultTo, isEmpty, isNull, isUndefined, omit, omitBy } from 'lodash-es'
+import React, { useMemo } from 'react'
+import { defaultTo, isNull, isUndefined, omit, omitBy } from 'lodash-es'
+import type { MutateRequestOptions } from 'restful-react/dist/Mutate'
 import { Classes, Dialog, IDialogProps } from '@blueprintjs/core'
 import * as Yup from 'yup'
 import {
@@ -19,11 +20,11 @@ import {
   PageSpinner,
   VisualYamlSelectedView as SelectedView,
   VisualYamlToggle,
-  Heading
+  Heading,
+  getErrorInfoFromErrorObject
 } from '@wings-software/uicore'
 import { useParams } from 'react-router-dom'
 import { parse } from 'yaml'
-import { CompletionItemKind } from 'vscode-languageserver-types'
 import type { PipelineInfoConfig } from 'services/cd-ng'
 
 import {
@@ -36,7 +37,10 @@ import {
   useUpdateOverlayInputSetForPipeline,
   ResponseOverlayInputSetResponse,
   useGetSchemaYaml,
-  EntityGitDetails
+  EntityGitDetails,
+  UpdateOverlayInputSetForPipelineQueryParams,
+  UpdateOverlayInputSetForPipelinePathParams,
+  CreateOverlayInputSetForPipelineQueryParams
 } from 'services/pipeline-ng'
 
 import { useToaster } from '@common/exports'
@@ -59,8 +63,16 @@ import { useQueryParams } from '@common/hooks'
 import { AppStoreContext } from 'framework/AppStore/AppStoreContext'
 import { GitSyncStoreProvider } from 'framework/GitRepoStore/GitSyncStoreContext'
 import { yamlStringify } from '@common/utils/YamlHelperMethods'
+import { getOverlayErrors } from '@pipeline/utils/runPipelineUtils'
+import { ErrorsStrip } from '../ErrorsStrip/ErrorsStrip'
 import type { InputSetDTO } from '../InputSetForm/InputSetForm'
 import { InputSetSelector, InputSetSelectorProps } from '../InputSetSelector/InputSetSelector'
+import {
+  anyOneOf,
+  constructInputSetYamlObject,
+  getCreateUpdateRequestBodyOptions,
+  getInputSetReference
+} from './OverlayInputSetUtils'
 import css from './OverlayInputSetForm.module.scss'
 
 export interface OverlayInputSetDTO extends Omit<OverlayInputSetResponse, 'identifier'> {
@@ -124,13 +136,13 @@ const yamlBuilderReadOnlyModeProps: YamlBuilderProps = {
 const clearNullUndefined = /* istanbul ignore next */ (data: OverlayInputSetDTO): OverlayInputSetDTO =>
   omitBy(omitBy(data, isUndefined), isNull)
 
-export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
+export function OverlayInputSetForm({
   hideForm,
   identifier,
   isReadOnly = false,
   overlayInputSetRepoIdentifier,
   overlayInputSetBranch
-}): JSX.Element => {
+}: OverlayInputSetFormProps): React.ReactElement {
   const { getString } = useStrings()
   const [isOpen, setIsOpen] = React.useState(true)
   const [isEdit, setIsEdit] = React.useState(false)
@@ -151,6 +163,17 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
   const [selectedBranch, setSelectedBranch] = React.useState<string>(overlayInputSetBranch || branch || '')
   const [selectedInputSets, setSelectedInputSets] = React.useState<InputSetSelectorProps['value']>()
   const { showSuccess, showError, clear } = useToaster()
+  const [formErrors, setFormErrors] = React.useState<Record<string, any>>({})
+  const commonQueryParams = useMemo(() => {
+    return {
+      accountIdentifier: accountId,
+      orgIdentifier,
+      pipelineIdentifier,
+      projectIdentifier,
+      repoIdentifier,
+      branch
+    }
+  }, [accountId, orgIdentifier, pipelineIdentifier, projectIdentifier, repoIdentifier, branch])
 
   const {
     data: overlayInputSetResponse,
@@ -159,45 +182,20 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
     error: errorOverlayInputSet
   } = useGetOverlayInputSetForPipeline({
     queryParams: {
-      accountIdentifier: accountId,
-      orgIdentifier,
-      pipelineIdentifier,
-      projectIdentifier,
+      ...commonQueryParams,
       repoIdentifier: overlayInputSetRepoIdentifier,
       branch: overlayInputSetBranch
     },
-    inputSetIdentifier: identifier || '',
+    inputSetIdentifier: defaultTo(identifier, ''),
     lazy: true
   })
 
-  const {
-    mutate: createOverlayInputSet,
-    error: createOverlayInputSetError,
-    loading: createOverlayInputSetLoading
-  } = useCreateOverlayInputSetForPipeline({
-    queryParams: {
-      accountIdentifier: accountId,
-      orgIdentifier,
-      pipelineIdentifier,
-      projectIdentifier,
-      repoIdentifier,
-      branch
-    },
+  const { mutate: createOverlayInputSet, loading: createOverlayInputSetLoading } = useCreateOverlayInputSetForPipeline({
+    queryParams: commonQueryParams,
     requestOptions: { headers: { 'content-type': 'application/yaml' } }
   })
-  const {
-    mutate: updateOverlayInputSet,
-    error: updateOverlayInputSetError,
-    loading: updateOverlayInputSetLoading
-  } = useUpdateOverlayInputSetForPipeline({
-    queryParams: {
-      accountIdentifier: accountId,
-      orgIdentifier,
-      pipelineIdentifier,
-      projectIdentifier,
-      repoIdentifier,
-      branch
-    },
+  const { mutate: updateOverlayInputSet, loading: updateOverlayInputSetLoading } = useUpdateOverlayInputSetForPipeline({
+    queryParams: commonQueryParams,
     inputSetIdentifier: '',
     requestOptions: { headers: { 'content-type': 'application/yaml' } }
   })
@@ -209,10 +207,7 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
     error: errorInputSetList
   } = useGetInputSetsListForPipeline({
     queryParams: {
-      accountIdentifier: accountId,
-      orgIdentifier,
-      projectIdentifier,
-      pipelineIdentifier,
+      ...commonQueryParams,
       inputSetType: 'INPUT_SET',
       repoIdentifier: selectedRepo,
       branch: selectedBranch,
@@ -240,42 +235,40 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
   })
 
   const inputSet = React.useMemo(() => {
-    if (overlayInputSetResponse?.data) {
-      const inputSetObj = overlayInputSetResponse?.data
-      const parsedInputSetObj = parse(inputSetObj?.overlayInputSetYaml || '')
-      if (isGitSyncEnabled && parsedInputSetObj && parsedInputSetObj.overlayInputSet) {
-        return {
-          name: parsedInputSetObj.overlayInputSet.name as string,
-          tags: parsedInputSetObj.overlayInputSet.tags as {
-            [key: string]: string
-          },
-          identifier: parsedInputSetObj.overlayInputSet.identifier as string,
-          description: parsedInputSetObj.overlayInputSet.description as string,
-          orgIdentifier: parsedInputSetObj.overlayInputSet.orgIdentifier as string,
-          projectIdentifier: parsedInputSetObj.overlayInputSet.projectIdentifier as string,
-          pipelineIdentifier: parsedInputSetObj.overlayInputSet.pipelineIdentifier as string,
-          inputSetReferences: defaultTo(
-            parsedInputSetObj.overlayInputSet.inputSetReferences,
-            /* istanbul ignore next */ []
-          ) as string[],
-          gitDetails: defaultTo(inputSetObj.gitDetails, {}),
-          entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
-        }
-      }
+    if (!overlayInputSetResponse?.data) {
+      return getDefaultInputSet(orgIdentifier, projectIdentifier, pipelineIdentifier)
+    }
+    const inputSetObj = overlayInputSetResponse.data
+    const parsedInputSetObj = parse(defaultTo(inputSetObj?.overlayInputSetYaml, ''))
+    if (isGitSyncEnabled && parsedInputSetObj?.overlayInputSet) {
+      const parsedOverlayInputSet = parsedInputSetObj.overlayInputSet as OverlayInputSetDTO
       return {
-        name: inputSetObj.name,
-        tags: inputSetObj.tags,
-        identifier: inputSetObj.identifier || /* istanbul ignore next */ '',
-        description: inputSetObj?.description,
-        orgIdentifier,
-        projectIdentifier,
-        pipelineIdentifier,
-        inputSetReferences: inputSetObj?.inputSetReferences || /* istanbul ignore next */ [],
-        gitDetails: inputSetObj.gitDetails ?? {},
-        entityValidityDetails: inputSetObj.entityValidityDetails ?? {}
+        name: parsedOverlayInputSet.name as string,
+        tags: parsedOverlayInputSet.tags as {
+          [key: string]: string
+        },
+        identifier: parsedOverlayInputSet.identifier as string,
+        description: parsedOverlayInputSet.description as string,
+        orgIdentifier: parsedOverlayInputSet.orgIdentifier as string,
+        projectIdentifier: parsedOverlayInputSet.projectIdentifier as string,
+        pipelineIdentifier: parsedOverlayInputSet.pipelineIdentifier as string,
+        inputSetReferences: defaultTo(parsedOverlayInputSet.inputSetReferences, []),
+        gitDetails: defaultTo(inputSetObj.gitDetails, {}),
+        entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
       }
     }
-    return getDefaultInputSet(orgIdentifier, projectIdentifier, pipelineIdentifier)
+    return {
+      name: inputSetObj.name,
+      tags: inputSetObj.tags,
+      identifier: inputSetObj.identifier,
+      description: inputSetObj.description,
+      orgIdentifier,
+      projectIdentifier,
+      pipelineIdentifier,
+      inputSetReferences: defaultTo(inputSetObj?.inputSetReferences, []),
+      gitDetails: defaultTo(inputSetObj.gitDetails, {}),
+      entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
+    }
   }, [overlayInputSetResponse?.data, isGitSyncEnabled])
 
   const [disableVisualView, setDisableVisualView] = React.useState(inputSet.entityValidityDetails?.valid === false)
@@ -297,14 +290,9 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
   }, [inputSet.entityValidityDetails?.valid])
 
   const inputSetListYaml: CompletionItemInterface[] = React.useMemo(() => {
-    return (
-      inputSetList?.data?.content?.map(item => ({
-        label: item.name || /* istanbul ignore next */ '',
-        insertText: item.identifier || /* istanbul ignore next */ '',
-        kind: CompletionItemKind.Field
-      })) || []
-    )
-  }, [inputSetList?.data?.content?.map, inputSetList])
+    if (!inputSetList?.data?.content) return []
+    return inputSetList.data.content.map(constructInputSetYamlObject)
+  }, [inputSetList?.data?.content])
 
   React.useEffect(() => {
     const inputSetsToSelect = inputSet.inputSetReferences?.map(inputSetRef => {
@@ -340,18 +328,18 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
   }, [selectedRepo, selectedBranch])
 
   const onRepoChange = (gitDetails: EntityGitDetails) => {
-    setSelectedRepo(gitDetails.repoIdentifier || '')
-    setSelectedBranch(gitDetails.branch || '')
+    setSelectedRepo(defaultTo(gitDetails.repoIdentifier, ''))
+    setSelectedBranch(defaultTo(gitDetails.branch, ''))
   }
 
   const onBranchChange = (gitDetails: EntityGitDetails) => {
-    setSelectedBranch(gitDetails.branch || '')
+    setSelectedBranch(defaultTo(gitDetails.branch, ''))
   }
 
   const handleModeSwitch = React.useCallback(
     (view: SelectedView) => {
       if (view === SelectedView.VISUAL) {
-        const yaml = yamlHandler?.getLatestYaml() || /* istanbul ignore next */ ''
+        const yaml = defaultTo(yamlHandler?.getLatestYaml(), '')
         const inputSetYamlVisual = parse(yaml).overlayInputSet as OverlayInputSetDTO
 
         inputSet.name = inputSetYamlVisual.name
@@ -375,40 +363,31 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
     gitDetails?: SaveToGitFormInterface,
     objectId = ''
   ) => {
-    let response: ResponseOverlayInputSetResponse | null = null
+    let response: ResponseOverlayInputSetResponse | null
     try {
-      /* istanbul ignore else */
-      if (isEdit) {
-        response = await updateOverlayInputSet(
-          yamlStringify({ overlayInputSet: clearNullUndefined(inputSetObj) }) as any,
-          {
-            pathParams: { inputSetIdentifier: inputSetObj.identifier || /* istanbul ignore next */ '' },
-            queryParams: {
-              accountIdentifier: accountId,
-              orgIdentifier,
-              pipelineIdentifier,
-              projectIdentifier,
-              ...(gitDetails ? { ...gitDetails, lastObjectId: objectId } : {}),
-              ...(gitDetails && gitDetails.isNewBranch ? { baseBranch: initialGitDetails.branch } : {})
-            }
-          }
-        )
-      } else {
-        response = await createOverlayInputSet(
-          yamlStringify({ overlayInputSet: clearNullUndefined(inputSetObj) }) as any,
-          {
-            queryParams: {
-              accountIdentifier: accountId,
-              orgIdentifier,
-              pipelineIdentifier,
-              projectIdentifier,
-              ...(gitDetails ?? {}),
-              ...(gitDetails && gitDetails.isNewBranch ? { baseBranch: initialGitDetails.branch } : {})
-            }
-          }
-        )
-      }
-      /* istanbul ignore else */
+      const requestData = yamlStringify({ overlayInputSet: clearNullUndefined(inputSetObj) }) as any
+      const requestOptions = getCreateUpdateRequestBodyOptions({
+        isEdit,
+        initialGitDetails,
+        inputSetObj,
+        orgIdentifier,
+        accountId,
+        projectIdentifier,
+        pipelineIdentifier,
+        gitDetails,
+        objectId
+      })
+      response = isEdit
+        ? await updateOverlayInputSet(requestData, {
+            ...(requestOptions as MutateRequestOptions<
+              UpdateOverlayInputSetForPipelineQueryParams,
+              UpdateOverlayInputSetForPipelinePathParams
+            >)
+          })
+        : await createOverlayInputSet(requestData, {
+            ...(requestOptions as MutateRequestOptions<CreateOverlayInputSetForPipelineQueryParams, void>)
+          })
+
       if (response) {
         // This is done because when git sync is enabled, errors are displayed in a modal
         if (!isGitSyncEnabled) {
@@ -419,30 +398,19 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
             clear()
             showSuccess(getString('inputSets.overlayInputSetSaved'))
           }
-        } else {
-          if (response.data?.errorResponse && !isEmpty(response?.data?.invalidInputSetReferences)) {
-            throw {
-              data: {
-                errors: Object.keys(response?.data?.invalidInputSetReferences ?? {}).map((key: string) => {
-                  return {
-                    fieldId: key,
-                    error:
-                      response?.data?.invalidInputSetReferences?.[key] ??
-                      getString('inputSets.overlayInputSetSavedError')
-                  }
-                })
-              }
-            }
-          }
         }
       }
       if (!isGitSyncEnabled) {
         closeForm()
       }
-    } catch (e) {
+    } catch (e: any) {
+      const invaliderrors = getOverlayErrors(e?.data?.metadata?.invalidReferences)
+      if (Object.keys(invaliderrors).length) {
+        setFormErrors(invaliderrors)
+      }
       // This is done because when git sync is enabled, errors are displayed in a modal
-      if (!isGitSyncEnabled) {
-        showError(e?.data?.message || e?.message || getString('commonError'), undefined, 'pipeline.common.error')
+      else if (!isGitSyncEnabled) {
+        showError(getErrorInfoFromErrorObject(e), undefined, 'pipeline.common.error')
       }
       throw e
     }
@@ -458,7 +426,7 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
       payload?: SaveOverlayInputSetDTO,
       objectId?: string
     ): Promise<UseSaveSuccessResponse> =>
-      createUpdateOverlayInputSet(payload?.overlayInputSet || savedInputSetObj, gitData, objectId)
+      createUpdateOverlayInputSet(defaultTo(payload?.overlayInputSet, savedInputSetObj), gitData, objectId)
   })
 
   const handleSubmit = React.useCallback(
@@ -497,23 +465,14 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
     ]
   )
 
-  /* istanbul ignore else */
-  if (
-    errorPipeline ||
-    createOverlayInputSetError ||
-    updateOverlayInputSetError ||
-    errorOverlayInputSet ||
-    errorInputSetList
-  ) {
-    /* istanbul ignore next */
+  const hasAnyApiError = useMemo(() => {
+    return anyOneOf([errorPipeline, errorOverlayInputSet, errorInputSetList])
+  }, [errorPipeline, errorOverlayInputSet, errorInputSetList])
+
+  if (hasAnyApiError) {
     clear()
     showError(
-      (errorPipeline?.data as Failure)?.message ||
-        (createOverlayInputSetError?.data as Failure)?.message ||
-        (updateOverlayInputSetError?.data as Failure)?.message ||
-        (errorOverlayInputSet?.data as Failure)?.message ||
-        (errorInputSetList?.data as Failure)?.message ||
-        getString('commonError'),
+      defaultTo((hasAnyApiError.data as Failure)?.message, getString('commonError')),
       undefined,
       'pipeline.common.error'
     )
@@ -540,8 +499,24 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
   })
 
   const selectedInputSetReferences: string[] | undefined = React.useMemo(() => {
-    return selectedInputSets?.map(currInputSet => defaultTo(currInputSet.identifier, currInputSet.value) as string)
+    return selectedInputSets?.map(getInputSetReference)
   }, [selectedInputSets])
+
+  const anyApiLoading = useMemo(() => {
+    return anyOneOf([
+      loadingPipeline,
+      createOverlayInputSetLoading,
+      updateOverlayInputSetLoading,
+      loadingInputSetList,
+      loadingOverlayInputSet
+    ])
+  }, [
+    loadingPipeline,
+    createOverlayInputSetLoading,
+    updateOverlayInputSetLoading,
+    loadingInputSetList,
+    loadingOverlayInputSet
+  ])
 
   return (
     <Dialog
@@ -554,11 +529,7 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
       isOpen={isOpen}
       {...dialogProps}
     >
-      {(loadingPipeline ||
-        createOverlayInputSetLoading ||
-        updateOverlayInputSetLoading ||
-        loadingInputSetList ||
-        loadingOverlayInputSet) && /* istanbul ignore next */ <PageSpinner />}
+      {anyApiLoading && <PageSpinner />}
       <div className={Classes.DIALOG_BODY}>
         <Layout.Vertical spacing="medium">
           <div className={css.optionBtns}>
@@ -574,8 +545,8 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
           <Formik<OverlayInputSetDTO & GitContextProps>
             initialValues={{
               ...omit(inputSet, 'gitDetails', 'entityValidityDetails'),
-              repo: repoIdentifier || '',
-              branch: branch || ''
+              repo: defaultTo(repoIdentifier, ''),
+              branch: defaultTo(branch, '')
             }}
             formName="overlayInputSet"
             enableReinitialize={true}
@@ -594,79 +565,83 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
               return (
                 <>
                   {selectedView === SelectedView.VISUAL ? (
-                    <FormikForm>
-                      <div className={css.inputSetForm}>
-                        <NameIdDescriptionTags
-                          className={css.inputSetName}
-                          identifierProps={{
-                            inputLabel: getString('name'),
-                            isIdentifierEditable: !isEdit && !isReadOnly,
-                            inputGroupProps: {
-                              disabled: isReadOnly
-                            }
-                          }}
-                          descriptionProps={{ disabled: isReadOnly }}
-                          tagsProps={{
-                            disabled: isReadOnly
-                          }}
-                          formikProps={formikProps}
-                        />
-                        {isGitSyncEnabled && (
-                          <GitSyncStoreProvider>
-                            <GitContextForm
-                              formikProps={formikProps}
-                              gitDetails={
-                                isEdit
-                                  ? { ...overlayInputSetResponse?.data?.gitDetails, getDefaultFromOtherRepo: false }
-                                  : {
-                                      repoIdentifier,
-                                      branch,
-                                      getDefaultFromOtherRepo: true
-                                    }
+                    <>
+                      <ErrorsStrip formErrors={formErrors} />
+                      <FormikForm>
+                        <div className={css.inputSetForm}>
+                          <NameIdDescriptionTags
+                            className={css.inputSetName}
+                            identifierProps={{
+                              inputLabel: getString('name'),
+                              isIdentifierEditable: !isEdit && !isReadOnly,
+                              inputGroupProps: {
+                                disabled: isReadOnly
                               }
-                              onRepoChange={onRepoChange}
-                              onBranchChange={onBranchChange}
-                            />
-                          </GitSyncStoreProvider>
-                        )}
-                        <Layout.Vertical padding={{ top: 'large', bottom: 'xxxlarge' }} spacing="small">
-                          <Heading level={5}>{getString('inputSets.selectInputSets')}</Heading>
-                          <Text
-                            icon="info-sign"
-                            iconProps={{ intent: 'primary', size: 16, padding: { left: 0, right: 'small' } }}
-                          >
-                            {getString('inputSets.selectInputSetsHelp')}
-                          </Text>
-                          {inputSet && (
+                            }}
+                            descriptionProps={{ disabled: isReadOnly }}
+                            tagsProps={{
+                              disabled: isReadOnly
+                            }}
+                            formikProps={formikProps}
+                          />
+                          {isGitSyncEnabled && (
                             <GitSyncStoreProvider>
-                              <InputSetSelector
-                                pipelineIdentifier={pipelineIdentifier}
-                                onChange={inputsets => {
-                                  setSelectedInputSets(inputsets)
-                                }}
-                                value={selectedInputSets}
-                                selectedRepo={selectedRepo}
-                                selectedBranch={selectedBranch}
-                                isOverlayInputSet={true}
-                                selectedValueClass={css.selectedInputSetsContainer}
+                              <GitContextForm
+                                formikProps={formikProps}
+                                gitDetails={
+                                  isEdit
+                                    ? { ...overlayInputSetResponse?.data?.gitDetails, getDefaultFromOtherRepo: false }
+                                    : {
+                                        repoIdentifier,
+                                        branch,
+                                        getDefaultFromOtherRepo: true
+                                      }
+                                }
+                                onRepoChange={onRepoChange}
+                                onBranchChange={onBranchChange}
                               />
                             </GitSyncStoreProvider>
                           )}
-                        </Layout.Vertical>
-                      </div>
-                      <Layout.Horizontal padding={{ top: 'medium' }}>
-                        <Button
-                          variation={ButtonVariation.PRIMARY}
-                          type="submit"
-                          text={getString('save')}
-                          disabled={isReadOnly}
-                        />
-                        &nbsp; &nbsp;
-                        <Button variation={ButtonVariation.TERTIARY} onClick={closeForm} text={getString('cancel')} />
-                      </Layout.Horizontal>
-                    </FormikForm>
+                          <Layout.Vertical padding={{ top: 'large', bottom: 'xxxlarge' }} spacing="small">
+                            <Heading level={5}>{getString('inputSets.selectInputSets')}</Heading>
+                            <Text
+                              icon="info-sign"
+                              iconProps={{ intent: 'primary', size: 16, padding: { left: 0, right: 'small' } }}
+                            >
+                              {getString('inputSets.selectInputSetsHelp')}
+                            </Text>
+                            {inputSet && (
+                              <GitSyncStoreProvider>
+                                <InputSetSelector
+                                  pipelineIdentifier={pipelineIdentifier}
+                                  onChange={inputsets => {
+                                    setSelectedInputSets(inputsets)
+                                  }}
+                                  value={selectedInputSets}
+                                  selectedRepo={selectedRepo}
+                                  selectedBranch={selectedBranch}
+                                  isOverlayInputSet={true}
+                                  selectedValueClass={css.selectedInputSetsContainer}
+                                />
+                              </GitSyncStoreProvider>
+                            )}
+                          </Layout.Vertical>
+                        </div>
+                        <Layout.Horizontal padding={{ top: 'medium' }}>
+                          <Button
+                            variation={ButtonVariation.PRIMARY}
+                            type="submit"
+                            text={getString('save')}
+                            disabled={isReadOnly}
+                          />
+                          &nbsp; &nbsp;
+                          <Button variation={ButtonVariation.TERTIARY} onClick={closeForm} text={getString('cancel')} />
+                        </Layout.Horizontal>
+                      </FormikForm>
+                    </>
                   ) : (
                     <div className={css.editor}>
+                      <ErrorsStrip formErrors={formErrors} />
                       {loading ? (
                         <PageSpinner />
                       ) : (
@@ -692,7 +667,7 @@ export const OverlayInputSetForm: React.FC<OverlayInputSetFormProps> = ({
                           type="submit"
                           text={getString('save')}
                           onClick={() => {
-                            const latestYaml = yamlHandler?.getLatestYaml() || /* istanbul ignore next */ ''
+                            const latestYaml = defaultTo(yamlHandler?.getLatestYaml(), '')
 
                             handleSubmit(parse(latestYaml)?.overlayInputSet, {
                               repoIdentifier: formikProps.values.repo,

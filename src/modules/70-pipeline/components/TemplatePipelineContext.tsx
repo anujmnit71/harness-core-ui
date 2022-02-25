@@ -41,14 +41,22 @@ import type { PipelineSelectionState } from '@pipeline/components/PipelineStudio
 import type { GetPipelineQueryParams } from 'services/pipeline-ng'
 import { getScopeFromDTO } from '@common/components/EntityReference/EntityReference'
 
-export const TemplatePipelineProvider: React.FC<{
+export interface TemplatePipelineProviderProps {
   queryParams: GetPipelineQueryParams
   initialValue: PipelineInfoConfig
   onUpdatePipeline: (pipeline: PipelineInfoConfig) => void
   isReadOnly: boolean
-}> = ({ queryParams, initialValue, onUpdatePipeline, isReadOnly, children }) => {
+}
+
+export function TemplatePipelineProvider({
+  queryParams,
+  initialValue,
+  onUpdatePipeline,
+  isReadOnly,
+  children
+}: React.PropsWithChildren<TemplatePipelineProviderProps>): React.ReactElement {
   const contextType = PipelineContextType.Template
-  const allowableTypes = [MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME]
+  const allowableTypes = [MultiTypeInputType.FIXED, MultiTypeInputType.RUNTIME, MultiTypeInputType.EXPRESSION]
   const { CI_LICENSE_STATE, FF_LICENSE_STATE, CD_LICENSE_STATE } = useLicenseStore()
   const isCDEnabled = useFeatureFlag(FeatureFlag.CDNG_ENABLED) && CD_LICENSE_STATE === LICENSE_STATE_VALUES.ACTIVE
   const isCIEnabled = useFeatureFlag(FeatureFlag.CING_ENABLED) && CI_LICENSE_STATE === LICENSE_STATE_VALUES.ACTIVE
@@ -147,7 +155,10 @@ export const TemplatePipelineProvider: React.FC<{
               accountIdentifier: queryParams.accountIdentifier,
               orgIdentifier: queryParams.orgIdentifier,
               projectIdentifier: queryParams.projectIdentifier,
-              templateListType: 'Stable'
+              templateListType: 'Stable',
+              repoIdentifier: queryParams.repoIdentifier,
+              branch: queryParams.branch,
+              getDefaultFromOtherRepo: true
             },
             templateRefs
           )

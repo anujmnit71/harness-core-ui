@@ -18,6 +18,7 @@ import type { ProjectPathProps } from '@common/interfaces/RouteInterfaces'
 import { HTTPRequestMethodOption } from '@connectors/components/CreateConnector/CustomHealthConnector/components/CustomHealthValidationPath/components/HTTPRequestMethod/HTTPRequestMethod'
 import { useFetchSampleData } from 'services/cv'
 import { useGetConnector } from 'services/cd-ng'
+import { QueryType } from '@cv/pages/health-source/common/HealthSourceQueryType/HealthSourceQueryType.types'
 import type { QueryMappingInterface } from './QueryMapping.types'
 import { CustomHealthSourceFieldNames } from '../../CustomHealthSource.constants'
 import { timeFormatOptions } from './QueryMapping.constants'
@@ -25,8 +26,9 @@ import { connectorParams, onFetchRecords } from './QueryMapping.utils'
 import css from './QueryMapping.module.scss'
 
 export default function QueryMapping({
-  formikValues,
-  formikSetFieldValue,
+  formValue,
+  onValueChange,
+  onFieldChange,
   connectorIdentifier,
   onFetchRecordsSuccess,
   isQueryExecuted,
@@ -35,7 +37,6 @@ export default function QueryMapping({
 }: QueryMappingInterface): JSX.Element {
   const { getString } = useStrings()
   const sampleDataTracingId = useMemo(() => Utils.randomId(), [])
-
   const { projectIdentifier, orgIdentifier, accountId } = useParams<ProjectPathProps & { identifier: string }>()
 
   const connectorPayload = useMemo(
@@ -63,16 +64,16 @@ export default function QueryMapping({
   }, [sampleDataLoading])
 
   useEffect(() => {
-    formikSetFieldValue(CustomHealthSourceFieldNames.BASE_URL, connectorData?.data?.connector?.spec?.baseURL)
+    onFieldChange(CustomHealthSourceFieldNames.BASE_URL, connectorData?.data?.connector?.spec?.baseURL)
   }, [connectorData])
 
   const fetchRecords = () =>
     onFetchRecords(
-      formikValues?.pathURL,
-      formikValues?.endTime,
-      formikValues?.startTime,
-      formikValues?.requestMethod,
-      formikValues?.query,
+      formValue?.pathURL,
+      formValue?.endTime,
+      formValue?.startTime,
+      formValue?.requestMethod,
+      formValue?.query,
       getSampleData,
       onFetchRecordsSuccess
     )
@@ -81,7 +82,25 @@ export default function QueryMapping({
     <Container>
       <Text margin={{ bottom: 'medium' }}>{getString('cv.customHealthSource.Querymapping.label')}</Text>
       <Container margin={{ top: 'medium', bottom: 'medium' }} border={{ bottom: true }}>
-        <HealthSourceQueryType />
+        <HealthSourceQueryType
+          onChange={val => {
+            if (val === QueryType.HOST_BASED) {
+              onValueChange({
+                ...formValue,
+                queryType: val,
+                [CustomHealthSourceFieldNames.SLI]: false,
+                [CustomHealthSourceFieldNames.HEALTH_SCORE]: false,
+                [CustomHealthSourceFieldNames.CONTINUOUS_VERIFICATION]: true
+              })
+            } else {
+              onValueChange({
+                ...formValue,
+                queryType: val,
+                [CustomHealthSourceFieldNames.CONTINUOUS_VERIFICATION]: false
+              })
+            }
+          }}
+        />
       </Container>
 
       <Container padding={{ top: 'medium', bottom: 'medium' }}>
@@ -141,7 +160,7 @@ export default function QueryMapping({
         </Layout.Horizontal>
       </Layout.Vertical>
       <Container margin={{ top: 'medium', bottom: 'medium' }}>
-        {formikValues?.requestMethod === 'POST' ? (
+        {formValue?.requestMethod === 'POST' ? (
           <QueryViewer
             queryLabel={getString('common.smtp.labelBody')}
             isQueryExecuted={isQueryExecuted}
@@ -150,7 +169,7 @@ export default function QueryMapping({
             fetchRecords={fetchRecords}
             loading={sampleDataLoading}
             error={sampleDataError}
-            query={formikValues.query}
+            query={formValue.query}
             fetchEntityName={getString('cv.response')}
           />
         ) : (

@@ -8,8 +8,16 @@
 import type { MultiTypeInputType } from '@wings-software/uicore'
 import type { AbstractStepFactory } from '@pipeline/components/AbstractSteps/AbstractStepFactory'
 import type { StepViewType } from '@pipeline/components/AbstractSteps/Step'
-import type { ServiceSpec } from 'services/cd-ng'
-
+import type {
+  ArtifactListConfig,
+  ManifestConfig,
+  ManifestConfigWrapper,
+  PrimaryArtifact,
+  ServiceSpec,
+  SidecarArtifact
+} from 'services/cd-ng'
+import type { ArtifactSourceBaseFactory } from '@cd/factory/ArtifactSourceFactory/ArtifactSourceBaseFactory'
+import type { ManifestSourceBaseFactory } from '@cd/factory/ManifestSourceFactory/ManifestSourceBaseFactory'
 export interface K8SDirectServiceStep extends ServiceSpec {
   stageIndex?: number
   setupModeType?: string
@@ -38,4 +46,38 @@ export interface LastQueryData {
   registryHostname?: string
   region?: string
   repository?: string
+}
+
+export interface KubernetesArtifactsProps {
+  type?: string
+  template: ServiceSpec
+  stepViewType?: StepViewType
+  artifactSourceBaseFactory: ArtifactSourceBaseFactory
+  stageIdentifier: string
+  artifacts?: ArtifactListConfig
+  formik?: any
+  path?: string
+  initialValues: K8SDirectServiceStep
+  readonly: boolean
+  allowableTypes: MultiTypeInputType[]
+  fromTrigger?: boolean
+  artifact?: PrimaryArtifact | SidecarArtifact
+  isSidecar?: boolean
+  artifactPath?: string
+}
+
+export interface KubernetesManifestsProps {
+  template: ServiceSpec
+  path?: string
+  stepViewType?: StepViewType
+  manifestSourceBaseFactory: ManifestSourceBaseFactory
+  manifests?: ManifestConfigWrapper[]
+  initialValues: K8SDirectServiceStep
+  readonly: boolean
+  stageIdentifier: string
+  formik?: any
+  fromTrigger?: boolean
+  allowableTypes: MultiTypeInputType[]
+  manifest?: ManifestConfig
+  manifestPath?: string
 }

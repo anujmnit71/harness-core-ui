@@ -7,7 +7,7 @@
 
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { PageSpinner } from '@wings-software/uicore'
+import { ContainerSpinner } from '@common/components/ContainerSpinner/ContainerSpinner'
 import { FeatureFlag } from '@common/featureFlags'
 import { useFeatureFlag } from '@common/hooks/useFeatureFlag'
 import type { ModulePathParams, ProjectPathProps } from '@common/interfaces/RouteInterfaces'
@@ -16,26 +16,32 @@ import { useIsGitSyncEnabled } from 'services/cd-ng'
 import FeatureFlagsPage from './FeatureFlagsPage'
 import SelectFlagGitRepoPage from './SelectFlagGitRepoPage'
 
+import css from './FeatureFlagsLandingPage.module.scss'
+
 const FeatureFlagsLandingPage: React.FC = () => {
-  const { projectIdentifier, accountId, orgIdentifier } = useParams<ProjectPathProps & ModulePathParams>()
+  const {
+    projectIdentifier,
+    accountId: accountIdentifier,
+    orgIdentifier
+  } = useParams<ProjectPathProps & ModulePathParams>()
   const FF_GITSYNC = useFeatureFlag(FeatureFlag.FF_GITSYNC)
   const isGitSyncEnabled = useIsGitSyncEnabled({
     queryParams: {
-      accountIdentifier: accountId,
-      orgIdentifier: orgIdentifier,
-      projectIdentifier: projectIdentifier
+      accountIdentifier,
+      orgIdentifier,
+      projectIdentifier
     }
   })
   const gitRepo = useGetGitRepo({
     identifier: projectIdentifier,
     queryParams: {
-      accountIdentifier: accountId,
-      org: orgIdentifier
+      accountIdentifier,
+      orgIdentifier
     }
   })
 
   if (gitRepo?.loading || isGitSyncEnabled.loading) {
-    return <PageSpinner />
+    return <ContainerSpinner className={css.spinner} />
   }
 
   if (FF_GITSYNC && isGitSyncEnabled.data?.gitSyncEnabled && !gitRepo?.data?.repoSet) {

@@ -100,8 +100,8 @@ export interface ScheduleTime {
 export interface FixedScheduleClient {
   name: string
   type: 'uptime' | 'downtime'
-  beginsOn: string
-  endsOn?: string
+  beginsOn: string | null
+  endsOn?: string | null
   startTime: ScheduleTime | null
   endTime: ScheduleTime | null
   allDay: boolean
@@ -141,4 +141,9 @@ export interface CustomDomainDetails {
   route53?: {
     hosted_zone_id: string
   }
+}
+
+export interface ActiveStepDetailsProps {
+  count?: number
+  tabId?: string
 }

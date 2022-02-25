@@ -8,7 +8,7 @@
 import React, { useEffect, useState } from 'react'
 import { isEmpty } from 'lodash-es'
 import { useParams } from 'react-router-dom'
-import { Dialog } from '@blueprintjs/core'
+import { Dialog, Intent } from '@blueprintjs/core'
 import cx from 'classnames'
 import * as Yup from 'yup'
 import { FieldArray, FormikProps } from 'formik'
@@ -20,7 +20,9 @@ import {
   FormInput,
   getMultiTypeFromValue,
   MultiTypeInputType,
-  Text
+  Text,
+  PageSpinner,
+  FormError
 } from '@wings-software/uicore'
 import { useModalHook } from '@harness/use-modal'
 import { setFormikRef, StepFormikFowardRef, StepViewType } from '@pipeline/components/AbstractSteps/Step'
@@ -70,7 +72,7 @@ import { getNameAndIdentifierSchema } from '../StepsValidateUtils'
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 import css from './JiraCreate.module.scss'
 
-const FormContent = ({
+function FormContent({
   formik,
   refetchProjects,
   refetchProjectMetadata,
@@ -84,7 +86,7 @@ const FormContent = ({
   allowableTypes,
   stepViewType,
   readonly
-}: JiraCreateFormContentInterface): JSX.Element => {
+}: JiraCreateFormContentInterface): JSX.Element {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   const { accountId, projectIdentifier, orgIdentifier } =
@@ -94,7 +96,7 @@ const FormContent = ({
   const [projectMetadata, setProjectMetadata] = useState<JiraProjectNG>()
 
   const [connectorValueType, setConnectorValueType] = useState<MultiTypeInputType>(MultiTypeInputType.FIXED)
-
+  const jiraType = 'createMode'
   const commonParams = {
     accountIdentifier: accountId,
     projectIdentifier,
@@ -102,7 +104,6 @@ const FormContent = ({
     repoIdentifier,
     branch
   }
-
   const connectorRefFixedValue = getGenuineValue(formik.values.spec.connectorRef)
   const projectKeyFixedValue =
     typeof formik.values.spec.projectKey === 'object'
@@ -214,7 +215,9 @@ const FormContent = ({
           connectorRef={connectorRefFixedValue || ''}
           selectedProjectKey={projectKeyFixedValue || ''}
           selectedIssueTypeKey={issueTypeFixedValue || ''}
+          jiraType={jiraType}
           projectOptions={projectOptions}
+          selectedFields={formik.values.spec.selectedFields}
           addSelectedFields={(fieldsToBeAdded: JiraFieldNG[]) => {
             formik.setFieldValue(
               'spec.selectedFields',
@@ -239,22 +242,24 @@ const FormContent = ({
     )
   }, [projectOptions, connectorRefFixedValue, formik.values.spec.selectedFields, formik.values.spec.fields])
 
-  const AddFieldsButton = () => (
-    <Text
-      onClick={() => {
-        if (!isApprovalStepFieldDisabled(readonly)) {
-          showDynamicFieldsModal()
-        }
-      }}
-      style={{
-        cursor: isApprovalStepFieldDisabled(readonly) ? 'not-allowed' : 'pointer'
-      }}
-      tooltipProps={{ dataTooltipId: 'jiraCreateAddFields' }}
-      intent="primary"
-    >
-      {getString('pipeline.jiraCreateStep.fieldSelectorAdd')}
-    </Text>
-  )
+  function AddFieldsButton(): React.ReactElement {
+    return (
+      <Text
+        onClick={() => {
+          if (!isApprovalStepFieldDisabled(readonly)) {
+            showDynamicFieldsModal()
+          }
+        }}
+        style={{
+          cursor: isApprovalStepFieldDisabled(readonly) ? 'not-allowed' : 'pointer'
+        }}
+        tooltipProps={{ dataTooltipId: 'jiraCreateAddFields' }}
+        intent="primary"
+      >
+        {getString('pipeline.jiraCreateStep.fieldSelectorAdd')}
+      </Text>
+    )
+  }
 
   return (
     <React.Fragment>
@@ -379,6 +384,24 @@ const FormContent = ({
           />
         )}
       </div>
+      {projectsFetchError ? (
+        <FormError
+          className={css.marginTop}
+          errorMessage={
+            <Text
+              lineClamp={1}
+              width={350}
+              margin={{ bottom: 'medium' }}
+              intent={Intent.DANGER}
+              tooltipProps={{ isDark: true, popoverClassName: css.tooltip }}
+            >
+              {(projectsFetchError as any)?.data?.message}
+            </Text>
+          }
+          name="spec.projectKey"
+        ></FormError>
+      ) : null}
+
       <div className={cx(stepCss.formGroup, stepCss.lg)}>
         <FormInput.MultiTypeInput
           selectItems={
@@ -475,61 +498,66 @@ const FormContent = ({
                   />
                 )}
               </div>
+              {fetchingProjectMetadata ? (
+                <PageSpinner message={getString('pipeline.jiraCreateStep.fetchingFields')} className={css.fetching} />
+              ) : (
+                <>
+                  <JiraFieldsRenderer
+                    selectedFields={formik.values.spec.selectedFields}
+                    readonly={readonly}
+                    onDelete={(index, selectedField) => {
+                      const selectedFieldsAfterRemoval = formik.values.spec.selectedFields?.filter(
+                        (_unused, i) => i !== index
+                      )
+                      formik.setFieldValue('spec.selectedFields', selectedFieldsAfterRemoval)
+                      const customFields = formik.values.spec.fields?.filter(field => field.name !== selectedField.name)
+                      formik.setFieldValue('spec.fields', customFields)
+                    }}
+                  />
 
-              <JiraFieldsRenderer
-                selectedFields={formik.values.spec.selectedFields}
-                readonly={readonly}
-                onDelete={(index, selectedField) => {
-                  const selectedFieldsAfterRemoval = formik.values.spec.selectedFields?.filter(
-                    (_unused, i) => i !== index
-                  )
-                  formik.setFieldValue('spec.selectedFields', selectedFieldsAfterRemoval)
-                  const customFields = formik.values.spec.fields?.filter(field => field.name !== selectedField.name)
-                  formik.setFieldValue('spec.fields', customFields)
-                }}
-              />
-
-              {!isEmpty(formik.values.spec.fields) ? (
-                <FieldArray
-                  name="spec.fields"
-                  render={({ remove }) => {
-                    return (
-                      <div>
-                        <div className={css.headerRow}>
-                          <String className={css.label} stringID="keyLabel" />
-                          <String className={css.label} stringID="valueLabel" />
-                        </div>
-                        {formik.values.spec.fields?.map((_unused: JiraCreateFieldType, i: number) => (
-                          <div className={css.headerRow} key={i}>
-                            <FormInput.Text
-                              name={`spec.fields[${i}].name`}
-                              disabled={isApprovalStepFieldDisabled(readonly)}
-                              placeholder={getString('pipeline.keyPlaceholder')}
-                            />
-                            <FormInput.MultiTextInput
-                              name={`spec.fields[${i}].value`}
-                              label=""
-                              placeholder={getString('common.valuePlaceholder')}
-                              disabled={isApprovalStepFieldDisabled(readonly)}
-                              multiTextInputProps={{
-                                allowableTypes: allowableTypes.filter(item => item !== MultiTypeInputType.RUNTIME),
-                                expressions
-                              }}
-                            />
-                            <Button
-                              minimal
-                              icon="main-trash"
-                              disabled={isApprovalStepFieldDisabled(readonly)}
-                              data-testid={`remove-fieldList-${i}`}
-                              onClick={() => remove(i)}
-                            />
+                  {!isEmpty(formik.values.spec.fields) ? (
+                    <FieldArray
+                      name="spec.fields"
+                      render={({ remove }) => {
+                        return (
+                          <div>
+                            <div className={css.headerRow}>
+                              <String className={css.label} stringID="keyLabel" />
+                              <String className={css.label} stringID="valueLabel" />
+                            </div>
+                            {formik.values.spec.fields?.map((_unused: JiraCreateFieldType, i: number) => (
+                              <div className={css.headerRow} key={i}>
+                                <FormInput.Text
+                                  name={`spec.fields[${i}].name`}
+                                  disabled={isApprovalStepFieldDisabled(readonly)}
+                                  placeholder={getString('pipeline.keyPlaceholder')}
+                                />
+                                <FormInput.MultiTextInput
+                                  name={`spec.fields[${i}].value`}
+                                  label=""
+                                  placeholder={getString('common.valuePlaceholder')}
+                                  disabled={isApprovalStepFieldDisabled(readonly)}
+                                  multiTextInputProps={{
+                                    allowableTypes: allowableTypes.filter(item => item !== MultiTypeInputType.RUNTIME),
+                                    expressions
+                                  }}
+                                />
+                                <Button
+                                  minimal
+                                  icon="main-trash"
+                                  disabled={isApprovalStepFieldDisabled(readonly)}
+                                  data-testid={`remove-fieldList-${i}`}
+                                  onClick={() => remove(i)}
+                                />
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    )
-                  }}
-                />
-              ) : null}
+                        )
+                      }}
+                    />
+                  ) : null}
+                </>
+              )}
 
               <AddFieldsButton />
             </div>

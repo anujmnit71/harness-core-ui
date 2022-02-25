@@ -337,8 +337,6 @@ permissions: Permissions
 activityLog: Activity Log
 selectAnExistingConnector: Select an existing Connector
 authentication: Authentication
-preCommandLabel: PreCommand
-postCommandLabel: PostCommand
 consoleView: Console View
 commandPlaceholder: |
   npm install
@@ -497,7 +495,6 @@ inputSets:
   searchInputSet: Search Input Set
   addInputSet: Add Input Set
   saveAsInputSet: Save as Input Set
-  aboutInputSets: Input Sets are collections of variables/values that must be provided to a Pipeline at runtime.
   confirmDeleteTitle: 'Delete {{type}}'
   overlayInputSet: Overlay Input Set
   inputFieldSummary: Input Field Summary
@@ -658,7 +655,7 @@ delegate:
   delegateSizeUndefined: 'Delegate Size is undefined'
   hostName: 'Hostname'
   useExistingSelectors: 'Use existing Delegate selectors'
-  verifyDelegateYamlCmnd: '$ kubectl apply -f harness-delegate.yaml'
+  verifyDelegateYamlCmnd: '$ kubectl apply -f harness-delegate.yml'
   delegateNameRequired: 'Delegate Name is Required.'
   delegateSizeRequired: 'Delegate Size is Required.'
   totalMem: 'Total Mem'
@@ -976,7 +973,7 @@ validation:
   validIdRegex: Identifier must start with an letter or _ and can then be followed by alphanumerics, _, or $
   # Replace if validIdRegex will apply the same rules
   validStepIdRegex: Identifier can only contain alphanumerics and _
-  validKeyRegex: Keys can only contain alphanumerics and _
+  validKeyRegex: Keys can only contain alphanumerics and _ with an optional dot(.) in the middle
   validOutputVariableRegex: Output variables can only contain alphanumerics and _
   validReportPathRegex: Report paths should end with .xml
   validStepNameRegex: Step Name can only contain alphanumerics, spaces, _, and -

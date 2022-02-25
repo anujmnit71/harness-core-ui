@@ -110,7 +110,7 @@ const codebaseIcons: Record<CodebaseStatuses, IconName> = {
   [CodebaseStatuses.Validating]: 'codebase-validating'
 }
 
-export const RightBar = (): JSX.Element => {
+export function RightBar(): JSX.Element {
   const {
     state: {
       pipeline,
@@ -224,7 +224,10 @@ export const RightBar = (): JSX.Element => {
       accountIdentifier: accountId,
       orgIdentifier,
       pipelineIdentifier,
-      projectIdentifier
+      projectIdentifier,
+      repoIdentifier,
+      branch,
+      getDefaultFromOtherRepo: true
     },
     body: {
       originalEntityYaml: yamlStringify(pipeline)

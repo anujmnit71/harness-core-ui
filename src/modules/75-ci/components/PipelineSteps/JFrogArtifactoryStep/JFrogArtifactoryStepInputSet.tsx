@@ -8,7 +8,7 @@
 import React from 'react'
 import { Text, getMultiTypeFromValue, MultiTypeInputType, FormikForm, Color } from '@wings-software/uicore'
 import { useStrings } from 'framework/strings'
-import StepCommonFieldsInputSet from '@pipeline/components/StepCommonFields/StepCommonFieldsInputSet'
+import StepCommonFieldsInputSet from '@ci/components/PipelineSteps/StepCommonFields/StepCommonFieldsInputSet'
 import { Connectors } from '@connectors/constants'
 import type { JFrogArtifactoryStepProps } from './JFrogArtifactoryStep'
 import { CIStep } from '../CIStep/CIStep'
@@ -46,7 +46,7 @@ export const JFrogArtifactoryStepInputSet: React.FC<JFrogArtifactoryStepProps> =
                   {getString('pipelineSteps.connectorLabel')}
                 </Text>
               ),
-              type: Connectors.Artifactory
+              type: Connectors.ARTIFACTORY
             }
           }),
           ...(getMultiTypeFromValue(template?.spec?.target) === MultiTypeInputType.RUNTIME && {

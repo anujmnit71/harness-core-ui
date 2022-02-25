@@ -58,7 +58,7 @@ interface HelmWithHttpPropType {
   deploymentType?: string
 }
 
-const HelmWithS3: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropType> = ({
+function HelmWithS3({
   stepName,
   prevStepData,
   expressions,
@@ -69,7 +69,7 @@ const HelmWithS3: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropType>
   manifestIdsList,
   isReadonly = false,
   deploymentType
-}) => {
+}: StepProps<ConnectorConfigDTO> & HelmWithHttpPropType): React.ReactElement {
   const { getString } = useStrings()
   const [regions, setRegions] = useState<SelectOption[]>([])
 
@@ -328,7 +328,7 @@ const HelmWithS3: React.FC<StepProps<ConnectorConfigDTO> & HelmWithHttpPropType>
           chartName: Yup.string().trim().required(getString('pipeline.manifestType.http.chartNameRequired')),
           helmVersion: Yup.string().trim().required(getString('pipeline.manifestType.helmVersionRequired')),
           region: Yup.string().trim().required(getString('pipeline.artifactsSelection.validation.region')),
-          bucketName: Yup.string().trim().required(getString('pipeline.manifestType.bucketNameRequired')),
+          bucketName: Yup.mixed().required(getString('pipeline.manifestType.bucketNameRequired')),
           commandFlags: Yup.array().of(
             Yup.object().shape({
               flag: Yup.string().when('commandType', {

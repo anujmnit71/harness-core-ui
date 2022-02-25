@@ -22,6 +22,52 @@ export interface AlertThreshold {
   userGroupIds?: string[]
 }
 
+export interface AnomalyData {
+  actualAmount?: number
+  anomalyRelativeTime?: string
+  anomalyScore?: number
+  cloudProvider?: string
+  comment?: string
+  details?: string
+  entity?: EntityInfo
+  expectedAmount?: number
+  id?: string
+  resourceInfo?: string
+  resourceName?: string
+  status?: string
+  statusRelativeTime?: string
+  time?: number
+  trend?: number
+  userFeedback?: 'TRUE_ANOMALY' | 'FALSE_ANOMALY' | 'NOT_RESPONDED'
+}
+
+export interface AnomalyFeedbackDTO {
+  feedback?: 'TRUE_ANOMALY' | 'FALSE_ANOMALY' | 'NOT_RESPONDED'
+}
+
+export interface AnomalyQueryDTO {
+  aggregations?: CCMAggregation[]
+  filter?: CCMFilter
+  groupBy?: CCMGroupBy[]
+  limit?: number
+  offset?: number
+  orderBy?: CCMSort[]
+}
+
+export interface AnomalySummary {
+  actualCost?: number
+  costImpact?: number
+  count?: number
+  description?: string
+  expectedCost?: number
+  name?: string
+}
+
+export interface AnomalyWidgetData {
+  widgetData?: AnomalySummary[]
+  widgetDescription?: 'TOP_N_ANOMALIES' | 'TOTAL_COST_IMPACT' | 'ANOMALIES_BY_CLOUD_PROVIDERS' | 'ANOMALIES_BY_STATUS'
+}
+
 export type AppDynamicsConnectorDTO = ConnectorConfigDTO & {
   accountname: string
   authType?: 'UsernamePassword' | 'ApiClientToken'
@@ -272,6 +318,7 @@ export interface Budget {
   lastMonthCost?: number
   lastUpdatedAt?: number
   name?: string
+  ngBudget?: boolean
   notifyOnSlack?: boolean
   period?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY'
   scope?: BudgetScope
@@ -286,6 +333,7 @@ export interface BudgetCostData {
   budgetVariance?: number
   budgetVariancePercentage?: number
   budgeted?: number
+  endTime?: number
   time?: number
 }
 
@@ -310,6 +358,180 @@ export interface BusinessMapping {
   name?: string
   sharedCosts?: SharedCost[]
   uuid?: string
+}
+
+export interface CCMAggregation {
+  field?:
+    | 'PERSPECTIVE_ID'
+    | 'WORKLOAD'
+    | 'WORKLOAD_TYPE'
+    | 'CLUSTER_ID'
+    | 'CLUSTER_NAME'
+    | 'NAMESPACE'
+    | 'GCP_PRODUCT'
+    | 'GCP_PROJECT'
+    | 'GCP_SKU_ID'
+    | 'GCP_SKU_DESCRIPTION'
+    | 'AWS_ACCOUNT'
+    | 'AWS_SERVICE'
+    | 'CLOUD_PROVIDER'
+    | 'STATUS'
+    | 'ANOMALY_TIME'
+    | 'ACTUAL_COST'
+    | 'EXPECTED_COST'
+    | 'COST_IMPACT'
+    | 'ALL'
+  operationType?: 'SUM' | 'MAX' | 'MIN' | 'AVG' | 'COUNT'
+}
+
+export interface CCMConnectorDetails {
+  connectorValidationResult?: ConnectorValidationResult
+  createdAt?: number
+  name?: string
+}
+
+export interface CCMFilter {
+  numericFilters?: CCMNumberFilter[]
+  stringFilters?: CCMStringFilter[]
+  timeFilters?: CCMTimeFilter[]
+}
+
+export interface CCMGroupBy {
+  groupByField?:
+    | 'PERSPECTIVE_ID'
+    | 'WORKLOAD'
+    | 'WORKLOAD_TYPE'
+    | 'CLUSTER_ID'
+    | 'CLUSTER_NAME'
+    | 'NAMESPACE'
+    | 'GCP_PRODUCT'
+    | 'GCP_PROJECT'
+    | 'GCP_SKU_ID'
+    | 'GCP_SKU_DESCRIPTION'
+    | 'AWS_ACCOUNT'
+    | 'AWS_SERVICE'
+    | 'CLOUD_PROVIDER'
+    | 'STATUS'
+    | 'ANOMALY_TIME'
+    | 'ACTUAL_COST'
+    | 'EXPECTED_COST'
+    | 'COST_IMPACT'
+    | 'ALL'
+}
+
+export interface CCMNumberFilter {
+  field?:
+    | 'PERSPECTIVE_ID'
+    | 'WORKLOAD'
+    | 'WORKLOAD_TYPE'
+    | 'CLUSTER_ID'
+    | 'CLUSTER_NAME'
+    | 'NAMESPACE'
+    | 'GCP_PRODUCT'
+    | 'GCP_PROJECT'
+    | 'GCP_SKU_ID'
+    | 'GCP_SKU_DESCRIPTION'
+    | 'AWS_ACCOUNT'
+    | 'AWS_SERVICE'
+    | 'CLOUD_PROVIDER'
+    | 'STATUS'
+    | 'ANOMALY_TIME'
+    | 'ACTUAL_COST'
+    | 'EXPECTED_COST'
+    | 'COST_IMPACT'
+    | 'ALL'
+  operator?:
+    | 'NOT_IN'
+    | 'IN'
+    | 'EQUALS'
+    | 'NOT_NULL'
+    | 'NULL'
+    | 'LIKE'
+    | 'GREATER_THAN'
+    | 'LESS_THAN'
+    | 'GREATER_THAN_EQUALS_TO'
+    | 'LESS_THAN_EQUALS_TO'
+    | 'AFTER'
+    | 'BEFORE'
+  value?: Number
+}
+
+export interface CCMSort {
+  field?:
+    | 'PERSPECTIVE_ID'
+    | 'WORKLOAD'
+    | 'WORKLOAD_TYPE'
+    | 'CLUSTER_ID'
+    | 'CLUSTER_NAME'
+    | 'NAMESPACE'
+    | 'GCP_PRODUCT'
+    | 'GCP_PROJECT'
+    | 'GCP_SKU_ID'
+    | 'GCP_SKU_DESCRIPTION'
+    | 'AWS_ACCOUNT'
+    | 'AWS_SERVICE'
+    | 'CLOUD_PROVIDER'
+    | 'STATUS'
+    | 'ANOMALY_TIME'
+    | 'ACTUAL_COST'
+    | 'EXPECTED_COST'
+    | 'COST_IMPACT'
+    | 'ALL'
+  order?: 'ASCENDING' | 'DESCENDING'
+}
+
+export interface CCMStringFilter {
+  field?:
+    | 'PERSPECTIVE_ID'
+    | 'WORKLOAD'
+    | 'WORKLOAD_TYPE'
+    | 'CLUSTER_ID'
+    | 'CLUSTER_NAME'
+    | 'NAMESPACE'
+    | 'GCP_PRODUCT'
+    | 'GCP_PROJECT'
+    | 'GCP_SKU_ID'
+    | 'GCP_SKU_DESCRIPTION'
+    | 'AWS_ACCOUNT'
+    | 'AWS_SERVICE'
+    | 'CLOUD_PROVIDER'
+    | 'STATUS'
+    | 'ANOMALY_TIME'
+    | 'ACTUAL_COST'
+    | 'EXPECTED_COST'
+    | 'COST_IMPACT'
+    | 'ALL'
+  operator?:
+    | 'NOT_IN'
+    | 'IN'
+    | 'EQUALS'
+    | 'NOT_NULL'
+    | 'NULL'
+    | 'LIKE'
+    | 'GREATER_THAN'
+    | 'LESS_THAN'
+    | 'GREATER_THAN_EQUALS_TO'
+    | 'LESS_THAN_EQUALS_TO'
+    | 'AFTER'
+    | 'BEFORE'
+  values?: string[]
+}
+
+export interface CCMTimeFilter {
+  operator?:
+    | 'NOT_IN'
+    | 'IN'
+    | 'EQUALS'
+    | 'NOT_NULL'
+    | 'NULL'
+    | 'LIKE'
+    | 'GREATER_THAN'
+    | 'LESS_THAN'
+    | 'GREATER_THAN_EQUALS_TO'
+    | 'LESS_THAN_EQUALS_TO'
+    | 'AFTER'
+    | 'BEFORE'
+  timestamp?: number
 }
 
 export type CEAwsConnector = ConnectorConfigDTO & {
@@ -377,6 +599,20 @@ export type ClusterBudgetScope = BudgetScope & {
   clusterIds?: string[]
 }
 
+export interface ClusterRecommendationAccuracy {
+  cpu?: number
+  masterPrice?: number
+  memory?: number
+  nodes?: number
+  regularNodes?: number
+  regularPrice?: number
+  spotNodes?: number
+  spotPrice?: number
+  totalPrice?: number
+  workerPrice?: number
+  zone?: string
+}
+
 export interface ConnectorActivityDetails {
   lastActivityTime?: number
 }
@@ -437,6 +673,8 @@ export interface ConnectorInfoDTO {
     | 'SumoLogic'
     | 'PagerDuty'
     | 'CustomHealth'
+    | 'ServiceNow'
+    | 'ErrorTracking'
 }
 
 export interface ConnectorResponse {
@@ -456,6 +694,31 @@ export interface ConnectorValidationResult {
   errors?: ErrorDetail[]
   status?: 'SUCCESS' | 'FAILURE' | 'PARTIAL' | 'UNKNOWN'
   testedAt?: number
+}
+
+export interface ContainerHistogramDTO {
+  containerName?: string
+  containerRecommendation?: ContainerRecommendation
+  cpuHistogram?: HistogramExp
+  memoryHistogram?: HistogramExp
+}
+
+export interface ContainerRecommendation {
+  burstable?: ResourceRequirement
+  current?: ResourceRequirement
+  guaranteed?: ResourceRequirement
+  lastDayCost?: Cost
+  numDays?: number
+  percentileBased?: {
+    [key: string]: ResourceRequirement
+  }
+  recommended?: ResourceRequirement
+  totalSamplesCount?: number
+}
+
+export interface Cost {
+  cpu?: number
+  memory?: number
 }
 
 export interface CostTarget {
@@ -531,7 +794,22 @@ export interface EntityGitDetails {
   filePath?: string
   objectId?: string
   repoIdentifier?: string
+  repoName?: string
   rootFolder?: string
+}
+
+export interface EntityInfo {
+  awsAccount?: string
+  awsService?: string
+  clusterId?: string
+  clusterName?: string
+  gcpProduct?: string
+  gcpProject?: string
+  gcpSKUDescription?: string
+  gcpSKUId?: string
+  namespace?: string
+  workloadName?: string
+  workloadType?: string
 }
 
 export interface EntityValidityDetails {
@@ -800,6 +1078,7 @@ export interface Error {
     | 'TIMESCALE_NOT_AVAILABLE'
     | 'MIGRATION_EXCEPTION'
     | 'REQUEST_PROCESSING_INTERRUPTED'
+    | 'SECRET_MANAGER_ID_NOT_FOUND'
     | 'GCP_SECRET_MANAGER_OPERATION_ERROR'
     | 'GCP_SECRET_OPERATION_ERROR'
     | 'GIT_OPERATION_ERROR'
@@ -830,10 +1109,11 @@ export interface Error {
     | 'ENGINE_FUNCTOR_ERROR'
     | 'JIRA_CLIENT_ERROR'
     | 'SCM_NOT_MODIFIED'
-    | 'JIRA_STEP_ERROR'
+    | 'APPROVAL_STEP_NG_ERROR'
     | 'BUCKET_SERVER_ERROR'
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
+    | 'ENTITY_REFERENCE_EXCEPTION'
   correlationId?: string
   detailedMessage?: string
   message?: string
@@ -850,6 +1130,13 @@ export interface ErrorDetail {
 
 export interface ErrorMetadataDTO {
   type?: string
+}
+
+export type ErrorTrackingConnectorDTO = ConnectorConfigDTO & {
+  apiKeyRef: string
+  delegateSelectors?: string[]
+  sid: string
+  url: string
 }
 
 export interface Failure {
@@ -1113,6 +1400,7 @@ export interface Failure {
     | 'TIMESCALE_NOT_AVAILABLE'
     | 'MIGRATION_EXCEPTION'
     | 'REQUEST_PROCESSING_INTERRUPTED'
+    | 'SECRET_MANAGER_ID_NOT_FOUND'
     | 'GCP_SECRET_MANAGER_OPERATION_ERROR'
     | 'GCP_SECRET_OPERATION_ERROR'
     | 'GIT_OPERATION_ERROR'
@@ -1143,18 +1431,30 @@ export interface Failure {
     | 'ENGINE_FUNCTOR_ERROR'
     | 'JIRA_CLIENT_ERROR'
     | 'SCM_NOT_MODIFIED'
-    | 'JIRA_STEP_ERROR'
+    | 'APPROVAL_STEP_NG_ERROR'
     | 'BUCKET_SERVER_ERROR'
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
+    | 'ENTITY_REFERENCE_EXCEPTION'
   correlationId?: string
   errors?: ValidationError[]
   message?: string
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
 
+export interface FilterStatsDTO {
+  key?: string
+  values?: string[]
+}
+
+export interface FilterValuesDTO {
+  columns?: string[]
+  filter?: K8sRecommendationFilterDTO
+}
+
 export interface GcpBillingExportSpec {
   datasetId: string
+  tableId: string
 }
 
 export type GcpCloudCostConnector = ConnectorConfigDTO & {
@@ -1200,6 +1500,7 @@ export type GitConfigDTO = ConnectorConfigDTO & {
   branchName?: string
   connectionType: 'Account' | 'Repo'
   delegateSelectors?: string[]
+  executeOnDelegate?: boolean
   spec: GitAuthenticationDTO
   type: 'Http' | 'Ssh'
   url: string
@@ -1347,6 +1648,17 @@ export interface GraphQLQuery {
   }
 }
 
+export interface HistogramExp {
+  bucketWeights?: number[]
+  firstBucketSize?: number
+  growthRatio?: number
+  maxBucket?: number
+  minBucket?: number
+  numBuckets?: number
+  precomputed?: number[]
+  totalWeight?: number
+}
+
 export interface HttpHelmAuthCredentialsDTO {
   [key: string]: any
 }
@@ -1382,6 +1694,19 @@ export interface K8sClusterSetupRequest {
   featuresEnabled?: ('BILLING' | 'OPTIMIZATION' | 'VISIBILITY')[]
   orgIdentifier?: string
   projectIdentifier?: string
+}
+
+export interface K8sRecommendationFilterDTO {
+  clusterNames?: string[]
+  ids?: string[]
+  limit?: number
+  minCost?: number
+  minSaving?: number
+  names?: string[]
+  namespaces?: string[]
+  offset?: number
+  perspectiveFilters?: QLCEViewFilterWrapper[]
+  resourceTypes?: ('WORKLOAD' | 'NODE_POOL')[]
 }
 
 export interface KubernetesAuthCredentialDTO {
@@ -1479,9 +1804,42 @@ export type NexusUsernamePasswordAuth = NexusAuthCredentials & {
   usernameRef?: string
 }
 
+export interface NodePool {
+  role?: string
+  sumNodes?: number
+  vm?: VirtualMachine
+  vmClass?: string
+}
+
+export interface NodePoolId {
+  clusterid?: string
+  nodepoolname?: string
+}
+
+export interface NodeRecommendationDTO {
+  current?: RecommendationResponse
+  id?: string
+  nodePoolId?: NodePoolId
+  recommended?: RecommendationResponse
+  resourceRequirement?: RecommendClusterRequest
+}
+
+export interface Number {
+  [key: string]: any
+}
+
 export type PagerDutyConnectorDTO = ConnectorConfigDTO & {
   apiTokenRef: string
   delegateSelectors?: string[]
+}
+
+export interface PerspectiveAnomalyData {
+  actualCost?: number
+  anomalyCount?: number
+  associatedResources?: string[]
+  differenceFromExpectedCost?: number
+  resourceType?: string
+  timestamp?: number
 }
 
 export type PerspectiveBudgetScope = BudgetScope & {
@@ -1489,9 +1847,59 @@ export type PerspectiveBudgetScope = BudgetScope & {
   viewName?: string
 }
 
+export interface PerspectiveQueryDTO {
+  filters?: QLCEViewFilterWrapper[]
+  groupBy?: QLCEViewGroupBy[]
+}
+
 export type PrometheusConnectorDTO = ConnectorConfigDTO & {
   delegateSelectors?: string[]
   url: string
+}
+
+export interface QLCEViewFieldInput {
+  fieldId?: string
+  fieldName?: string
+  identifier?: 'CLUSTER' | 'AWS' | 'GCP' | 'AZURE' | 'COMMON' | 'CUSTOM' | 'BUSINESS_MAPPING' | 'LABEL'
+  identifierName?: string
+}
+
+export interface QLCEViewFilter {
+  field?: QLCEViewFieldInput
+  operator?: 'NOT_IN' | 'IN' | 'EQUALS' | 'NOT_NULL' | 'NULL' | 'LIKE'
+  values?: string[]
+}
+
+export interface QLCEViewFilterWrapper {
+  idFilter?: QLCEViewFilter
+  ruleFilter?: QLCEViewRule
+  timeFilter?: QLCEViewTimeFilter
+  viewMetadataFilter?: QLCEViewMetadataFilter
+}
+
+export interface QLCEViewGroupBy {
+  entityGroupBy?: QLCEViewFieldInput
+  timeTruncGroupBy?: QLCEViewTimeTruncGroupBy
+}
+
+export interface QLCEViewMetadataFilter {
+  isPreview?: boolean
+  preview?: boolean
+  viewId?: string
+}
+
+export interface QLCEViewRule {
+  conditions?: QLCEViewFilter[]
+}
+
+export interface QLCEViewTimeFilter {
+  field?: QLCEViewFieldInput
+  operator?: 'AFTER' | 'BEFORE'
+  value?: Number
+}
+
+export interface QLCEViewTimeTruncGroupBy {
+  resolution?: 'HOUR' | 'DAY' | 'MONTH' | 'WEEK' | 'QUARTER' | 'YEAR'
 }
 
 export interface QueryStat {
@@ -1501,12 +1909,70 @@ export interface QueryStat {
   secondMaxExecutionTime?: number
 }
 
+export interface RecommendClusterRequest {
+  allowBurst?: boolean
+  allowOlderGen?: boolean
+  category?: string[]
+  excludes?: string[]
+  includes?: string[]
+  maxNodes?: number
+  minNodes?: number
+  networkPerf?: string[]
+  onDemandPct?: number
+  sameSize?: boolean
+  sumCpu?: number
+  sumGpu?: number
+  sumMem?: number
+  zone?: string
+}
+
+export interface RecommendationItemDTO {
+  clusterName?: string
+  id: string
+  monthlyCost?: number
+  monthlySaving?: number
+  namespace?: string
+  resourceName?: string
+  resourceType: 'WORKLOAD' | 'NODE_POOL'
+}
+
+export interface RecommendationOverviewStats {
+  totalMonthlyCost?: number
+  totalMonthlySaving?: number
+}
+
+export interface RecommendationResponse {
+  accuracy?: ClusterRecommendationAccuracy
+  instanceCategory?: 'ON_DEMAND' | 'SPOT' | 'RESERVED'
+  nodePools?: NodePool[]
+  provider?: string
+  region?: string
+  service?: string
+  zone?: string
+}
+
+export interface RecommendationsDTO {
+  items?: RecommendationItemDTO[]
+  limit?: number
+  offset?: number
+}
+
 export interface ReferenceDTO {
   accountIdentifier?: string
   identifier?: string
   name?: string
   orgIdentifier?: string
   projectIdentifier?: string
+}
+
+export interface ResourceRequirement {
+  empty?: boolean
+  limits?: {
+    [key: string]: string
+  }
+  requests?: {
+    [key: string]: string
+  }
 }
 
 export interface Response {
@@ -1523,6 +1989,13 @@ export interface ResponseAwsAccountConnectionDetail {
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
 
+export interface ResponseBoolean {
+  correlationId?: string
+  data?: boolean
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
 export interface ResponseBudget {
   correlationId?: string
   data?: Budget
@@ -1533,6 +2006,13 @@ export interface ResponseBudget {
 export interface ResponseBudgetData {
   correlationId?: string
   data?: BudgetData
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseCCMConnectorDetails {
+  correlationId?: string
+  data?: CCMConnectorDetails
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -1565,9 +2045,37 @@ export interface ResponseDouble {
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
 
+export interface ResponseInteger {
+  correlationId?: string
+  data?: number
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
 export interface ResponseLicenseUsageDTO {
   correlationId?: string
   data?: LicenseUsageDTO
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListAnomalyData {
+  correlationId?: string
+  data?: AnomalyData[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListAnomalySummary {
+  correlationId?: string
+  data?: AnomalySummary[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListAnomalyWidgetData {
+  correlationId?: string
+  data?: AnomalyWidgetData[]
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -1582,6 +2090,20 @@ export interface ResponseListBudget {
 export interface ResponseListCEReportSchedule {
   correlationId?: string
   data?: CEReportSchedule[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListFilterStatsDTO {
+  correlationId?: string
+  data?: FilterStatsDTO[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListPerspectiveAnomalyData {
+  correlationId?: string
+  data?: PerspectiveAnomalyData[]
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -1856,6 +2378,7 @@ export interface ResponseMessage {
     | 'TIMESCALE_NOT_AVAILABLE'
     | 'MIGRATION_EXCEPTION'
     | 'REQUEST_PROCESSING_INTERRUPTED'
+    | 'SECRET_MANAGER_ID_NOT_FOUND'
     | 'GCP_SECRET_MANAGER_OPERATION_ERROR'
     | 'GCP_SECRET_OPERATION_ERROR'
     | 'GIT_OPERATION_ERROR'
@@ -1890,6 +2413,7 @@ export interface ResponseMessage {
     | 'BUCKET_SERVER_ERROR'
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
+    | 'ENTITY_REFERENCE_EXCEPTION'
   exception?: Throwable
   failureTypes?: (
     | 'EXPIRED'
@@ -1905,9 +2429,37 @@ export interface ResponseMessage {
   message?: string
 }
 
+export interface ResponseNodeRecommendationDTO {
+  correlationId?: string
+  data?: NodeRecommendationDTO
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseRecommendationOverviewStats {
+  correlationId?: string
+  data?: RecommendationOverviewStats
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseRecommendationsDTO {
+  correlationId?: string
+  data?: RecommendationsDTO
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
 export interface ResponseString {
   correlationId?: string
   data?: string
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseWorkloadRecommendationDTO {
+  correlationId?: string
+  data?: WorkloadRecommendationDTO
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -1971,6 +2523,14 @@ export interface SecretRefData {
   identifier?: string
   null?: boolean
   scope?: 'account' | 'org' | 'project' | 'unknown'
+}
+
+export type ServiceNowConnector = ConnectorConfigDTO & {
+  delegateSelectors?: string[]
+  passwordRef: string
+  serviceNowUrl: string
+  username?: string
+  usernameRef?: string
 }
 
 export interface SharedCost {
@@ -2106,6 +2666,34 @@ export interface ViewVisualization {
   groupBy?: ViewField
 }
 
+export interface VirtualMachine {
+  allocatableCpusPerVm?: number
+  allocatableMemPerVm?: number
+  avgPrice?: number
+  burst?: boolean
+  category?: string
+  cpusPerVm?: number
+  currentGen?: boolean
+  gpusPerVm?: number
+  memPerVm?: number
+  networkPerf?: string
+  networkPerfCategory?: string
+  onDemandPrice?: number
+  type?: string
+  zones?: string[]
+}
+
+export interface WorkloadRecommendationDTO {
+  containerRecommendations?: {
+    [key: string]: ContainerRecommendation
+  }
+  id?: string
+  items?: ContainerHistogramDTO[]
+  lastDayCost?: Cost
+}
+
+export type AnomalyQueryDTORequestBody = AnomalyQueryDTO
+
 export type BudgetRequestBody = Budget
 
 export type BusinessMappingRequestBody = BusinessMapping
@@ -2116,7 +2704,232 @@ export type CEViewRequestBody = CEView
 
 export type K8sClusterSetupRequestRequestBody = K8sClusterSetupRequest
 
+export type K8sRecommendationFilterDTORequestBody = K8sRecommendationFilterDTO
+
 export type ViewCustomFieldRequestBody = ViewCustomField
+
+export interface ListAnomaliesQueryParams {
+  accountIdentifier: string
+}
+
+export type ListAnomaliesProps = Omit<
+  MutateProps<ResponseListAnomalyData, unknown, ListAnomaliesQueryParams, AnomalyQueryDTORequestBody, void>,
+  'path' | 'verb'
+>
+
+/**
+ * List Anomalies
+ */
+export const ListAnomalies = (props: ListAnomaliesProps) => (
+  <Mutate<ResponseListAnomalyData, unknown, ListAnomaliesQueryParams, AnomalyQueryDTORequestBody, void>
+    verb="POST"
+    path={`/anomaly`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseListAnomaliesProps = Omit<
+  UseMutateProps<ResponseListAnomalyData, unknown, ListAnomaliesQueryParams, AnomalyQueryDTORequestBody, void>,
+  'path' | 'verb'
+>
+
+/**
+ * List Anomalies
+ */
+export const useListAnomalies = (props: UseListAnomaliesProps) =>
+  useMutate<ResponseListAnomalyData, unknown, ListAnomaliesQueryParams, AnomalyQueryDTORequestBody, void>(
+    'POST',
+    `/anomaly`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface ReportAnomalyFeedbackQueryParams {
+  accountIdentifier: string
+  anomalyId?: string
+}
+
+export type ReportAnomalyFeedbackProps = Omit<
+  MutateProps<ResponseBoolean, unknown, ReportAnomalyFeedbackQueryParams, AnomalyFeedbackDTO, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Report Anomaly Feedback
+ */
+export const ReportAnomalyFeedback = (props: ReportAnomalyFeedbackProps) => (
+  <Mutate<ResponseBoolean, unknown, ReportAnomalyFeedbackQueryParams, AnomalyFeedbackDTO, void>
+    verb="PUT"
+    path={`/anomaly/feedback`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseReportAnomalyFeedbackProps = Omit<
+  UseMutateProps<ResponseBoolean, unknown, ReportAnomalyFeedbackQueryParams, AnomalyFeedbackDTO, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Report Anomaly Feedback
+ */
+export const useReportAnomalyFeedback = (props: UseReportAnomalyFeedbackProps) =>
+  useMutate<ResponseBoolean, unknown, ReportAnomalyFeedbackQueryParams, AnomalyFeedbackDTO, void>(
+    'PUT',
+    `/anomaly/feedback`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface ListPerspectiveAnomaliesQueryParams {
+  accountIdentifier: string
+}
+
+export interface ListPerspectiveAnomaliesPathParams {
+  perspectiveId: string
+}
+
+export type ListPerspectiveAnomaliesProps = Omit<
+  MutateProps<
+    ResponseListPerspectiveAnomalyData,
+    unknown,
+    ListPerspectiveAnomaliesQueryParams,
+    PerspectiveQueryDTO,
+    ListPerspectiveAnomaliesPathParams
+  >,
+  'path' | 'verb'
+> &
+  ListPerspectiveAnomaliesPathParams
+
+/**
+ * List Anomalies for Perspective
+ */
+export const ListPerspectiveAnomalies = ({ perspectiveId, ...props }: ListPerspectiveAnomaliesProps) => (
+  <Mutate<
+    ResponseListPerspectiveAnomalyData,
+    unknown,
+    ListPerspectiveAnomaliesQueryParams,
+    PerspectiveQueryDTO,
+    ListPerspectiveAnomaliesPathParams
+  >
+    verb="POST"
+    path={`/anomaly/perspective/${perspectiveId}`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseListPerspectiveAnomaliesProps = Omit<
+  UseMutateProps<
+    ResponseListPerspectiveAnomalyData,
+    unknown,
+    ListPerspectiveAnomaliesQueryParams,
+    PerspectiveQueryDTO,
+    ListPerspectiveAnomaliesPathParams
+  >,
+  'path' | 'verb'
+> &
+  ListPerspectiveAnomaliesPathParams
+
+/**
+ * List Anomalies for Perspective
+ */
+export const useListPerspectiveAnomalies = ({ perspectiveId, ...props }: UseListPerspectiveAnomaliesProps) =>
+  useMutate<
+    ResponseListPerspectiveAnomalyData,
+    unknown,
+    ListPerspectiveAnomaliesQueryParams,
+    PerspectiveQueryDTO,
+    ListPerspectiveAnomaliesPathParams
+  >(
+    'POST',
+    (paramsInPath: ListPerspectiveAnomaliesPathParams) => `/anomaly/perspective/${paramsInPath.perspectiveId}`,
+    { base: getConfig('ccm/api'), pathParams: { perspectiveId }, ...props }
+  )
+
+export interface GetAnomaliesSummaryQueryParams {
+  accountIdentifier: string
+}
+
+export type GetAnomaliesSummaryProps = Omit<
+  MutateProps<ResponseListAnomalySummary, unknown, GetAnomaliesSummaryQueryParams, AnomalyQueryDTORequestBody, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Get Anomalies Summary
+ */
+export const GetAnomaliesSummary = (props: GetAnomaliesSummaryProps) => (
+  <Mutate<ResponseListAnomalySummary, unknown, GetAnomaliesSummaryQueryParams, AnomalyQueryDTORequestBody, void>
+    verb="POST"
+    path={`/anomaly/summary`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseGetAnomaliesSummaryProps = Omit<
+  UseMutateProps<ResponseListAnomalySummary, unknown, GetAnomaliesSummaryQueryParams, AnomalyQueryDTORequestBody, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Get Anomalies Summary
+ */
+export const useGetAnomaliesSummary = (props: UseGetAnomaliesSummaryProps) =>
+  useMutate<ResponseListAnomalySummary, unknown, GetAnomaliesSummaryQueryParams, AnomalyQueryDTORequestBody, void>(
+    'POST',
+    `/anomaly/summary`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface GetAnomalyWidgetsDataQueryParams {
+  accountIdentifier: string
+}
+
+export type GetAnomalyWidgetsDataProps = Omit<
+  MutateProps<
+    ResponseListAnomalyWidgetData,
+    unknown,
+    GetAnomalyWidgetsDataQueryParams,
+    AnomalyQueryDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Get Anomaly Widgets
+ */
+export const GetAnomalyWidgetsData = (props: GetAnomalyWidgetsDataProps) => (
+  <Mutate<ResponseListAnomalyWidgetData, unknown, GetAnomalyWidgetsDataQueryParams, AnomalyQueryDTORequestBody, void>
+    verb="POST"
+    path={`/anomaly/widgets`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseGetAnomalyWidgetsDataProps = Omit<
+  UseMutateProps<
+    ResponseListAnomalyWidgetData,
+    unknown,
+    GetAnomalyWidgetsDataQueryParams,
+    AnomalyQueryDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Get Anomaly Widgets
+ */
+export const useGetAnomalyWidgetsData = (props: UseGetAnomalyWidgetsDataProps) =>
+  useMutate<ResponseListAnomalyWidgetData, unknown, GetAnomalyWidgetsDataQueryParams, AnomalyQueryDTORequestBody, void>(
+    'POST',
+    `/anomaly/widgets`,
+    { base: getConfig('ccm/api'), ...props }
+  )
 
 export interface ListBudgetsForAccountQueryParams {
   accountIdentifier: string
@@ -2128,7 +2941,7 @@ export type ListBudgetsForAccountProps = Omit<
 >
 
 /**
- * List budgets for account
+ * List Budgets for account
  */
 export const ListBudgetsForAccount = (props: ListBudgetsForAccountProps) => (
   <Get<ResponseListBudget, unknown, ListBudgetsForAccountQueryParams, void>
@@ -2144,7 +2957,7 @@ export type UseListBudgetsForAccountProps = Omit<
 >
 
 /**
- * List budgets for account
+ * List Budgets for account
  */
 export const useListBudgetsForAccount = (props: UseListBudgetsForAccountProps) =>
   useGet<ResponseListBudget, unknown, ListBudgetsForAccountQueryParams, void>(`/budgets`, {
@@ -2195,7 +3008,7 @@ export interface GetForecastCostQueryParams {
 export type GetForecastCostProps = Omit<GetProps<ResponseDouble, unknown, GetForecastCostQueryParams, void>, 'path'>
 
 /**
- * Deprecated use /perspective/forecastCost instead, Get forecast cost for perspective.
+ * Deprecated use /perspective/forecastCost instead, Get forecast cost for Perspective.
  */
 export const GetForecastCost = (props: GetForecastCostProps) => (
   <Get<ResponseDouble, unknown, GetForecastCostQueryParams, void>
@@ -2211,80 +3024,10 @@ export type UseGetForecastCostProps = Omit<
 >
 
 /**
- * Deprecated use /perspective/forecastCost instead, Get forecast cost for perspective.
+ * Deprecated use /perspective/forecastCost instead, Get forecast cost for Perspective.
  */
 export const useGetForecastCost = (props: UseGetForecastCostProps) =>
   useGet<ResponseDouble, unknown, GetForecastCostQueryParams, void>(`/budgets/forecastCost`, {
-    base: getConfig('ccm/api'),
-    ...props
-  })
-export interface GetLastPeriodCostQueryParams {
-  accountIdentifier: string
-  perspectiveId: string
-  startTime: number
-  period: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY'
-}
-
-export type GetLastPeriodCostProps = Omit<GetProps<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>, 'path'>
-
-/**
- * Get last period cost for perspective
- */
-export const GetLastPeriodCost = (props: GetLastPeriodCostProps) => (
-  <Get<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>
-    path={`/perspective/lastPeriodCost`}
-    base={getConfig('ccm/api')}
-    {...props}
-  />
-)
-
-export type UseGetLastPeriodCostProps = Omit<
-  UseGetProps<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>,
-  'path'
->
-
-/**
- * Get last period cost for perspective
- */
-export const useGetLastPeriodCost = (props: UseGetLastPeriodCostProps) =>
-  useGet<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>(`/perspective/lastPeriodCost`, {
-    base: getConfig('ccm/api'),
-    ...props
-  })
-
-export interface GetForecastCostForPeriodQueryParams {
-  accountIdentifier: string
-  perspectiveId: string
-  startTime: number
-  period: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY'
-}
-
-export type GetForecastCostForPeriodProps = Omit<
-  GetProps<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>,
-  'path'
->
-
-/**
- * Get forecast cost for perspective for given period
- */
-export const GetForecastCostForPeriod = (props: GetForecastCostForPeriodProps) => (
-  <Get<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>
-    path={`/perspective/forecastCostForPeriod`}
-    base={getConfig('ccm/api')}
-    {...props}
-  />
-)
-
-export type UseGetForecastCostForPeriodProps = Omit<
-  UseGetProps<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>,
-  'path'
->
-
-/**
- * Get forecast cost for perspective for given period
- */
-export const useGetForecastCostForPeriod = (props: UseGetForecastCostForPeriodProps) =>
-  useGet<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>(`/perspective/forecastCostForPeriod`, {
     base: getConfig('ccm/api'),
     ...props
   })
@@ -2297,7 +3040,7 @@ export interface GetLastMonthCostQueryParams {
 export type GetLastMonthCostProps = Omit<GetProps<ResponseDouble, unknown, GetLastMonthCostQueryParams, void>, 'path'>
 
 /**
- * Deprecated use /perspective/lastMonthCost instead, Get last month cost for perspective.
+ * Deprecated use /perspective/lastMonthCost instead, Get last month cost for Perspective.
  */
 export const GetLastMonthCost = (props: GetLastMonthCostProps) => (
   <Get<ResponseDouble, unknown, GetLastMonthCostQueryParams, void>
@@ -2313,7 +3056,7 @@ export type UseGetLastMonthCostProps = Omit<
 >
 
 /**
- * Deprecated use /perspective/lastMonthCost instead, Get last month cost for perspective.
+ * Deprecated use /perspective/lastMonthCost instead, Get last month cost for Perspective.
  */
 export const useGetLastMonthCost = (props: UseGetLastMonthCostProps) =>
   useGet<ResponseDouble, unknown, GetLastMonthCostQueryParams, void>(`/budgets/lastMonthCost`, {
@@ -2332,7 +3075,7 @@ export type ListBudgetsForPerspectiveProps = Omit<
 >
 
 /**
- * List budgets for perspective
+ * List Budgets for Perspective
  */
 export const ListBudgetsForPerspective = (props: ListBudgetsForPerspectiveProps) => (
   <Get<ResponseListBudget, unknown, ListBudgetsForPerspectiveQueryParams, void>
@@ -2348,7 +3091,7 @@ export type UseListBudgetsForPerspectiveProps = Omit<
 >
 
 /**
- * List budgets for perspective
+ * List Budgets for Perspective
  */
 export const useListBudgetsForPerspective = (props: UseListBudgetsForPerspectiveProps) =>
   useGet<ResponseListBudget, unknown, ListBudgetsForPerspectiveQueryParams, void>(`/budgets/perspectiveBudgets`, {
@@ -3315,72 +4058,140 @@ export const useValidateCustomField = (props: UseValidateCustomFieldProps) =>
     { base: getConfig('ccm/api'), ...props }
   )
 
-export interface GetForecastCostNextQueryParams {
+export interface GetForecastCostV2QueryParams {
   accountIdentifier: string
   perspectiveId: string
 }
 
-export type GetForecastCostNextProps = Omit<
-  GetProps<ResponseDouble, unknown, GetForecastCostNextQueryParams, void>,
-  'path'
->
+export type GetForecastCostV2Props = Omit<GetProps<ResponseDouble, unknown, GetForecastCostV2QueryParams, void>, 'path'>
 
 /**
  * Get forecast cost for perspective
  */
-export const GetForecastCostNext = (props: GetForecastCostNextProps) => (
-  <Get<ResponseDouble, unknown, GetForecastCostNextQueryParams, void>
+export const GetForecastCostV2 = (props: GetForecastCostV2Props) => (
+  <Get<ResponseDouble, unknown, GetForecastCostV2QueryParams, void>
     path={`/perspective/forecastCost`}
     base={getConfig('ccm/api')}
     {...props}
   />
 )
 
-export type UseGetForecastCostNextProps = Omit<
-  UseGetProps<ResponseDouble, unknown, GetForecastCostNextQueryParams, void>,
+export type UseGetForecastCostV2Props = Omit<
+  UseGetProps<ResponseDouble, unknown, GetForecastCostV2QueryParams, void>,
   'path'
 >
 
 /**
  * Get forecast cost for perspective
  */
-export const useGetForecastCostNext = (props: UseGetForecastCostNextProps) =>
-  useGet<ResponseDouble, unknown, GetForecastCostNextQueryParams, void>(`/perspective/forecastCost`, {
+export const useGetForecastCostV2 = (props: UseGetForecastCostV2Props) =>
+  useGet<ResponseDouble, unknown, GetForecastCostV2QueryParams, void>(`/perspective/forecastCost`, {
     base: getConfig('ccm/api'),
     ...props
   })
 
-export interface GetLastMonthCostNextQueryParams {
+export interface GetForecastCostForPeriodQueryParams {
+  accountIdentifier: string
+  perspectiveId: string
+  startTime: number
+  period: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY'
+}
+
+export type GetForecastCostForPeriodProps = Omit<
+  GetProps<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get forecast cost for perspective for given period
+ */
+export const GetForecastCostForPeriod = (props: GetForecastCostForPeriodProps) => (
+  <Get<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>
+    path={`/perspective/forecastCostForPeriod`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseGetForecastCostForPeriodProps = Omit<
+  UseGetProps<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get forecast cost for perspective for given period
+ */
+export const useGetForecastCostForPeriod = (props: UseGetForecastCostForPeriodProps) =>
+  useGet<ResponseDouble, unknown, GetForecastCostForPeriodQueryParams, void>(`/perspective/forecastCostForPeriod`, {
+    base: getConfig('ccm/api'),
+    ...props
+  })
+
+export interface GetLastMonthCostV2QueryParams {
   accountIdentifier: string
   perspectiveId: string
 }
 
-export type GetLastMonthCostNextProps = Omit<
-  GetProps<ResponseDouble, unknown, GetLastMonthCostNextQueryParams, void>,
+export type GetLastMonthCostV2Props = Omit<
+  GetProps<ResponseDouble, unknown, GetLastMonthCostV2QueryParams, void>,
   'path'
 >
 
 /**
  * Get last month cost for perspective
  */
-export const GetLastMonthCostNext = (props: GetLastMonthCostNextProps) => (
-  <Get<ResponseDouble, unknown, GetLastMonthCostNextQueryParams, void>
+export const GetLastMonthCostV2 = (props: GetLastMonthCostV2Props) => (
+  <Get<ResponseDouble, unknown, GetLastMonthCostV2QueryParams, void>
     path={`/perspective/lastMonthCost`}
     base={getConfig('ccm/api')}
     {...props}
   />
 )
 
-export type UseGetLastMonthCostNextProps = Omit<
-  UseGetProps<ResponseDouble, unknown, GetLastMonthCostNextQueryParams, void>,
+export type UseGetLastMonthCostV2Props = Omit<
+  UseGetProps<ResponseDouble, unknown, GetLastMonthCostV2QueryParams, void>,
   'path'
 >
 
 /**
  * Get last month cost for perspective
  */
-export const useGetLastMonthCostNext = (props: UseGetLastMonthCostNextProps) =>
-  useGet<ResponseDouble, unknown, GetLastMonthCostNextQueryParams, void>(`/perspective/lastMonthCost`, {
+export const useGetLastMonthCostV2 = (props: UseGetLastMonthCostV2Props) =>
+  useGet<ResponseDouble, unknown, GetLastMonthCostV2QueryParams, void>(`/perspective/lastMonthCost`, {
+    base: getConfig('ccm/api'),
+    ...props
+  })
+
+export interface GetLastPeriodCostQueryParams {
+  accountIdentifier: string
+  perspectiveId: string
+  startTime: number
+  period: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY'
+}
+
+export type GetLastPeriodCostProps = Omit<GetProps<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>, 'path'>
+
+/**
+ * Get last period cost for perspective
+ */
+export const GetLastPeriodCost = (props: GetLastPeriodCostProps) => (
+  <Get<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>
+    path={`/perspective/lastPeriodCost`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseGetLastPeriodCostProps = Omit<
+  UseGetProps<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get last period cost for perspective
+ */
+export const useGetLastPeriodCost = (props: UseGetLastPeriodCostProps) =>
+  useGet<ResponseDouble, unknown, GetLastPeriodCostQueryParams, void>(`/perspective/lastPeriodCost`, {
     base: getConfig('ccm/api'),
     ...props
   })
@@ -3550,6 +4361,268 @@ export const useUpdateReportSetting = ({ accountIdentifier, ...props }: UseUpdat
     { base: getConfig('ccm/api'), pathParams: { accountIdentifier }, ...props }
   )
 
+export interface NodeRecommendationDetailQueryParams {
+  accountIdentifier: string
+  id: string
+}
+
+export type NodeRecommendationDetailProps = Omit<
+  GetProps<ResponseNodeRecommendationDTO, unknown, NodeRecommendationDetailQueryParams, void>,
+  'path'
+>
+
+/**
+ * Node pool Recommendation Details
+ */
+export const NodeRecommendationDetail = (props: NodeRecommendationDetailProps) => (
+  <Get<ResponseNodeRecommendationDTO, unknown, NodeRecommendationDetailQueryParams, void>
+    path={`/recommendation/details/node-pool`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseNodeRecommendationDetailProps = Omit<
+  UseGetProps<ResponseNodeRecommendationDTO, unknown, NodeRecommendationDetailQueryParams, void>,
+  'path'
+>
+
+/**
+ * Node pool Recommendation Details
+ */
+export const useNodeRecommendationDetail = (props: UseNodeRecommendationDetailProps) =>
+  useGet<ResponseNodeRecommendationDTO, unknown, NodeRecommendationDetailQueryParams, void>(
+    `/recommendation/details/node-pool`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface WorkloadRecommendationDetailQueryParams {
+  accountIdentifier: string
+  id: string
+  from?: string
+  to?: string
+}
+
+export type WorkloadRecommendationDetailProps = Omit<
+  GetProps<ResponseWorkloadRecommendationDTO, unknown, WorkloadRecommendationDetailQueryParams, void>,
+  'path'
+>
+
+/**
+ * Workload Recommendation Details
+ */
+export const WorkloadRecommendationDetail = (props: WorkloadRecommendationDetailProps) => (
+  <Get<ResponseWorkloadRecommendationDTO, unknown, WorkloadRecommendationDetailQueryParams, void>
+    path={`/recommendation/details/workload`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseWorkloadRecommendationDetailProps = Omit<
+  UseGetProps<ResponseWorkloadRecommendationDTO, unknown, WorkloadRecommendationDetailQueryParams, void>,
+  'path'
+>
+
+/**
+ * Workload Recommendation Details
+ */
+export const useWorkloadRecommendationDetail = (props: UseWorkloadRecommendationDetailProps) =>
+  useGet<ResponseWorkloadRecommendationDTO, unknown, WorkloadRecommendationDetailQueryParams, void>(
+    `/recommendation/details/workload`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface RecommendationsCountQueryParams {
+  accountIdentifier: string
+}
+
+export type RecommendationsCountProps = Omit<
+  MutateProps<ResponseInteger, unknown, RecommendationsCountQueryParams, K8sRecommendationFilterDTORequestBody, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Recommendations count
+ */
+export const RecommendationsCount = (props: RecommendationsCountProps) => (
+  <Mutate<ResponseInteger, unknown, RecommendationsCountQueryParams, K8sRecommendationFilterDTORequestBody, void>
+    verb="POST"
+    path={`/recommendation/overview/count`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseRecommendationsCountProps = Omit<
+  UseMutateProps<
+    ResponseInteger,
+    unknown,
+    RecommendationsCountQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Recommendations count
+ */
+export const useRecommendationsCount = (props: UseRecommendationsCountProps) =>
+  useMutate<ResponseInteger, unknown, RecommendationsCountQueryParams, K8sRecommendationFilterDTORequestBody, void>(
+    'POST',
+    `/recommendation/overview/count`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface RecommendationFilterValuesQueryParams {
+  accountIdentifier: string
+}
+
+export type RecommendationFilterValuesProps = Omit<
+  MutateProps<ResponseListFilterStatsDTO, unknown, RecommendationFilterValuesQueryParams, FilterValuesDTO, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Filter values available for Recommendations
+ */
+export const RecommendationFilterValues = (props: RecommendationFilterValuesProps) => (
+  <Mutate<ResponseListFilterStatsDTO, unknown, RecommendationFilterValuesQueryParams, FilterValuesDTO, void>
+    verb="POST"
+    path={`/recommendation/overview/filter-values`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseRecommendationFilterValuesProps = Omit<
+  UseMutateProps<ResponseListFilterStatsDTO, unknown, RecommendationFilterValuesQueryParams, FilterValuesDTO, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Filter values available for Recommendations
+ */
+export const useRecommendationFilterValues = (props: UseRecommendationFilterValuesProps) =>
+  useMutate<ResponseListFilterStatsDTO, unknown, RecommendationFilterValuesQueryParams, FilterValuesDTO, void>(
+    'POST',
+    `/recommendation/overview/filter-values`,
+    { base: getConfig('ccm/api'), ...props }
+  )
+
+export interface ListRecommendationsQueryParams {
+  accountIdentifier: string
+}
+
+export type ListRecommendationsProps = Omit<
+  MutateProps<
+    ResponseRecommendationsDTO,
+    unknown,
+    ListRecommendationsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * List Recommendations
+ */
+export const ListRecommendations = (props: ListRecommendationsProps) => (
+  <Mutate<
+    ResponseRecommendationsDTO,
+    unknown,
+    ListRecommendationsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >
+    verb="POST"
+    path={`/recommendation/overview/list`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseListRecommendationsProps = Omit<
+  UseMutateProps<
+    ResponseRecommendationsDTO,
+    unknown,
+    ListRecommendationsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * List Recommendations
+ */
+export const useListRecommendations = (props: UseListRecommendationsProps) =>
+  useMutate<
+    ResponseRecommendationsDTO,
+    unknown,
+    ListRecommendationsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >('POST', `/recommendation/overview/list`, { base: getConfig('ccm/api'), ...props })
+
+export interface RecommendationStatsQueryParams {
+  accountIdentifier: string
+}
+
+export type RecommendationStatsProps = Omit<
+  MutateProps<
+    ResponseRecommendationOverviewStats,
+    unknown,
+    RecommendationStatsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Recommendations Statistics
+ */
+export const RecommendationStats = (props: RecommendationStatsProps) => (
+  <Mutate<
+    ResponseRecommendationOverviewStats,
+    unknown,
+    RecommendationStatsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >
+    verb="POST"
+    path={`/recommendation/overview/stats`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseRecommendationStatsProps = Omit<
+  UseMutateProps<
+    ResponseRecommendationOverviewStats,
+    unknown,
+    RecommendationStatsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Recommendations Statistics
+ */
+export const useRecommendationStats = (props: UseRecommendationStatsProps) =>
+  useMutate<
+    ResponseRecommendationOverviewStats,
+    unknown,
+    RecommendationStatsQueryParams,
+    K8sRecommendationFilterDTORequestBody,
+    void
+  >('POST', `/recommendation/overview/stats`, { base: getConfig('ccm/api'), ...props })
+
 export interface ValidateConnectorQueryParams {
   accountIdentifier?: string
 }
@@ -3585,6 +4658,40 @@ export const useValidateConnector = (props: UseValidateConnectorProps) =>
     `/testconnection`,
     { base: getConfig('ccm/api'), ...props }
   )
+
+export interface GetConnectorDetailsQueryParams {
+  accountIdentifier?: string
+}
+
+export type GetConnectorDetailsProps = Omit<
+  GetProps<ResponseCCMConnectorDetails, unknown, GetConnectorDetailsQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get connector details
+ */
+export const GetConnectorDetails = (props: GetConnectorDetailsProps) => (
+  <Get<ResponseCCMConnectorDetails, unknown, GetConnectorDetailsQueryParams, void>
+    path={`/testconnection/firstConnector`}
+    base={getConfig('ccm/api')}
+    {...props}
+  />
+)
+
+export type UseGetConnectorDetailsProps = Omit<
+  UseGetProps<ResponseCCMConnectorDetails, unknown, GetConnectorDetailsQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get connector details
+ */
+export const useGetConnectorDetails = (props: UseGetConnectorDetailsProps) =>
+  useGet<ResponseCCMConnectorDetails, unknown, GetConnectorDetailsQueryParams, void>(`/testconnection/firstConnector`, {
+    base: getConfig('ccm/api'),
+    ...props
+  })
 
 export interface GetLicenseUsageQueryParams {
   accountIdentifier?: string

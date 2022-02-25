@@ -120,7 +120,7 @@ export interface InputSetFormProps {
   executionView?: boolean
 }
 
-export const InputSetForm: React.FC<InputSetFormProps> = (props): JSX.Element => {
+export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   const { executionView } = props
   const { getString } = useStrings()
   const [isEdit, setIsEdit] = React.useState(false)
@@ -254,7 +254,10 @@ export const InputSetForm: React.FC<InputSetFormProps> = (props): JSX.Element =>
         accountIdentifier: accountId,
         orgIdentifier,
         pipelineIdentifier,
-        projectIdentifier
+        projectIdentifier,
+        repoIdentifier,
+        branch,
+        getDefaultFromOtherRepo: true
       },
       body: {
         originalEntityYaml: yamlStringify(parse(pipeline?.data?.yamlPipeline || '')?.pipeline)
@@ -400,7 +403,7 @@ export const InputSetForm: React.FC<InputSetFormProps> = (props): JSX.Element =>
             }
           })
         } else {
-          throw new Error(getString('pipeline.triggers.validation.identifier'))
+          throw new Error(getString('common.validation.identifierIsRequired'))
         }
       } else {
         response = await createInputSet(yamlStringify({ inputSet: clearNullUndefined(inputSetObj) }) as any, {
@@ -416,33 +419,23 @@ export const InputSetForm: React.FC<InputSetFormProps> = (props): JSX.Element =>
           }
         })
       }
-      /* istanbul ignore else */
-      if (response) {
-        if (response.data?.errorResponse) {
-          const errors = getFormattedErrors(response.data.inputSetErrorWrapper?.uuidToErrorResponseMap)
-          if (Object.keys(errors).length) {
-            setFormErrors(errors)
-            // This is done because when git sync is enabled, errors are displayed in a modal
-          } else if (!isGitSyncEnabled) {
-            showError(getString('inputSets.inputSetSavedError'), undefined, 'pipeline.create.inputset')
-          }
-        } else {
-          if (!isGitSyncEnabled) {
-            showSuccess(getString('inputSets.inputSetSaved'))
-            history.goBack()
-          }
-        }
+      if (!isGitSyncEnabled) {
+        showSuccess(getString('inputSets.inputSetSaved'))
+        history.goBack()
       }
     } catch (e) {
+      const errors = getFormattedErrors(e?.data?.metadata?.uuidToErrorResponseMap)
+      if (!isEmpty(errors)) {
+        setFormErrors(errors)
+      }
       // This is done because when git sync is enabled, errors are displayed in a modal
-      if (!isGitSyncEnabled) {
+      else if (!isGitSyncEnabled) {
         showError(
           e?.data?.message || e?.message || getString('commonError'),
           undefined,
           'pipeline.update.create.inputset'
         )
       }
-      throw e
     }
     return {
       status: response?.status, // nextCallback can be added if required
@@ -486,9 +479,17 @@ export const InputSetForm: React.FC<InputSetFormProps> = (props): JSX.Element =>
     name: NameSchema(),
     identifier: IdentifierSchema()
   })
+
+  const formRefDom = React.useRef<HTMLElement | undefined>()
+
   const child = (
     <Container className={css.inputSetForm}>
-      <Layout.Vertical spacing="medium">
+      <Layout.Vertical
+        spacing="medium"
+        ref={ref => {
+          formRefDom.current = ref as HTMLElement
+        }}
+      >
         <Formik<InputSetDTO & GitContextProps>
           initialValues={{
             ...omit(inputSet, 'gitDetails', 'entityValidityDetails'),
@@ -536,7 +537,7 @@ export const InputSetForm: React.FC<InputSetFormProps> = (props): JSX.Element =>
                 {selectedView === SelectedView.VISUAL ? (
                   <div className={css.inputsetGrid}>
                     <div>
-                      <ErrorsStrip formErrors={formErrors} />
+                      <ErrorsStrip formErrors={formErrors} domRef={formRefDom} />
                       <FormikForm>
                         {executionView ? null : (
                           <Layout.Vertical className={css.content} padding="xlarge">
@@ -775,7 +776,7 @@ export function InputSetFormWrapper(props: InputSetFormWrapperProps): React.Reac
   )
 }
 
-export const EnhancedInputSetForm: React.FC<InputSetFormProps> = props => {
+export function EnhancedInputSetForm(props: InputSetFormProps): React.ReactElement {
   return (
     <NestedAccordionProvider>
       <InputSetForm {...props} />

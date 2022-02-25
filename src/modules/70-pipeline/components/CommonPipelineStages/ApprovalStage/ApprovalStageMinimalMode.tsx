@@ -32,7 +32,7 @@ const getInitialValues = (data?: StageElementWrapper<ApprovalStageElementConfig>
   approvalType: (data?.stage?.spec as any)?.approvalType
 })
 
-export const ApprovalStageMinimalMode: React.FC<ApprovalStageMinimalModeProps> = props => {
+export function ApprovalStageMinimalMode(props: ApprovalStageMinimalModeProps): React.ReactElement {
   const { getString } = useStrings()
   const { onChange, onSubmit, data, template } = props
 
@@ -66,7 +66,9 @@ export const ApprovalStageMinimalMode: React.FC<ApprovalStageMinimalModeProps> =
         data.stage.name = values.name
         data.stage.description = values.description
         data.stage.tags = values.tags
-        ;(data.stage as any).approvalType = values.approvalType
+        if (!data.stage.spec?.execution) {
+          ;(data.stage as any).approvalType = values.approvalType
+        }
         onSubmit?.(data, values.identifier)
       }
     }
@@ -79,9 +81,10 @@ export const ApprovalStageMinimalMode: React.FC<ApprovalStageMinimalModeProps> =
         initialValues={getInitialValues(data)}
         validationSchema={Yup.object().shape({
           ...getNameAndIdentifierSchema(getString, contextType),
-          ...(!template && {
-            approvalType: Yup.string().required(getString('pipeline.approvalTypeRequired'))
-          })
+          ...(!template &&
+            !data?.stage?.spec?.execution && {
+              approvalType: Yup.string().required(getString('pipeline.approvalTypeRequired'))
+            })
         })}
         validate={handleValidate}
         onSubmit={(values: ApprovalStageMinimalValues) => handleSubmit(values)}
@@ -123,7 +126,7 @@ export const ApprovalStageMinimalMode: React.FC<ApprovalStageMinimalModeProps> =
               >
                 {`Using Template: ${getTemplateNameWithLabel(template)}`}
               </Text>
-            ) : (
+            ) : !data?.stage?.spec?.execution ? (
               <>
                 <Text
                   color={Color.GREY_700}
@@ -134,7 +137,7 @@ export const ApprovalStageMinimalMode: React.FC<ApprovalStageMinimalModeProps> =
                 </Text>
                 <ApprovalTypeCards formikProps={formikProps} />
               </>
-            )}
+            ) : null}
 
             <Button
               type="submit"

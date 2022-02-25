@@ -111,11 +111,11 @@ describe('Monitored Service list', () => {
     )
 
     expect(getByText('ServiceName 1')).toBeDefined()
-    expect(getByText('EnvironmentName 1')).toBeDefined()
+    expect(getByText('new_env_test')).toBeDefined()
     expect(getByText('ServiceName 2')).toBeDefined()
-    expect(getByText('EnvironmentName 2')).toBeDefined()
+    expect(getByText('AppDTestEnv1')).toBeDefined()
     expect(getByText('ServiceName 3')).toBeDefined()
-    expect(getByText('EnvironmentName 3')).toBeDefined()
+    expect(getByText('AppDTestEnv2')).toBeDefined()
   })
 
   test('delete flow works correctly', async () => {
@@ -254,11 +254,10 @@ describe('Monitored Service list', () => {
     )
 
     jest.spyOn(cvServices, 'useListMonitoredService').mockImplementation(() => ({} as any))
-
     userEvent.click(container.querySelector('[data-icon="offline-outline"]')!)
 
     expect(refetchServiceCountData).toBeCalledTimes(2)
     expect(screen.queryByText(`cv.monitoredServices.showingServiceAtRisk`)).not.toBeInTheDocument()
-    expect(screen.queryByText('cv.monitoredServices.youHaveNoMonitoredServices')).toBeInTheDocument()
+    expect(screen.queryByText('cv.monitoredServices.youHaveNoMonitoredServices')).not.toBeInTheDocument()
   })
 })

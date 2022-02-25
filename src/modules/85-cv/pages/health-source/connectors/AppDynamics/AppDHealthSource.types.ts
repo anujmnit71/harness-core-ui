@@ -6,13 +6,19 @@
  */
 
 import type { SelectOption } from '@wings-software/uicore'
+import type { StringKeys } from 'framework/strings'
 import type { MetricPackDTO } from 'services/cv'
+import type { CustomMappedMetric } from '../../common/CustomMetric/CustomMetric.types'
 import type { HealthSourceTypes } from '../../types'
 import type { BasePathData } from './Components/BasePath/BasePath.types'
 import type { MetricPathData } from './Components/MetricPath/MetricPath.types'
 
 export type MapAppDynamicsMetric = {
   metricName: string
+  appdApplication: string
+  appDTier: string
+  metricPacks?: MetricPackDTO[]
+  metricData: { [key: string]: boolean }
   riskCategory?: string
   serviceInstance?: string
   lowerBaselineDeviation?: boolean
@@ -23,24 +29,10 @@ export type MapAppDynamicsMetric = {
   healthScore?: boolean
   basePath: BasePathData
   metricPath: MetricPathData
-  appdApplication: string
-  appDTier: string
-  metricPacks?: MetricPackDTO[]
-  metricData: { [key: string]: boolean }
   serviceInstanceMetricPath?: string
   metricIdentifier?: string
   fullPath?: string
   pathType?: string
-}
-
-export type SelectedAndMappedMetrics = {
-  selectedMetric: string
-  mappedMetrics: Map<string, MapAppDynamicsMetric>
-}
-
-export type CreatedMetricsWithSelectedIndex = {
-  createdMetrics: string[]
-  selectedMetricIndex: number
 }
 
 export interface AppDynamicsData {
@@ -56,7 +48,6 @@ export interface AppDynamicsData {
   showCustomMetric?: boolean
   mappedServicesAndEnvs: Map<string, MapAppDynamicsMetric>
 }
-
 export interface AppDynamicsFomikFormInterface {
   name: string
   identifier: string
@@ -70,9 +61,7 @@ export interface AppDynamicsFomikFormInterface {
   appdApplication: string
   appDTier: string
   metricPacks?: MetricPackDTO[]
-  metricData: {
-    [key: string]: boolean
-  }
+  metricData: { [key: string]: boolean }
   riskCategory?: string
   serviceInstance?: string
   lowerBaselineDeviation?: boolean
@@ -87,4 +76,24 @@ export interface AppDynamicsFomikFormInterface {
   metricIdentifier?: string
   fullPath?: string
   pathType?: string
+}
+
+export interface InitAppDCustomFormInterface {
+  sli: boolean
+  groupName: {
+    label: string
+    value: string
+  }
+  healthScore: boolean
+  basePath: BasePathData
+  metricPath: MetricPathData
+  continuousVerification: boolean
+  serviceInstanceMetricPath: string
+}
+export interface ValidateMappingInterface {
+  values: any
+  createdMetrics: string[]
+  selectedMetricIndex: number
+  getString: (key: StringKeys) => string
+  mappedMetrics?: Map<string, CustomMappedMetric>
 }

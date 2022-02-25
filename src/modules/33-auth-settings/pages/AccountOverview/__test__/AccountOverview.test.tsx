@@ -8,6 +8,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { TestWrapper } from '@common/utils/testUtils'
+import * as FeatureFlag from '@common/hooks/useFeatureFlag'
 import AccountOverview from '../AccountOverview'
 
 jest.mock('services/cd-ng', () => {
@@ -49,6 +50,25 @@ jest.mock('services/cd-ng', () => {
         mutate: jest.fn(),
         loading: false
       }
+    }),
+    useListAccountSetting: jest.fn().mockImplementation(() => {
+      return {
+        status: 'SUCCESS',
+        data: [
+          {
+            id: 'mockedId',
+            accountIdentifier: 'accountId',
+            orgIdentifier: null,
+            projectIdentifier: null,
+            createdAt: null,
+            lastModifiedAt: null,
+            type: 'Connector',
+            config: { builtInSMDisabled: true }
+          }
+        ],
+        metaData: null,
+        correlationId: 'correlation'
+      }
     })
   }
 })
@@ -56,6 +76,9 @@ jest.mock('services/cd-ng', () => {
 describe('Account Overview Page', () => {
   describe('Rendering', () => {
     test('should render properly', () => {
+      jest.spyOn(FeatureFlag, 'useFeatureFlags').mockReturnValue({
+        DISABLE_HARNESS_SM: true
+      })
       const { container } = render(
         <TestWrapper>
           <AccountOverview />

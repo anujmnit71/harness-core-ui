@@ -52,12 +52,12 @@ const placeholderValues = {
   PR: defaultValues['PR']
 }
 
-const CICodebaseInputSetFormInternal = ({
+function CICodebaseInputSetFormInternal({
   path,
   readonly,
   formik,
   originalPipeline
-}: CICodebaseInputSetFormProps): JSX.Element => {
+}: CICodebaseInputSetFormProps): JSX.Element {
   const { triggerIdentifier, accountId, projectIdentifier, orgIdentifier } = useParams<Record<string, string>>()
 
   const [isInputTouched, setIsInputTouched] = useState(false)
@@ -85,8 +85,8 @@ const CICodebaseInputSetFormInternal = ({
   }
 
   const inputLabels = {
-    branch: getString('pipeline.triggers.conditionsPanel.branchName'),
-    tag: getString('pipeline.triggers.conditionsPanel.tagName'),
+    branch: getString('common.branchName'),
+    tag: getString('common.tagName'),
     PR: getString('pipeline.ciCodebase.pullRequestNumber')
   }
 

@@ -8,13 +8,14 @@
 import React, { useEffect, useState } from 'react'
 import { isEmpty } from 'lodash-es'
 import { useParams } from 'react-router-dom'
-import { Dialog } from '@blueprintjs/core'
+import { Dialog, Intent } from '@blueprintjs/core'
 import cx from 'classnames'
 import * as Yup from 'yup'
 import { FieldArray, FormikProps } from 'formik'
 import {
   Accordion,
   Button,
+  FormError,
   Formik,
   FormikForm,
   FormInput,
@@ -55,18 +56,19 @@ import { getNameAndIdentifierSchema } from '../StepsValidateUtils'
 import stepCss from '@pipeline/components/PipelineSteps/Steps/Steps.module.scss'
 import css from '../JiraCreate/JiraCreate.module.scss'
 
-const FormContent = ({
+function FormContent({
   formik,
   refetchProjects,
   projectsResponse,
   refetchStatuses,
   fetchingStatuses,
+  statusFetchError,
   statusResponse,
   isNewStep,
   readonly,
   allowableTypes,
   stepViewType
-}: JiraUpdateFormContentInterface): JSX.Element => {
+}: JiraUpdateFormContentInterface): JSX.Element {
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
   const { accountId, projectIdentifier, orgIdentifier } =
@@ -87,7 +89,7 @@ const FormContent = ({
     repoIdentifier,
     branch
   }
-
+  const jiraType = 'updateMode'
   useEffect(() => {
     // If connector value changes in form, fetch projects
     // second block is needed so that we don't fetch projects if type is expression
@@ -154,6 +156,8 @@ const FormContent = ({
           selectedProjectKey={selectedProjectKey}
           selectedIssueTypeKey={selectedIssueTypeKey}
           projectOptions={projectOptions}
+          selectedFields={formik.values.spec.selectedFields}
+          jiraType={jiraType}
           addSelectedFields={(fieldsToBeAdded: JiraFieldNG[], selectedProjectKeyInForm, selectedIssueTypeKeyInForm) => {
             setSelectedProjectKey(selectedProjectKeyInForm)
             setSelectedIssueTypeKey(selectedIssueTypeKeyInForm)
@@ -181,22 +185,24 @@ const FormContent = ({
     )
   }, [projectOptions, connectorRefFixedValue, formik.values.spec.selectedFields, formik.values.spec.fields])
 
-  const AddFieldsButton = () => (
-    <Text
-      onClick={() => {
-        if (!isApprovalStepFieldDisabled(readonly)) {
-          showDynamicFieldsModal()
-        }
-      }}
-      style={{
-        cursor: isApprovalStepFieldDisabled(readonly) ? 'not-allowed' : 'pointer'
-      }}
-      tooltipProps={{ dataTooltipId: 'jiraUpdateAddFields' }}
-      intent="primary"
-    >
-      {getString('pipeline.jiraCreateStep.fieldSelectorAdd')}
-    </Text>
-  )
+  function AddFieldsButton(): React.ReactElement {
+    return (
+      <Text
+        onClick={() => {
+          if (!isApprovalStepFieldDisabled(readonly)) {
+            showDynamicFieldsModal()
+          }
+        }}
+        style={{
+          cursor: isApprovalStepFieldDisabled(readonly) ? 'not-allowed' : 'pointer'
+        }}
+        tooltipProps={{ dataTooltipId: 'jiraUpdateAddFields' }}
+        intent="primary"
+      >
+        {getString('pipeline.jiraCreateStep.fieldSelectorAdd')}
+      </Text>
+    )
+  }
 
   return (
     <React.Fragment>
@@ -333,6 +339,25 @@ const FormContent = ({
                   />
                 )}
               </div>
+
+              {statusFetchError ? (
+                <FormError
+                  className={css.marginTop}
+                  errorMessage={
+                    <Text
+                      lineClamp={1}
+                      width={350}
+                      margin={{ bottom: 'medium' }}
+                      intent={Intent.DANGER}
+                      tooltipProps={{ isDark: true, popoverClassName: css.tooltip }}
+                    >
+                      {(statusFetchError as any)?.data?.message}
+                    </Text>
+                  }
+                  name="spec.projectKey"
+                ></FormError>
+              ) : null}
+
               <div className={cx(stepCss.formGroup, stepCss.lg)}>
                 <FormInput.MultiTextInput
                   label={getString('pipeline.jiraUpdateStep.transitionLabel')}

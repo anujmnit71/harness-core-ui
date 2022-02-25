@@ -20,10 +20,11 @@ import type { CustomVariableInputSetExtraProps } from '@pipeline/components/Pipe
 import type { AllNGVariables } from '@pipeline/utils/types'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import artifactSourceBaseFactory from '@cd/factory/ArtifactSourceFactory/ArtifactSourceBaseFactory'
+// import manifestSourceBaseFactory from '@cd/factory/ManifestSourceFactory/ManifestSourceBaseFactory'
+import { ManifestInputForm } from '@cd/components/ManifestInputForm/ManifestInputForm'
 import type { K8SDirectServiceStep } from './K8sServiceSpecInterface'
-import { KubernetesArtifacts } from './KubernetesArtifacts'
-import { KubernetesManifests } from './KubernetesManifests/KubernetesManifests'
-import { KubernetesSidecars } from './KubernetesSidecars'
+import { KubernetesArtifacts } from './KubernetesArtifacts/KubernetesArtifacts'
+// import { KubernetesManifests } from './KubernetesManifests/KubernetesManifests'
 import css from './K8sServiceSpec.module.scss'
 
 export interface KubernetesInputSetProps {
@@ -39,8 +40,7 @@ export interface KubernetesInputSetProps {
   formik?: any
   allowableTypes: MultiTypeInputType[]
 }
-
-const KubernetesServiceSpecInputSetModeFormikForm = (props: KubernetesInputSetProps) => {
+const KubernetesServiceSpecInputSetModeFormikForm = (props: KubernetesInputSetProps): React.ReactElement => {
   const {
     template,
     path,
@@ -57,34 +57,38 @@ const KubernetesServiceSpecInputSetModeFormikForm = (props: KubernetesInputSetPr
   const { getString } = useStrings()
   return (
     <Layout.Vertical spacing="medium">
-      <KubernetesArtifacts
-        template={template}
-        type={allValues?.artifacts?.primary?.type || ''}
-        artifactSourceBaseFactory={artifactSourceBaseFactory}
-        stepViewType={stepViewType}
-        stageIdentifier={stageIdentifier}
-        artifacts={allValues?.artifacts}
-        formik={formik}
-        onUpdate={onUpdate}
-        path={path}
-        initialValues={initialValues}
-        readonly={readonly}
-      />
-      <KubernetesSidecars />
-
-      {!!template?.manifests?.length && (
-        <KubernetesManifests
+      {!!(template?.artifacts?.primary?.type || template?.artifacts?.sidecars?.length) && (
+        <KubernetesArtifacts
+          type={allValues?.artifacts?.primary?.type || ''}
           template={template}
-          path={path}
+          artifacts={allValues?.artifacts}
+          artifactSourceBaseFactory={artifactSourceBaseFactory}
           stepViewType={stepViewType}
-          manifests={allValues?.manifests}
-          initialValues={initialValues}
-          readonly={readonly}
           stageIdentifier={stageIdentifier}
           formik={formik}
+          path={path}
+          initialValues={initialValues}
+          readonly={readonly}
+          allowableTypes={allowableTypes}
         />
       )}
+
       {/* {!!template?.manifests?.length && (
+        <KubernetesManifests
+          template={template}
+          manifests={allValues?.manifests}
+          manifestSourceBaseFactory={manifestSourceBaseFactory}
+          stepViewType={stepViewType}
+          stageIdentifier={stageIdentifier}
+          formik={formik}
+          path={path}
+          initialValues={initialValues}
+          readonly={readonly}
+          allowableTypes={allowableTypes}
+        />
+      )} */}
+
+      {!!template?.manifests?.length && (
         <ManifestInputForm
           template={template}
           path={path}
@@ -93,8 +97,9 @@ const KubernetesServiceSpecInputSetModeFormikForm = (props: KubernetesInputSetPr
           readonly={readonly}
           stageIdentifier={stageIdentifier}
           formik={formik}
+          allowableTypes={allowableTypes}
         />
-      )} */}
+      )}
       {!!template?.variables?.length && (
         <div id={`Stage.${stageIdentifier}.Service.Variables`} className={cx(css.nopadLeft, css.accordionSummary)}>
           <div className={css.subheading}>{getString('variablesText')}</div>
@@ -109,13 +114,11 @@ const KubernetesServiceSpecInputSetModeFormikForm = (props: KubernetesInputSetPr
               type={StepType.CustomVariable}
               stepViewType={StepViewType.InputSet}
               allowableTypes={allowableTypes}
-              onUpdate={
-                /*istanbul ignore next*/ ({ variables }: CustomVariablesData) => {
-                  onUpdate?.({
-                    variables: variables as any
-                  })
-                }
-              }
+              onUpdate={({ variables }: CustomVariablesData) => {
+                onUpdate?.({
+                  variables: variables as any
+                })
+              }}
               customStepProps={{
                 template: { variables: (template?.variables || []) as AllNGVariables[] },
                 path,

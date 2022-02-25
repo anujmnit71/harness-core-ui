@@ -122,7 +122,7 @@ export class HarnessApproval extends PipelineStep<HarnessApprovalData> {
     viewType
   }: ValidateInputSetProps<HarnessApprovalData>): FormikErrors<HarnessApprovalData> {
     const errors: FormikErrors<HarnessApprovalData> = {}
-    const isRequired = viewType === StepViewType.DeploymentForm
+    const isRequired = viewType === StepViewType.DeploymentForm || viewType === StepViewType.TriggerForm
     if (
       typeof template?.spec?.approvalMessage === 'string' &&
       isRequired &&
@@ -136,7 +136,7 @@ export class HarnessApproval extends PipelineStep<HarnessApprovalData> {
     }
 
     if (
-      typeof template?.spec?.approvers.userGroups === 'string' &&
+      typeof template?.spec?.approvers?.userGroups === 'string' &&
       isRequired &&
       getMultiTypeFromValue(template?.spec?.approvers.userGroups) === MultiTypeInputType.RUNTIME &&
       isEmpty(data?.spec?.approvers.userGroups)
@@ -151,7 +151,7 @@ export class HarnessApproval extends PipelineStep<HarnessApprovalData> {
     }
 
     if (
-      typeof template?.spec?.approvers.minimumCount === 'string' &&
+      typeof template?.spec?.approvers?.minimumCount === 'string' &&
       isRequired &&
       getMultiTypeFromValue(template?.spec?.approvers.minimumCount) === MultiTypeInputType.RUNTIME
     ) {

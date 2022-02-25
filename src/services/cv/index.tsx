@@ -640,6 +640,11 @@ export interface DataCollectionRequest {
     | 'NEWRELIC_SAMPLE_FETCH_REQUEST'
     | 'SYNC_DATA_COLLECTION'
     | 'CUSTOM_HEALTH_SAMPLE_DATA'
+    | 'DYNATRACE_SERVICE_LIST_REQUEST'
+    | 'DYNATRACE_SERVICE_DETAILS_REQUEST'
+    | 'DYNATRACE_VALIDATION_REQUEST'
+    | 'DYNATRACE_SAMPLE_DATA_REQUEST'
+    | 'DYNATRACE_METRIC_LIST_REQUEST'
 }
 
 export interface DataCollectionTaskDTO {
@@ -737,6 +742,7 @@ export interface DatasourceTypeDTO {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   verificationType?: 'TIME_SERIES' | 'LOG'
 }
@@ -822,10 +828,60 @@ export type DockerUserNamePasswordDTO = DockerAuthCredentialsDTO & {
   usernameRef?: string
 }
 
+export interface Duration {
+  nano?: number
+  negative?: boolean
+  seconds?: number
+  units?: TemporalUnit[]
+  zero?: boolean
+}
+
 export type DynatraceConnectorDTO = ConnectorConfigDTO & {
   apiTokenRef: string
   delegateSelectors?: string[]
   url: string
+}
+
+export type DynatraceHealthSourceSpec = HealthSourceSpec & {
+  feature: string
+  metricDefinitions?: DynatraceMetricDefinition[]
+  metricPacks?: MetricPackDTO[]
+  serviceId?: string
+  serviceMethodIds?: string[]
+  serviceName?: string
+}
+
+export interface DynatraceMetricDTO {
+  displayName?: string
+  metricId?: string
+  unit?: string
+}
+
+export interface DynatraceMetricDefinition {
+  analysis?: AnalysisDTO
+  groupName?: string
+  identifier: string
+  isManualQuery?: boolean
+  metricName: string
+  metricSelector?: string
+  riskProfile?: RiskProfile
+  sli?: Slidto
+}
+
+export interface DynatraceSampleDataRequestDTO {
+  metricSelector?: string
+  serviceId?: string
+}
+
+export interface DynatraceServiceDTO {
+  displayName?: string
+  entityId?: string
+  serviceMethodIds?: string[]
+}
+
+export interface DynatraceValidateDataRequestDTO {
+  metricPacks?: MetricPackDTO[]
+  serviceMethodsIds?: string[]
 }
 
 export interface Edge {
@@ -874,6 +930,7 @@ export interface Error {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -1152,6 +1209,8 @@ export interface Error {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
   correlationId?: string
   detailedMessage?: string
   message?: string
@@ -1199,6 +1258,7 @@ export interface Failure {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -1477,6 +1537,8 @@ export interface Failure {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
   correlationId?: string
   errors?: ValidationError[]
   message?: string
@@ -1745,6 +1807,7 @@ export interface HealthSource {
     | 'Splunk'
     | 'DatadogMetrics'
     | 'DatadogLog'
+    | 'Dynatrace'
     | 'ErrorTracking'
     | 'CustomHealth'
 }
@@ -1763,6 +1826,7 @@ export interface HealthSourceDTO {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   verificationType?: 'TIME_SERIES' | 'LOG'
 }
@@ -1784,6 +1848,7 @@ export interface HostData {
   anomalous?: boolean
   controlData?: number[]
   hostName?: string
+  nearestControlHost?: string
   risk?: 'NO_DATA' | 'NO_ANALYSIS' | 'HEALTHY' | 'OBSERVE' | 'NEED_ATTENTION' | 'UNHEALTHY'
   score?: number
   testData?: number[]
@@ -1999,11 +2064,19 @@ export type LocalConnectorDTO = ConnectorConfigDTO & {
   default?: boolean
 }
 
+export interface LocalTime {
+  hour?: number
+  minute?: number
+  nano?: number
+  second?: number
+}
+
 export interface LogAnalysisCluster {
   accountId?: string
   analysisEndTime?: number
   analysisMinute?: number
   analysisStartTime?: number
+  compressedText?: string[]
   createdAt?: number
   evicted?: boolean
   firstSeenTime?: number
@@ -2191,6 +2264,7 @@ export interface MetricPack {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   identifier?: string
   lastUpdatedAt?: number
@@ -2214,6 +2288,7 @@ export interface MetricPackDTO {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   identifier?: string
   metrics?: MetricDefinitionDTO[]
@@ -2251,7 +2326,7 @@ export interface MetricValidationResponse {
 export interface MonitoredServiceDTO {
   dependencies?: ServiceDependencyDTO[]
   description?: string
-  environmentRef: string
+  environmentRef?: string
   environmentRefList?: string[]
   identifier: string
   name: string
@@ -2299,6 +2374,11 @@ export interface MonitoredServiceWithHealthSources {
 
 export type MonthlyCalenderSpec = CalenderSpec & {
   dayOfMonth: number
+}
+
+export interface NGTag {
+  key: string
+  value: string
 }
 
 export interface NewRelicApplication {
@@ -2637,6 +2717,12 @@ export interface ProgressLog {
   verificationTaskId?: string
 }
 
+export interface ProjectParams {
+  accountIdentifier: string
+  orgIdentifier: string
+  projectIdentifier: string
+}
+
 export type PrometheusConnectorDTO = ConnectorConfigDTO & {
   delegateSelectors?: string[]
   url: string
@@ -2678,7 +2764,7 @@ export interface PrometheusSampleData {
 export type QuarterlyCalenderSpec = CalenderSpec & { [key: string]: any }
 
 export interface QueryDTO {
-  indexes?: string[]
+  indexes: string[]
   name: string
   query: string
   serviceInstanceIdentifier: string
@@ -2709,6 +2795,13 @@ export interface ResponseAppdynamicsMetricDataResponse {
 export interface ResponseBoolean {
   correlationId?: string
   data?: boolean
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseDynatraceServiceDTO {
+  correlationId?: string
+  data?: DynatraceServiceDTO
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -2760,6 +2853,20 @@ export interface ResponseListAppDynamicsFileDefinition {
 export interface ResponseListDatadogDashboardDetail {
   correlationId?: string
   data?: DatadogDashboardDetail[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListDynatraceMetricDTO {
+  correlationId?: string
+  data?: DynatraceMetricDTO[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListDynatraceServiceDTO {
+  correlationId?: string
+  data?: DynatraceServiceDTO[]
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -2848,6 +2955,7 @@ export interface ResponseMessage {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -3126,6 +3234,8 @@ export interface ResponseMessage {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
   exception?: Throwable
   failureTypes?: (
     | 'EXPIRED'
@@ -3136,6 +3246,7 @@ export interface ResponseMessage {
     | 'APPLICATION_ERROR'
     | 'AUTHORIZATION_ERROR'
     | 'TIMEOUT_ERROR'
+    | 'POLICY_EVALUATION_FAILURE'
   )[]
   level?: 'INFO' | 'ERROR'
   message?: string
@@ -3249,6 +3360,13 @@ export interface ResponseSLORiskCountResponse {
 export interface ResponseSetAppdynamicsValidationResponse {
   correlationId?: string
   data?: AppdynamicsValidationResponse[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseSetMetricPackValidationResponse {
+  correlationId?: string
+  data?: MetricPackValidationResponse[]
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -3664,6 +3782,14 @@ export interface RestResponseSLIOnboardingGraphs {
   responseMessages?: ResponseMessage[]
 }
 
+export interface RestResponseSLODebugResponse {
+  metaData?: {
+    [key: string]: { [key: string]: any }
+  }
+  resource?: SLODebugResponse
+  responseMessages?: ResponseMessage[]
+}
+
 export interface RestResponseSLOErrorBudgetResetDTO {
   metaData?: {
     [key: string]: { [key: string]: any }
@@ -3833,7 +3959,7 @@ export interface SLODashboardWidget {
   errorBudgetBurndown: Point[]
   errorBudgetRemaining: number
   errorBudgetRemainingPercentage: number
-  errorBudgetRisk: 'HEALTHY' | 'OBSERVE' | 'NEED_ATTENTION' | 'UNHEALTHY' | 'EXHAUSTED'
+  errorBudgetRisk: 'EXHAUSTED' | 'UNHEALTHY' | 'NEED_ATTENTION' | 'OBSERVE' | 'HEALTHY'
   healthSourceIdentifier: string
   healthSourceName: string
   monitoredServiceIdentifier: string
@@ -3854,6 +3980,13 @@ export interface SLODashboardWidget {
   type: 'Availability' | 'Latency'
 }
 
+export interface SLODebugResponse {
+  projectParams?: ProjectParams
+  serviceLevelIndicatorList?: ServiceLevelIndicator[]
+  serviceLevelObjective?: ServiceLevelObjective
+  sloHealthIndicator?: SLOHealthIndicator
+}
+
 export interface SLOErrorBudgetResetDTO {
   createdAt?: number
   errorBudgetAtReset?: number
@@ -3861,7 +3994,21 @@ export interface SLOErrorBudgetResetDTO {
   reason?: string
   remainingErrorBudgetAtReset?: number
   serviceLevelObjectiveIdentifier?: string
-  validTill?: number
+  validUntil?: number
+}
+
+export interface SLOHealthIndicator {
+  accountId?: string
+  createdAt?: number
+  errorBudgetRemainingPercentage?: number
+  errorBudgetRisk?: 'EXHAUSTED' | 'UNHEALTHY' | 'NEED_ATTENTION' | 'OBSERVE' | 'HEALTHY'
+  lastComputedAt?: number
+  lastUpdatedAt?: number
+  monitoredServiceIdentifier?: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  serviceLevelObjectiveIdentifier?: string
+  uuid?: string
 }
 
 export interface SLORiskCountResponse {
@@ -3941,6 +4088,26 @@ export interface ServiceGuardTxnMetricAnalysisDataDTO {
   shortTermHistory?: number[]
 }
 
+export interface ServiceLevelIndicator {
+  accountId?: string
+  createNextTaskIteration?: number
+  createdAt?: number
+  firstTimeDataCollectionTimeRange?: TimeRange
+  healthSourceIdentifier?: string
+  identifier?: string
+  lastUpdatedAt?: number
+  metricNames?: string[]
+  monitoredServiceIdentifier?: string
+  name?: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  sliMissingDataType?: 'Good' | 'Bad' | 'Ignore'
+  slimetricType?: 'Threshold' | 'Ratio'
+  type?: 'Availability' | 'Latency'
+  uuid?: string
+  version?: number
+}
+
 export interface ServiceLevelIndicatorDTO {
   healthSourceRef?: string
   identifier?: string
@@ -3953,6 +4120,27 @@ export interface ServiceLevelIndicatorDTO {
 export interface ServiceLevelIndicatorSpec {
   spec: SLIMetricSpec
   type?: 'Threshold' | 'Ratio'
+}
+
+export interface ServiceLevelObjective {
+  accountId?: string
+  createdAt?: number
+  desc?: string
+  healthSourceIdentifier?: string
+  identifier?: string
+  lastUpdatedAt?: number
+  monitoredServiceIdentifier?: string
+  name?: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  serviceLevelIndicators?: string[]
+  sloTarget?: SLOTarget
+  sloTargetPercentage?: number
+  tags: NGTag[]
+  type?: 'Availability' | 'Latency'
+  userJourneyIdentifier?: string
+  uuid?: string
+  zoneOffset?: ZoneOffset
 }
 
 export interface ServiceLevelObjectiveDTO {
@@ -4000,7 +4188,7 @@ export interface ServiceSummaryDetails {
 
 export interface SloHealthIndicatorDTO {
   errorBudgetRemainingPercentage?: number
-  errorBudgetRisk?: 'HEALTHY' | 'OBSERVE' | 'NEED_ATTENTION' | 'UNHEALTHY' | 'EXHAUSTED'
+  errorBudgetRisk?: 'EXHAUSTED' | 'UNHEALTHY' | 'NEED_ATTENTION' | 'OBSERVE' | 'HEALTHY'
   serviceLevelObjectiveIdentifier?: string
 }
 
@@ -4086,6 +4274,13 @@ export type TemplateInputsErrorMetadataDTO = ErrorMetadataDTO & {
     [key: string]: TemplateInputsErrorDTO
   }
   errorYaml?: string
+}
+
+export interface TemporalUnit {
+  dateBased?: boolean
+  duration?: Duration
+  durationEstimated?: boolean
+  timeBased?: boolean
 }
 
 export interface TestVerificationBaselineExecutionDTO {
@@ -4193,6 +4388,7 @@ export interface TimeSeriesMetricDataDTO {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   environmentIdentifier?: string
   groupName?: string
@@ -4283,6 +4479,7 @@ export interface TimeSeriesThreshold {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   lastUpdatedAt?: number
   metricGroupName?: string
@@ -4316,6 +4513,7 @@ export interface TimeSeriesThresholdDTO {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   metricGroupName?: string
   metricName?: string
@@ -4365,6 +4563,7 @@ export interface TransactionMetricInfo {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
   nodeRiskCountDTO?: NodeRiskCountDTO
   nodes?: HostData[]
@@ -4410,9 +4609,10 @@ export interface ValidationError {
 }
 
 export type VaultConnectorDTO = ConnectorConfigDTO & {
-  accessType?: 'APP_ROLE' | 'TOKEN' | 'VAULT_AGENT'
+  accessType?: 'APP_ROLE' | 'TOKEN' | 'VAULT_AGENT' | 'AWS_IAM'
   appRoleId?: string
   authToken?: string
+  awsRegion?: string
   basePath?: string
   default?: boolean
   delegateSelectors?: string[]
@@ -4424,8 +4624,11 @@ export type VaultConnectorDTO = ConnectorConfigDTO & {
   secretEngineVersion?: number
   secretId?: string
   sinkPath?: string
+  useAwsIam?: boolean
   useVaultAgent?: boolean
+  vaultAwsIamRole?: string
   vaultUrl?: string
+  xvaultAwsIamServerId?: string
 }
 
 export interface VerifyStepSummary {
@@ -4460,6 +4663,7 @@ export interface YamlSchemaMetadata {
   featureFlags?: string[]
   featureRestrictions?: string[]
   modulesSupported?: ('CD' | 'CI' | 'CV' | 'CF' | 'CE' | 'CORE' | 'PMS' | 'TEMPLATESERVICE')[]
+  namespace?: string
   yamlGroup: YamlGroup
 }
 
@@ -4471,6 +4675,53 @@ export interface YamlSchemaWithDetails {
   schema?: JsonNode
   schemaClassName?: string
   yamlSchemaMetadata?: YamlSchemaMetadata
+}
+
+export interface ZoneOffset {
+  id?: string
+  rules?: ZoneRules
+  totalSeconds?: number
+}
+
+export interface ZoneOffsetTransition {
+  dateTimeAfter?: string
+  dateTimeBefore?: string
+  duration?: Duration
+  gap?: boolean
+  instant?: number
+  offsetAfter?: ZoneOffset
+  offsetBefore?: ZoneOffset
+  overlap?: boolean
+}
+
+export interface ZoneOffsetTransitionRule {
+  dayOfMonthIndicator?: number
+  dayOfWeek?: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+  localTime?: LocalTime
+  midnightEndOfDay?: boolean
+  month?:
+    | 'JANUARY'
+    | 'FEBRUARY'
+    | 'MARCH'
+    | 'APRIL'
+    | 'MAY'
+    | 'JUNE'
+    | 'JULY'
+    | 'AUGUST'
+    | 'SEPTEMBER'
+    | 'OCTOBER'
+    | 'NOVEMBER'
+    | 'DECEMBER'
+  offsetAfter?: ZoneOffset
+  offsetBefore?: ZoneOffset
+  standardOffset?: ZoneOffset
+  timeDefinition?: 'UTC' | 'WALL' | 'STANDARD'
+}
+
+export interface ZoneRules {
+  fixedOffset?: boolean
+  transitionRules?: ZoneOffsetTransitionRule[]
+  transitions?: ZoneOffsetTransition[]
 }
 
 export type ChangeEventDTORequestBody = ChangeEventDTO
@@ -5300,10 +5551,12 @@ export const getDeploymentLogAnalysisResultPromise = (
 
 export interface GetDeploymentMetricsQueryParams {
   accountId: string
-  anomalousMetricsOnly?: boolean
-  hostName?: string
   filter?: string
   healthSources?: string[]
+  anomalousMetricsOnly?: boolean
+  hostNames?: string[]
+  transactionNames?: string[]
+  anomalousNodesOnly?: boolean
   pageNumber?: number
   pageSize?: number
 }
@@ -5873,6 +6126,62 @@ export const getAppDynamicsTiersPromise = (
   getUsingFetch<ResponsePageAppDynamicsTier, Failure | Error, GetAppDynamicsTiersQueryParams, void>(
     getConfig('cv/api'),
     `/appdynamics/tiers`,
+    props,
+    signal
+  )
+
+export interface GetMonitoredServiceChangeTimelineQueryParams {
+  accountId: string
+  orgIdentifier: string
+  projectIdentifier: string
+  environmentIdentifier: string
+  serviceIdentifier: string
+  changeSourceTypes?: ('HarnessCDNextGen' | 'PagerDuty' | 'K8sCluster' | 'HarnessCD')[]
+  searchText?: string
+  duration: 'FOUR_HOURS' | 'TWENTY_FOUR_HOURS' | 'THREE_DAYS' | 'SEVEN_DAYS' | 'THIRTY_DAYS'
+  endTime: number
+}
+
+export type GetMonitoredServiceChangeTimelineProps = Omit<
+  GetProps<RestResponseChangeTimeline, unknown, GetMonitoredServiceChangeTimelineQueryParams, void>,
+  'path'
+>
+
+/**
+ * get monitored service timeline with durationDTO
+ */
+export const GetMonitoredServiceChangeTimeline = (props: GetMonitoredServiceChangeTimelineProps) => (
+  <Get<RestResponseChangeTimeline, unknown, GetMonitoredServiceChangeTimelineQueryParams, void>
+    path={`/change-event/monitored-service-timeline`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetMonitoredServiceChangeTimelineProps = Omit<
+  UseGetProps<RestResponseChangeTimeline, unknown, GetMonitoredServiceChangeTimelineQueryParams, void>,
+  'path'
+>
+
+/**
+ * get monitored service timeline with durationDTO
+ */
+export const useGetMonitoredServiceChangeTimeline = (props: UseGetMonitoredServiceChangeTimelineProps) =>
+  useGet<RestResponseChangeTimeline, unknown, GetMonitoredServiceChangeTimelineQueryParams, void>(
+    `/change-event/monitored-service-timeline`,
+    { base: getConfig('cv/api'), ...props }
+  )
+
+/**
+ * get monitored service timeline with durationDTO
+ */
+export const getMonitoredServiceChangeTimelinePromise = (
+  props: GetUsingFetchProps<RestResponseChangeTimeline, unknown, GetMonitoredServiceChangeTimelineQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<RestResponseChangeTimeline, unknown, GetMonitoredServiceChangeTimelineQueryParams, void>(
+    getConfig('cv/api'),
+    `/change-event/monitored-service-timeline`,
     props,
     signal
   )
@@ -6498,9 +6807,12 @@ export const getDatadogSampleDataPromise = (
 
 export interface GetDeploymentTimeSeriesQueryParams {
   accountId?: string
-  anomalousMetricsOnly?: boolean
-  hostName?: string
   filter?: string
+  healthSources?: string[]
+  anomalousMetricsOnly?: boolean
+  hostNames?: string[]
+  transactionNames?: string[]
+  anomalousNodesOnly?: boolean
   pageNumber?: number
   pageSize?: number
 }
@@ -6583,6 +6895,330 @@ export const getDeploymentTimeSeriesPromise = (
     GetDeploymentTimeSeriesQueryParams,
     GetDeploymentTimeSeriesPathParams
   >(getConfig('cv/api'), `/deployment-time-series-analysis/${verificationJobInstanceId}`, props, signal)
+
+export interface GetDynatraceSampleDataQueryParams {
+  accountId: string
+  orgIdentifier: string
+  projectIdentifier: string
+  connectorIdentifier: string
+  tracingId: string
+}
+
+export type GetDynatraceSampleDataProps = Omit<
+  MutateProps<
+    ResponseListTimeSeriesSampleDTO,
+    Failure | Error,
+    GetDynatraceSampleDataQueryParams,
+    DynatraceSampleDataRequestDTO,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * get dynatrace sample data
+ */
+export const GetDynatraceSampleData = (props: GetDynatraceSampleDataProps) => (
+  <Mutate<
+    ResponseListTimeSeriesSampleDTO,
+    Failure | Error,
+    GetDynatraceSampleDataQueryParams,
+    DynatraceSampleDataRequestDTO,
+    void
+  >
+    verb="POST"
+    path={`/dynatrace/fetch-sample-data`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetDynatraceSampleDataProps = Omit<
+  UseMutateProps<
+    ResponseListTimeSeriesSampleDTO,
+    Failure | Error,
+    GetDynatraceSampleDataQueryParams,
+    DynatraceSampleDataRequestDTO,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * get dynatrace sample data
+ */
+export const useGetDynatraceSampleData = (props: UseGetDynatraceSampleDataProps) =>
+  useMutate<
+    ResponseListTimeSeriesSampleDTO,
+    Failure | Error,
+    GetDynatraceSampleDataQueryParams,
+    DynatraceSampleDataRequestDTO,
+    void
+  >('POST', `/dynatrace/fetch-sample-data`, { base: getConfig('cv/api'), ...props })
+
+/**
+ * get dynatrace sample data
+ */
+export const getDynatraceSampleDataPromise = (
+  props: MutateUsingFetchProps<
+    ResponseListTimeSeriesSampleDTO,
+    Failure | Error,
+    GetDynatraceSampleDataQueryParams,
+    DynatraceSampleDataRequestDTO,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponseListTimeSeriesSampleDTO,
+    Failure | Error,
+    GetDynatraceSampleDataQueryParams,
+    DynatraceSampleDataRequestDTO,
+    void
+  >('POST', getConfig('cv/api'), `/dynatrace/fetch-sample-data`, props, signal)
+
+export interface GetDynatraceMetricDataQueryParams {
+  accountId: string
+  orgIdentifier: string
+  projectIdentifier: string
+  connectorIdentifier: string
+  tracingId: string
+}
+
+export type GetDynatraceMetricDataProps = Omit<
+  MutateProps<
+    ResponseSetMetricPackValidationResponse,
+    Failure | Error,
+    GetDynatraceMetricDataQueryParams,
+    DynatraceValidateDataRequestDTO,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * get metric data for given metric packs
+ */
+export const GetDynatraceMetricData = (props: GetDynatraceMetricDataProps) => (
+  <Mutate<
+    ResponseSetMetricPackValidationResponse,
+    Failure | Error,
+    GetDynatraceMetricDataQueryParams,
+    DynatraceValidateDataRequestDTO,
+    void
+  >
+    verb="POST"
+    path={`/dynatrace/metric-data`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetDynatraceMetricDataProps = Omit<
+  UseMutateProps<
+    ResponseSetMetricPackValidationResponse,
+    Failure | Error,
+    GetDynatraceMetricDataQueryParams,
+    DynatraceValidateDataRequestDTO,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * get metric data for given metric packs
+ */
+export const useGetDynatraceMetricData = (props: UseGetDynatraceMetricDataProps) =>
+  useMutate<
+    ResponseSetMetricPackValidationResponse,
+    Failure | Error,
+    GetDynatraceMetricDataQueryParams,
+    DynatraceValidateDataRequestDTO,
+    void
+  >('POST', `/dynatrace/metric-data`, { base: getConfig('cv/api'), ...props })
+
+/**
+ * get metric data for given metric packs
+ */
+export const getDynatraceMetricDataPromise = (
+  props: MutateUsingFetchProps<
+    ResponseSetMetricPackValidationResponse,
+    Failure | Error,
+    GetDynatraceMetricDataQueryParams,
+    DynatraceValidateDataRequestDTO,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponseSetMetricPackValidationResponse,
+    Failure | Error,
+    GetDynatraceMetricDataQueryParams,
+    DynatraceValidateDataRequestDTO,
+    void
+  >('POST', getConfig('cv/api'), `/dynatrace/metric-data`, props, signal)
+
+export interface GetAllDynatraceServiceMetricsQueryParams {
+  accountId: string
+  connectorIdentifier: string
+  orgIdentifier: string
+  projectIdentifier: string
+  tracingId: string
+}
+
+export type GetAllDynatraceServiceMetricsProps = Omit<
+  GetProps<ResponseListDynatraceMetricDTO, Failure | Error, GetAllDynatraceServiceMetricsQueryParams, void>,
+  'path'
+>
+
+/**
+ * get all dynatrace service metrics
+ */
+export const GetAllDynatraceServiceMetrics = (props: GetAllDynatraceServiceMetricsProps) => (
+  <Get<ResponseListDynatraceMetricDTO, Failure | Error, GetAllDynatraceServiceMetricsQueryParams, void>
+    path={`/dynatrace/metrics`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetAllDynatraceServiceMetricsProps = Omit<
+  UseGetProps<ResponseListDynatraceMetricDTO, Failure | Error, GetAllDynatraceServiceMetricsQueryParams, void>,
+  'path'
+>
+
+/**
+ * get all dynatrace service metrics
+ */
+export const useGetAllDynatraceServiceMetrics = (props: UseGetAllDynatraceServiceMetricsProps) =>
+  useGet<ResponseListDynatraceMetricDTO, Failure | Error, GetAllDynatraceServiceMetricsQueryParams, void>(
+    `/dynatrace/metrics`,
+    { base: getConfig('cv/api'), ...props }
+  )
+
+/**
+ * get all dynatrace service metrics
+ */
+export const getAllDynatraceServiceMetricsPromise = (
+  props: GetUsingFetchProps<
+    ResponseListDynatraceMetricDTO,
+    Failure | Error,
+    GetAllDynatraceServiceMetricsQueryParams,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<ResponseListDynatraceMetricDTO, Failure | Error, GetAllDynatraceServiceMetricsQueryParams, void>(
+    getConfig('cv/api'),
+    `/dynatrace/metrics`,
+    props,
+    signal
+  )
+
+export interface GetDynatraceServiceDetailsQueryParams {
+  accountId: string
+  connectorIdentifier: string
+  orgIdentifier: string
+  projectIdentifier: string
+  serviceId: string
+  tracingId: string
+}
+
+export type GetDynatraceServiceDetailsProps = Omit<
+  GetProps<ResponseDynatraceServiceDTO, Failure | Error, GetDynatraceServiceDetailsQueryParams, void>,
+  'path'
+>
+
+/**
+ * get dynatrace service details
+ */
+export const GetDynatraceServiceDetails = (props: GetDynatraceServiceDetailsProps) => (
+  <Get<ResponseDynatraceServiceDTO, Failure | Error, GetDynatraceServiceDetailsQueryParams, void>
+    path={`/dynatrace/service-details`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetDynatraceServiceDetailsProps = Omit<
+  UseGetProps<ResponseDynatraceServiceDTO, Failure | Error, GetDynatraceServiceDetailsQueryParams, void>,
+  'path'
+>
+
+/**
+ * get dynatrace service details
+ */
+export const useGetDynatraceServiceDetails = (props: UseGetDynatraceServiceDetailsProps) =>
+  useGet<ResponseDynatraceServiceDTO, Failure | Error, GetDynatraceServiceDetailsQueryParams, void>(
+    `/dynatrace/service-details`,
+    { base: getConfig('cv/api'), ...props }
+  )
+
+/**
+ * get dynatrace service details
+ */
+export const getDynatraceServiceDetailsPromise = (
+  props: GetUsingFetchProps<ResponseDynatraceServiceDTO, Failure | Error, GetDynatraceServiceDetailsQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<ResponseDynatraceServiceDTO, Failure | Error, GetDynatraceServiceDetailsQueryParams, void>(
+    getConfig('cv/api'),
+    `/dynatrace/service-details`,
+    props,
+    signal
+  )
+
+export interface GetDynatraceServicesQueryParams {
+  accountId: string
+  connectorIdentifier: string
+  orgIdentifier: string
+  projectIdentifier: string
+  tracingId: string
+}
+
+export type GetDynatraceServicesProps = Omit<
+  GetProps<ResponseListDynatraceServiceDTO, Failure | Error, GetDynatraceServicesQueryParams, void>,
+  'path'
+>
+
+/**
+ * get all dynatrace services
+ */
+export const GetDynatraceServices = (props: GetDynatraceServicesProps) => (
+  <Get<ResponseListDynatraceServiceDTO, Failure | Error, GetDynatraceServicesQueryParams, void>
+    path={`/dynatrace/services`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetDynatraceServicesProps = Omit<
+  UseGetProps<ResponseListDynatraceServiceDTO, Failure | Error, GetDynatraceServicesQueryParams, void>,
+  'path'
+>
+
+/**
+ * get all dynatrace services
+ */
+export const useGetDynatraceServices = (props: UseGetDynatraceServicesProps) =>
+  useGet<ResponseListDynatraceServiceDTO, Failure | Error, GetDynatraceServicesQueryParams, void>(
+    `/dynatrace/services`,
+    { base: getConfig('cv/api'), ...props }
+  )
+
+/**
+ * get all dynatrace services
+ */
+export const getDynatraceServicesPromise = (
+  props: GetUsingFetchProps<ResponseListDynatraceServiceDTO, Failure | Error, GetDynatraceServicesQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<ResponseListDynatraceServiceDTO, Failure | Error, GetDynatraceServicesQueryParams, void>(
+    getConfig('cv/api'),
+    `/dynatrace/services`,
+    props,
+    signal
+  )
 
 export interface GetNamespacesQueryParams {
   accountId: string
@@ -7201,6 +7837,7 @@ export interface GetMetricPacksQueryParams {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
 }
 
@@ -7263,6 +7900,7 @@ export interface SaveMetricPacksQueryParams {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
 }
 
@@ -7754,6 +8392,7 @@ export interface GetMonitoredServiceListQueryParams {
   orgIdentifier?: string
   projectIdentifier?: string
   environmentIdentifier?: string
+  environmentIdentifiers?: string[]
   offset?: number
   pageSize?: number
   filter?: string
@@ -9344,7 +9983,7 @@ export interface GetServiceLevelObjectivesQueryParams {
   identifiers?: string[]
   sliTypes?: ('Availability' | 'Latency')[]
   targetTypes?: ('Rolling' | 'Calender')[]
-  errorBudgetRisks?: ('HEALTHY' | 'OBSERVE' | 'NEED_ATTENTION' | 'UNHEALTHY' | 'EXHAUSTED')[]
+  errorBudgetRisks?: ('EXHAUSTED' | 'UNHEALTHY' | 'NEED_ATTENTION' | 'OBSERVE' | 'HEALTHY')[]
 }
 
 export type GetServiceLevelObjectivesProps = Omit<
@@ -9481,7 +10120,7 @@ export interface GetServiceLevelObjectivesRiskCountQueryParams {
   monitoredServiceIdentifier?: string
   sliTypes?: ('Availability' | 'Latency')[]
   targetTypes?: ('Rolling' | 'Calender')[]
-  errorBudgetRisks?: ('HEALTHY' | 'OBSERVE' | 'NEED_ATTENTION' | 'UNHEALTHY' | 'EXHAUSTED')[]
+  errorBudgetRisks?: ('EXHAUSTED' | 'UNHEALTHY' | 'NEED_ATTENTION' | 'OBSERVE' | 'HEALTHY')[]
 }
 
 export type GetServiceLevelObjectivesRiskCountProps = Omit<
@@ -9536,7 +10175,7 @@ export interface GetSLODashboardWidgetsQueryParams {
   monitoredServiceIdentifier?: string
   sliTypes?: ('Availability' | 'Latency')[]
   targetTypes?: ('Rolling' | 'Calender')[]
-  errorBudgetRisks?: ('HEALTHY' | 'OBSERVE' | 'NEED_ATTENTION' | 'UNHEALTHY' | 'EXHAUSTED')[]
+  errorBudgetRisks?: ('EXHAUSTED' | 'UNHEALTHY' | 'NEED_ATTENTION' | 'OBSERVE' | 'HEALTHY')[]
   pageNumber?: number
   pageSize?: number
 }
@@ -10442,6 +11081,7 @@ export interface GetAnomalousMetricDashboardDataQueryParams {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
 }
 
@@ -10518,6 +11158,7 @@ export interface GetMetricDataQueryParams {
     | 'DATADOG_METRICS'
     | 'DATADOG_LOG'
     | 'ERROR_TRACKING'
+    | 'DYNATRACE'
     | 'CUSTOM_HEALTH'
 }
 
@@ -11183,12 +11824,100 @@ export const getVerifyStepTransactionNamesPromise = (
     GetVerifyStepTransactionNamesPathParams
   >(getConfig('cv/api'), `/verify-step/${verifyStepExecutionId}/all-transaction-names`, props, signal)
 
+export interface GetVerifyStepDeploymentActivitySummaryQueryParams {
+  accountId: string
+}
+
+export interface GetVerifyStepDeploymentActivitySummaryPathParams {
+  verifyStepExecutionId: string
+}
+
+export type GetVerifyStepDeploymentActivitySummaryProps = Omit<
+  GetProps<
+    RestResponseDeploymentActivitySummaryDTO,
+    unknown,
+    GetVerifyStepDeploymentActivitySummaryQueryParams,
+    GetVerifyStepDeploymentActivitySummaryPathParams
+  >,
+  'path'
+> &
+  GetVerifyStepDeploymentActivitySummaryPathParams
+
+/**
+ * get summary of deployment activity
+ */
+export const GetVerifyStepDeploymentActivitySummary = ({
+  verifyStepExecutionId,
+  ...props
+}: GetVerifyStepDeploymentActivitySummaryProps) => (
+  <Get<
+    RestResponseDeploymentActivitySummaryDTO,
+    unknown,
+    GetVerifyStepDeploymentActivitySummaryQueryParams,
+    GetVerifyStepDeploymentActivitySummaryPathParams
+  >
+    path={`/verify-step/${verifyStepExecutionId}/deployment-activity-summary`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetVerifyStepDeploymentActivitySummaryProps = Omit<
+  UseGetProps<
+    RestResponseDeploymentActivitySummaryDTO,
+    unknown,
+    GetVerifyStepDeploymentActivitySummaryQueryParams,
+    GetVerifyStepDeploymentActivitySummaryPathParams
+  >,
+  'path'
+> &
+  GetVerifyStepDeploymentActivitySummaryPathParams
+
+/**
+ * get summary of deployment activity
+ */
+export const useGetVerifyStepDeploymentActivitySummary = ({
+  verifyStepExecutionId,
+  ...props
+}: UseGetVerifyStepDeploymentActivitySummaryProps) =>
+  useGet<
+    RestResponseDeploymentActivitySummaryDTO,
+    unknown,
+    GetVerifyStepDeploymentActivitySummaryQueryParams,
+    GetVerifyStepDeploymentActivitySummaryPathParams
+  >(
+    (paramsInPath: GetVerifyStepDeploymentActivitySummaryPathParams) =>
+      `/verify-step/${paramsInPath.verifyStepExecutionId}/deployment-activity-summary`,
+    { base: getConfig('cv/api'), pathParams: { verifyStepExecutionId }, ...props }
+  )
+
+/**
+ * get summary of deployment activity
+ */
+export const getVerifyStepDeploymentActivitySummaryPromise = (
+  {
+    verifyStepExecutionId,
+    ...props
+  }: GetUsingFetchProps<
+    RestResponseDeploymentActivitySummaryDTO,
+    unknown,
+    GetVerifyStepDeploymentActivitySummaryQueryParams,
+    GetVerifyStepDeploymentActivitySummaryPathParams
+  > & { verifyStepExecutionId: string },
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<
+    RestResponseDeploymentActivitySummaryDTO,
+    unknown,
+    GetVerifyStepDeploymentActivitySummaryQueryParams,
+    GetVerifyStepDeploymentActivitySummaryPathParams
+  >(getConfig('cv/api'), `/verify-step/${verifyStepExecutionId}/deployment-activity-summary`, props, signal)
+
 export interface GetVerifyStepDeploymentMetricsQueryParams {
   accountId: string
   filter?: string
   healthSources?: string[]
   anomalousMetricsOnly?: boolean
-  hostName?: string
   hostNames?: string[]
   transactionNames?: string[]
   anomalousNodesOnly?: boolean
@@ -11280,3 +12009,89 @@ export const getVerifyStepDeploymentMetricsPromise = (
     GetVerifyStepDeploymentMetricsQueryParams,
     GetVerifyStepDeploymentMetricsPathParams
   >(getConfig('cv/api'), `/verify-step/${verifyStepExecutionId}/deployment-timeseries-data`, props, signal)
+
+export interface GetVerifyStepHealthSourcesQueryParams {
+  accountId: string
+}
+
+export interface GetVerifyStepHealthSourcesPathParams {
+  verifyStepExecutionId: string
+}
+
+export type GetVerifyStepHealthSourcesProps = Omit<
+  GetProps<
+    RestResponseSetHealthSourceDTO,
+    unknown,
+    GetVerifyStepHealthSourcesQueryParams,
+    GetVerifyStepHealthSourcesPathParams
+  >,
+  'path'
+> &
+  GetVerifyStepHealthSourcesPathParams
+
+/**
+ * get health sources  for an activity
+ */
+export const GetVerifyStepHealthSources = ({ verifyStepExecutionId, ...props }: GetVerifyStepHealthSourcesProps) => (
+  <Get<
+    RestResponseSetHealthSourceDTO,
+    unknown,
+    GetVerifyStepHealthSourcesQueryParams,
+    GetVerifyStepHealthSourcesPathParams
+  >
+    path={`/verify-step/${verifyStepExecutionId}/healthSources`}
+    base={getConfig('cv/api')}
+    {...props}
+  />
+)
+
+export type UseGetVerifyStepHealthSourcesProps = Omit<
+  UseGetProps<
+    RestResponseSetHealthSourceDTO,
+    unknown,
+    GetVerifyStepHealthSourcesQueryParams,
+    GetVerifyStepHealthSourcesPathParams
+  >,
+  'path'
+> &
+  GetVerifyStepHealthSourcesPathParams
+
+/**
+ * get health sources  for an activity
+ */
+export const useGetVerifyStepHealthSources = ({
+  verifyStepExecutionId,
+  ...props
+}: UseGetVerifyStepHealthSourcesProps) =>
+  useGet<
+    RestResponseSetHealthSourceDTO,
+    unknown,
+    GetVerifyStepHealthSourcesQueryParams,
+    GetVerifyStepHealthSourcesPathParams
+  >(
+    (paramsInPath: GetVerifyStepHealthSourcesPathParams) =>
+      `/verify-step/${paramsInPath.verifyStepExecutionId}/healthSources`,
+    { base: getConfig('cv/api'), pathParams: { verifyStepExecutionId }, ...props }
+  )
+
+/**
+ * get health sources  for an activity
+ */
+export const getVerifyStepHealthSourcesPromise = (
+  {
+    verifyStepExecutionId,
+    ...props
+  }: GetUsingFetchProps<
+    RestResponseSetHealthSourceDTO,
+    unknown,
+    GetVerifyStepHealthSourcesQueryParams,
+    GetVerifyStepHealthSourcesPathParams
+  > & { verifyStepExecutionId: string },
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<
+    RestResponseSetHealthSourceDTO,
+    unknown,
+    GetVerifyStepHealthSourcesQueryParams,
+    GetVerifyStepHealthSourcesPathParams
+  >(getConfig('cv/api'), `/verify-step/${verifyStepExecutionId}/healthSources`, props, signal)

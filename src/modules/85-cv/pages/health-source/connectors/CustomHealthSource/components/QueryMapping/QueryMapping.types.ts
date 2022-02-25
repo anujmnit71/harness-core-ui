@@ -9,8 +9,9 @@ import type { TimeSeriesSampleDTO } from 'services/cv'
 import type { MapCustomHealthToService } from '../../CustomHealthSource.types'
 
 export interface QueryMappingInterface {
-  formikSetFieldValue: any
-  formikValues: MapCustomHealthToService | undefined
+  formValue: MapCustomHealthToService
+  onFieldChange: (field: string, value: any) => void
+  onValueChange: (value: any) => void
   connectorIdentifier: string
   onFetchRecordsSuccess: (data: { [key: string]: { [key: string]: any } }) => void
   isQueryExecuted: boolean

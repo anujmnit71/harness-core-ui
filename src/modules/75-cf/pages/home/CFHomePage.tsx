@@ -8,7 +8,8 @@
 import React, { useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { pick } from 'lodash-es'
-import { PageError, PageSpinner } from '@wings-software/uicore'
+import { PageError } from '@wings-software/uicore'
+import { ContainerSpinner } from '@common/components/ContainerSpinner/ContainerSpinner'
 import { useStrings } from 'framework/strings'
 import { HomePageTemplate } from '@projects-orgs/pages/HomePageTemplate/HomePageTemplate'
 import { TrialInProgressTemplate } from '@rbac/components/TrialHomePageTemplate/TrialInProgressTemplate'
@@ -28,9 +29,11 @@ import { TrialType } from '@pipeline/components/TrialModalTemplate/trialModalUti
 import { useGetProjectCreateSuccessHandler, useGetSignUpHandler } from './cfHomeUtils'
 import bgImageURL from './ff.svg'
 
+import css from './CFHomePage.module.scss'
+
 const CFHomePage: React.FC = () => {
   const { getString } = useStrings()
-  const { accountId } = useParams<AccountPathProps>()
+  const { accountId: accountIdentifier } = useParams<AccountPathProps>()
   const { currentUserInfo, selectedProject } = useAppStore()
   const { NG_LICENSES_ENABLED } = useFeatureFlags()
   const { licenseInformation, updateLicenseStore } = useLicenseStore()
@@ -38,7 +41,7 @@ const CFHomePage: React.FC = () => {
   const module = moduleType.toLowerCase() as Module
 
   const { accounts } = currentUserInfo
-  const createdFromNG = accounts?.find(account => account.uuid === accountId)?.createdFromNG
+  const createdFromNG = accounts?.find(account => account.uuid === accountIdentifier)?.createdFromNG
 
   const {
     data: licenseData,
@@ -47,7 +50,7 @@ const CFHomePage: React.FC = () => {
     loading: gettingLicense
   } = useGetLicensesAndSummary({
     queryParams: { moduleType },
-    accountIdentifier: accountId
+    accountIdentifier
   })
 
   // get project lists via accountId
@@ -58,7 +61,7 @@ const CFHomePage: React.FC = () => {
     refetch: refetchProject
   } = useGetProjectList({
     queryParams: {
-      accountIdentifier: accountId,
+      accountIdentifier,
       pageSize: 1
     }
   })
@@ -72,7 +75,7 @@ const CFHomePage: React.FC = () => {
           pathname: routes.toCFOnboarding({
             orgIdentifier: projectData?.orgIdentifier || '',
             projectIdentifier: projectData.identifier,
-            accountId
+            accountId: accountIdentifier
           })
         })
       }
@@ -133,7 +136,7 @@ const CFHomePage: React.FC = () => {
   const projectCreateSuccessHandler = useGetProjectCreateSuccessHandler()
 
   if (gettingLicense || gettingProjects) {
-    return <PageSpinner />
+    return <ContainerSpinner className={css.homepageSpinner} />
   }
 
   if (licenseError) {
@@ -149,7 +152,7 @@ const CFHomePage: React.FC = () => {
   if (showTrialPages && licenseData?.status === 'SUCCESS' && !licenseData.data) {
     history.push(
       routes.toModuleTrialHome({
-        accountId,
+        accountId: accountIdentifier,
         module
       })
     )
@@ -171,7 +174,7 @@ const CFHomePage: React.FC = () => {
       routes.toCFFeatureFlags({
         projectIdentifier: selectedProject.identifier,
         orgIdentifier: selectedProject.orgIdentifier || '',
-        accountId
+        accountId: accountIdentifier
       })
     )
   }

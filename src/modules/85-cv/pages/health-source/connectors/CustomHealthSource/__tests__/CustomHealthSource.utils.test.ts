@@ -8,9 +8,7 @@
 import {
   validateMappings,
   transformCustomHealthSourceToSetupSource,
-  transformCustomSetupSourceToHealthSource,
-  initializeSelectedMetricsMap,
-  initializeCreatedMetrics
+  transformCustomSetupSourceToHealthSource
 } from '../CustomHealthSource.utils'
 import {
   customHealthSourceData,
@@ -44,22 +42,27 @@ describe('Validate utils', () => {
     expect(validateMappings(val => val, ['CustomHealth Metric 101'], 0, noErrorValidatation as any)).toEqual({})
   })
 
-  test('should validate createAppDFormData', () => {
-    const { selectedMetric, mappedMetrics } = initializeSelectedMetricsMap(
-      'CustomHealth Metric',
-      transformHealthSourceMap
-    )
-    expect(selectedMetric).toEqual('CustomHealth Metric 101')
-    expect(mappedMetrics).toEqual(transformHealthSourceMap)
-
-    const { createdMetrics, selectedMetricIndex } = initializeCreatedMetrics(
-      'CustomHealth Metric',
-      selectedMetric,
-      mappedMetrics
-    )
-
-    expect(createdMetrics).toEqual(['CustomHealth Metric 101'])
-    expect(selectedMetricIndex).toEqual(0)
+  test('should validate queryType and requestMethodAreThere', () => {
+    expect(
+      validateMappings(val => val, ['CustomHealth Metric 101'], 0, {
+        ...noErrorValidatation,
+        pathURL: 'solo-dolo?endTime=2234&startTime=243',
+        requestMethod: null,
+        queryType: null,
+        endTime: {
+          placeholder: 'end_time',
+          timestampFormat: 'MILLISECONDS'
+        },
+        startTime: {
+          placeholder: 'start_time',
+          timestampFormat: 'MILLISECONDS'
+        }
+      } as any)
+    ).toEqual({
+      pathURL: 'cv.customHealthSource.Querymapping.validation.pathWithoutPlaceholder',
+      queryType: 'cv.customHealthSource.Querymapping.validation.queryType',
+      requestMethod: 'connectors.customHealth.requestMethod'
+    })
   })
 
   test('Validate end and start time placeholder', async () => {

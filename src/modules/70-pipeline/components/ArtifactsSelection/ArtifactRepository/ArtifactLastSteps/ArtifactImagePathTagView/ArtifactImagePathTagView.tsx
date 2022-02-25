@@ -15,7 +15,7 @@ import {
   SelectOption,
   Text
 } from '@wings-software/uicore'
-import { defaultTo, isNil, get, isEmpty, memoize } from 'lodash-es'
+import { isNil, get, memoize } from 'lodash-es'
 import type { GetDataError } from 'restful-react'
 import { ConfigureOptions } from '@common/components/ConfigureOptions/ConfigureOptions'
 import { useStrings } from 'framework/strings'
@@ -28,7 +28,7 @@ import { helperTextData, resetTag } from '../../../ArtifactUtils'
 import type { ArtifactImagePathTagViewProps } from '../../../ArtifactInterface'
 import css from '../../ArtifactConnector.module.scss'
 
-const NoTagResults = ({ tagError }: { tagError: GetDataError<Failure | Error> | null }): JSX.Element => {
+function NoTagResults({ tagError }: { tagError: GetDataError<Failure | Error> | null }): JSX.Element {
   const { getString } = useStrings()
 
   return (
@@ -39,7 +39,7 @@ const NoTagResults = ({ tagError }: { tagError: GetDataError<Failure | Error> | 
     </span>
   )
 }
-const ArtifactImagePathTagView = ({
+function ArtifactImagePathTagView({
   selectedArtifact,
   formik,
   buildDetailsLoading,
@@ -52,7 +52,7 @@ const ArtifactImagePathTagView = ({
   fetchTags,
   tagError,
   tagDisabled
-}: ArtifactImagePathTagViewProps): React.ReactElement => {
+}: ArtifactImagePathTagViewProps): React.ReactElement {
   const { getString } = useStrings()
 
   const getSelectItems = useCallback(() => {
@@ -128,7 +128,7 @@ const ArtifactImagePathTagView = ({
         <div className={css.imagePathContainer}>
           <FormInput.MultiTypeInput
             selectItems={tags}
-            disabled={defaultTo(tagDisabled, isEmpty(formik.values?.imagePath))}
+            disabled={tagDisabled}
             helperText={
               getMultiTypeFromValue(formik.values?.tag) === MultiTypeInputType.FIXED &&
               getHelpeTextForTags(helperTextData(selectedArtifact, formik, connectorIdValue), getString)

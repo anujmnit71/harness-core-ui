@@ -66,6 +66,7 @@ type CustomColumn<T extends Record<string, any>> = Column<T> & {
   refetchPipeline?: () => void
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderColumnMenu: Renderer<CellProps<PipelineDTO>> = ({ row, column }) => {
   const data = row.original
   const [menuOpen, setMenuOpen] = React.useState(false)
@@ -131,7 +132,7 @@ const RenderColumnMenu: Renderer<CellProps<PipelineDTO>> = ({ row, column }) => 
               e.stopPropagation()
               runPipeline()
             }}
-            featuresProps={getFeaturePropsForRunPipelineButton(data.modules)}
+            featuresProps={getFeaturePropsForRunPipelineButton({ modules: data.modules, getString })}
           />
 
           <Menu.Item
@@ -178,6 +179,7 @@ const RenderColumnMenu: Renderer<CellProps<PipelineDTO>> = ({ row, column }) => 
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderColumnPipeline: Renderer<CellProps<PipelineDTO>> = ({ row }) => {
   const data = row.original
   const { getString } = useStrings()
@@ -234,6 +236,7 @@ const RenderColumnPipeline: Renderer<CellProps<PipelineDTO>> = ({ row }) => {
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderActivity: Renderer<CellProps<PipelineDTO>> = ({ row, column }) => {
   const data = row.original
 
@@ -281,6 +284,7 @@ const RenderActivity: Renderer<CellProps<PipelineDTO>> = ({ row, column }) => {
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderLastRun: Renderer<CellProps<PipelineDTO>> = ({ row }) => {
   const data = row.original
   const { getString } = useStrings()
@@ -300,6 +304,7 @@ const RenderLastRun: Renderer<CellProps<PipelineDTO>> = ({ row }) => {
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderRunPipeline: Renderer<CellProps<PipelineDTO>> = ({ row }): JSX.Element => {
   const rowdata = row.original
 
@@ -332,7 +337,7 @@ const RenderRunPipeline: Renderer<CellProps<PipelineDTO>> = ({ row }): JSX.Eleme
         },
         permission: PermissionIdentifier.EXECUTE_PIPELINE
       }}
-      featuresProps={getFeaturePropsForRunPipelineButton(row.original.modules)}
+      featuresProps={getFeaturePropsForRunPipelineButton({ modules: row.original.modules, getString })}
       onClick={e => {
         e.stopPropagation()
         runPipeline()
@@ -341,7 +346,7 @@ const RenderRunPipeline: Renderer<CellProps<PipelineDTO>> = ({ row }): JSX.Eleme
   )
 }
 
-export const PipelineListView: React.FC<PipelineListViewProps> = ({
+export function PipelineListView({
   data,
   goToPipelineDetail,
   gotoPage,
@@ -349,7 +354,7 @@ export const PipelineListView: React.FC<PipelineListViewProps> = ({
   goToPipelineStudio,
   onDeletePipeline,
   onDelete
-}): JSX.Element => {
+}: PipelineListViewProps): React.ReactElement {
   const { getString } = useStrings()
   const { isGitSyncEnabled } = useAppStore()
   const columns: CustomColumn<PipelineDTO>[] = React.useMemo(

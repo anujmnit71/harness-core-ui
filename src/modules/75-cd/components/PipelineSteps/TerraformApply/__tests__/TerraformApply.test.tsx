@@ -6,12 +6,11 @@
  */
 
 import React from 'react'
-import { act, fireEvent, render, waitFor, getByText as getByTextBody } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import { RUNTIME_INPUT_VALUE } from '@wings-software/uicore'
 import { StepFormikRef, StepViewType } from '@pipeline/components/AbstractSteps/Step'
 import { StepType } from '@pipeline/components/PipelineSteps/PipelineStepInterface'
 import { factory, TestStepWidget } from '@pipeline/components/PipelineSteps/Steps/__tests__/StepTestUtil'
-import { findDialogContainer } from '@common/utils/testUtils'
 
 import { TerraformApply } from '../TerraformApply'
 
@@ -93,7 +92,7 @@ describe('Test TerraformApply', () => {
   test('should be able to edit inline config', async () => {
     const ref = React.createRef<StepFormikRef<unknown>>()
     const onUpdate = jest.fn()
-    const { container } = render(
+    const { findByTestId } = render(
       <TestStepWidget
         initialValues={{
           type: 'TerraformApply',
@@ -131,7 +130,7 @@ describe('Test TerraformApply', () => {
                       type: 'Remote',
                       store: {
                         spec: {
-                          connectorRef: 'test',
+                          connectorRef: 'test connector ref',
                           branch: 'test-brancg',
                           folderPath: 'testfolder'
                         }
@@ -149,12 +148,20 @@ describe('Test TerraformApply', () => {
         onUpdate={onUpdate}
       />
     )
-    const editIcon = container.querySelector('[data-name="config-edit"]')
+    const editIcon = await findByTestId('editConfigButton')
     fireEvent.click(editIcon!)
-    const dialog = findDialogContainer() as HTMLElement
 
-    await waitFor(() => getByTextBody(dialog, 'pipelineSteps.configFiles'))
-    expect(dialog).toMatchSnapshot()
+    const gitConnector = await findByTestId('varStore-Git')
+    expect(gitConnector).toBeInTheDocument()
+
+    const gitlabConnector = await findByTestId('varStore-GitLab')
+    expect(gitlabConnector).toBeInTheDocument()
+
+    const githubbConnector = await findByTestId('varStore-Github')
+    expect(githubbConnector).toBeInTheDocument()
+
+    const bitBucketConnector = await findByTestId('varStore-Bitbucket')
+    expect(bitBucketConnector).toBeInTheDocument()
   })
 
   test('should submit form for inline config', async () => {
@@ -509,6 +516,209 @@ describe('Test TerraformApply', () => {
         stepViewType={StepViewType.InputVariable}
       />
     )
+    expect(container).toMatchSnapshot()
+  })
+
+  test('should trigger validation error for fixed value', async () => {
+    const ref = React.createRef<StepFormikRef<unknown>>()
+    const onUpdate = jest.fn()
+    const { container, getByText } = render(
+      <TestStepWidget
+        initialValues={{
+          type: 'TerraformApply',
+          name: 'Test A',
+          identifier: 'Test_A',
+          timeout: '10m',
+          spec: {
+            provisionerIdentifier: '',
+            configuration: {
+              type: 'Inline',
+              spec: {
+                configFiles: {
+                  store: {
+                    spec: {
+                      folderPath: 'test',
+                      connectorRef: {
+                        label: 'test',
+                        value: 'test',
+                        scope: 'account',
+
+                        connector: { type: 'Git' }
+                      }
+                    }
+                  }
+                },
+                varFiles: [
+                  {
+                    varFile: {
+                      type: 'Inline',
+                      spec: {
+                        content: 'test'
+                      }
+                    }
+                  },
+                  {
+                    varFile: {
+                      type: 'Remote',
+                      store: {
+                        spec: {
+                          connectorRef: 'test',
+                          branch: 'test-brancg',
+                          folderPath: 'testfolder'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }}
+        type={StepType.TerraformApply}
+        stepViewType={StepViewType.Edit}
+        ref={ref}
+        onUpdate={onUpdate}
+      />
+    )
+    await act(() => ref.current?.submitForm())
+    const errMsg = getByText('common.validation.provisionerIdentifierIsRequired')
+    expect(errMsg).toBeInTheDocument()
+    expect(container).toMatchSnapshot()
+  })
+
+  test('should trigger validation error for invalid fixed value', async () => {
+    const ref = React.createRef<StepFormikRef<unknown>>()
+    const onUpdate = jest.fn()
+    const { container, getByText } = render(
+      <TestStepWidget
+        initialValues={{
+          type: 'TerraformApply',
+          name: 'Test A',
+          identifier: 'Test_A',
+          timeout: '10m',
+          spec: {
+            provisionerIdentifier: '$%',
+            configuration: {
+              type: 'Inline',
+              spec: {
+                configFiles: {
+                  store: {
+                    spec: {
+                      folderPath: 'test',
+                      connectorRef: {
+                        label: 'test',
+                        value: 'test',
+                        scope: 'account',
+
+                        connector: { type: 'Git' }
+                      }
+                    }
+                  }
+                },
+                varFiles: [
+                  {
+                    varFile: {
+                      type: 'Inline',
+                      spec: {
+                        content: 'test'
+                      }
+                    }
+                  },
+                  {
+                    varFile: {
+                      type: 'Remote',
+                      store: {
+                        spec: {
+                          connectorRef: 'test',
+                          branch: 'test-brancg',
+                          folderPath: 'testfolder'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }}
+        type={StepType.TerraformApply}
+        stepViewType={StepViewType.Edit}
+        ref={ref}
+        onUpdate={onUpdate}
+      />
+    )
+    await act(() => ref.current?.submitForm())
+    const errMsg = getByText('common.validation.provisionerIdentifierPatternIsNotValid')
+    expect(errMsg).toBeInTheDocument()
+    expect(container).toMatchSnapshot()
+  })
+
+  test('should trigger validation error for expression value', async () => {
+    const ref = React.createRef<StepFormikRef<unknown>>()
+    const onUpdate = jest.fn()
+    const { container, getByText, getByPlaceholderText } = render(
+      <TestStepWidget
+        initialValues={{
+          type: 'TerraformApply',
+          name: 'Test A',
+          identifier: 'Test_A',
+          timeout: '10m',
+          spec: {
+            provisionerIdentifier: '<+service.test.id>',
+            configuration: {
+              type: 'Inline',
+              spec: {
+                configFiles: {
+                  store: {
+                    spec: {
+                      folderPath: 'test',
+                      connectorRef: {
+                        label: 'test',
+                        value: 'test',
+                        scope: 'account',
+
+                        connector: { type: 'Git' }
+                      }
+                    }
+                  }
+                },
+                varFiles: [
+                  {
+                    varFile: {
+                      type: 'Inline',
+                      spec: {
+                        content: 'test'
+                      }
+                    }
+                  },
+                  {
+                    varFile: {
+                      type: 'Remote',
+                      store: {
+                        spec: {
+                          connectorRef: 'test',
+                          branch: 'test-brancg',
+                          folderPath: 'testfolder'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }}
+        type={StepType.TerraformApply}
+        stepViewType={StepViewType.Edit}
+        ref={ref}
+        onUpdate={onUpdate}
+      />
+    )
+    const input = getByPlaceholderText('<+expression>')
+    fireEvent.change(input!, { target: { value: '' } })
+    await act(() => ref.current?.submitForm())
+    const errMsg = getByText('common.validation.provisionerIdentifierIsRequired')
+    expect(errMsg).toBeInTheDocument()
     expect(container).toMatchSnapshot()
   })
 })

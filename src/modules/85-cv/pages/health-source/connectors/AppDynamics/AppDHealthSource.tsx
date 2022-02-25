@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react'
-import { flatten, noop } from 'lodash-es'
+import { noop } from 'lodash-es'
 import { useParams } from 'react-router-dom'
 import {
   Color,
@@ -36,6 +36,7 @@ import ValidationStatus from '@cv/pages/components/ValidationStatus/ValidationSt
 import MetricsVerificationModal from '@cv/components/MetricsVerificationModal/MetricsVerificationModal'
 import { StatusOfValidation } from '@cv/pages/components/ValidationStatus/ValidationStatus.constants'
 import { getErrorMessage } from '@cv/utils/CommonUtils'
+import useGroupedSideNaveHook from '@cv/hooks/GroupedSideNaveHook/useGroupedSideNaveHook'
 import {
   getOptions,
   getInputGroupProps,
@@ -43,25 +44,20 @@ import {
   createMetricDataFormik
 } from '../MonitoredServiceConnector.utils'
 import { HealthSoureSupportedConnectorTypes } from '../MonitoredServiceConnector.constants'
-import AppDMappedMetric from './Components/AppDMappedMetric/AppDMappedMetric'
 import {
   createAppDFormData,
-  initializeCreatedMetrics,
+  initAppDCustomFormValue,
   initializeNonCustomFields,
-  initializeSelectedMetricsMap,
   setAppDynamicsApplication,
   setAppDynamicsTier,
   submitData,
   validateMapping
 } from './AppDHealthSource.utils'
-import type {
-  AppDynamicsData,
-  CreatedMetricsWithSelectedIndex,
-  AppDynamicsFomikFormInterface,
-  SelectedAndMappedMetrics
-} from './AppDHealthSource.types'
+import type { AppDynamicsData, AppDynamicsFomikFormInterface } from './AppDHealthSource.types'
 import MetricPackCustom from '../MetricPackCustom'
-import type { GroupedCreatedMetrics } from './Components/AppDMappedMetric/AppDMappedMetric.types'
+import CustomMetric from '../../common/CustomMetric/CustomMetric'
+import AppDCustomMetricForm from './Components/AppDCustomMetricForm/AppDCustomMetricForm'
+
 import css from './AppDHealthSource.module.scss'
 
 export default function AppDMonitoredSource({
@@ -199,22 +195,20 @@ export default function AppDMonitoredSource({
 
   const [showCustomMetric, setShowCustomMetric] = useState(!!Array.from(appDynamicsData?.mappedServicesAndEnvs)?.length)
 
-  const [{ selectedMetric, mappedMetrics }, setMappedMetrics] = useState<SelectedAndMappedMetrics>(
-    initializeSelectedMetricsMap(
-      getString('cv.monitoringSources.appD.defaultAppDMetricName'),
-      appDynamicsData?.mappedServicesAndEnvs
-    )
-  )
-
-  const [{ createdMetrics, selectedMetricIndex }, setCreatedMetrics] = useState<CreatedMetricsWithSelectedIndex>(
-    initializeCreatedMetrics(
-      getString('cv.monitoringSources.appD.defaultAppDMetricName'),
-      selectedMetric,
-      mappedMetrics
-    )
-  )
-
-  const [groupedCreatedMetrics, setGroupedCreatedMetrics] = useState<string[]>([])
+  const {
+    createdMetrics,
+    mappedMetrics,
+    selectedMetric,
+    groupedCreatedMetrics,
+    groupedCreatedMetricsList,
+    setMappedMetrics,
+    setCreatedMetrics,
+    setGroupedCreatedMetrics
+  } = useGroupedSideNaveHook({
+    defaultCustomMetricName: getString('cv.monitoringSources.appD.defaultAppDMetricName'),
+    initCustomMetricData: initAppDCustomFormValue(),
+    mappedServicesAndEnvs: appDynamicsData?.mappedServicesAndEnvs
+  })
 
   const [nonCustomFeilds, setNonCustomFeilds] = useState(initializeNonCustomFields(appDynamicsData))
 
@@ -229,11 +223,23 @@ export default function AppDMonitoredSource({
       formName={'appDHealthSourceform'}
       isInitialValid={(args: any) =>
         Object.keys(
-          validateMapping(args.initialValues, groupedCreatedMetrics, selectedMetricIndex, getString, mappedMetrics)
+          validateMapping({
+            values: args.initialValues,
+            createdMetrics: groupedCreatedMetricsList,
+            selectedMetricIndex: groupedCreatedMetricsList.indexOf(selectedMetric),
+            getString,
+            mappedMetrics
+          })
         ).length === 0
       }
       validate={values => {
-        return validateMapping(values, groupedCreatedMetrics, selectedMetricIndex, getString, mappedMetrics)
+        return validateMapping({
+          values,
+          createdMetrics: groupedCreatedMetricsList,
+          selectedMetricIndex: groupedCreatedMetricsList.indexOf(selectedMetric),
+          getString,
+          mappedMetrics
+        })
       }}
       initialValues={initPayload}
       onSubmit={noop}
@@ -360,23 +366,31 @@ export default function AppDMonitoredSource({
               </Layout.Vertical>
             </CardWithOuterTitle>
             {showCustomMetric ? (
-              <AppDMappedMetric
-                isValidInput={formik.isValid}
-                setMappedMetrics={setMappedMetrics}
-                selectedMetric={selectedMetric}
-                formikValues={formik.values}
-                formikSetField={formik.setFieldValue}
-                connectorIdentifier={connectorIdentifier}
-                mappedMetrics={mappedMetrics}
-                createdMetrics={createdMetrics}
-                setCreatedMetrics={setCreatedMetrics}
-                updateGroupedCreatedMetrics={(data: GroupedCreatedMetrics) => {
-                  const vv = flatten(Object.values(data))
-                    .map(item => item.metricName)
-                    .filter(item => Boolean(item))
-                  setGroupedCreatedMetrics(vv as string[])
-                }}
-              />
+              <>
+                <CustomMetric
+                  isValidInput={formik.isValid}
+                  setMappedMetrics={setMappedMetrics}
+                  selectedMetric={selectedMetric}
+                  formikValues={formik.values}
+                  mappedMetrics={mappedMetrics}
+                  createdMetrics={createdMetrics}
+                  groupedCreatedMetrics={groupedCreatedMetrics}
+                  setCreatedMetrics={setCreatedMetrics}
+                  setGroupedCreatedMetrics={setGroupedCreatedMetrics}
+                  defaultMetricName={'appdMetric'}
+                  tooptipMessage={getString('cv.monitoringSources.gcoLogs.addQueryTooltip')}
+                  addFieldLabel={getString('cv.monitoringSources.addMetric')}
+                  initCustomForm={initAppDCustomFormValue()}
+                >
+                  <AppDCustomMetricForm
+                    formikValues={formik.values}
+                    formikSetField={formik.setFieldValue}
+                    mappedMetrics={mappedMetrics}
+                    selectedMetric={selectedMetric}
+                    connectorIdentifier={connectorIdentifier}
+                  />
+                </CustomMetric>
+              </>
             ) : (
               <CardWithOuterTitle title={getString('cv.healthSource.connectors.customMetrics')}>
                 <Button
@@ -398,8 +412,8 @@ export default function AppDMonitoredSource({
                   formik,
                   mappedMetrics,
                   selectedMetric,
-                  selectedMetricIndex,
-                  createdMetrics,
+                  groupedCreatedMetricsList.indexOf(selectedMetric),
+                  groupedCreatedMetricsList,
                   getString,
                   onSubmit
                 )

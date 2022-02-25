@@ -175,6 +175,8 @@ onboarding:
       product: 'Product selection is required.'
       source: Source selection is required
 selectCreateService: Select or create a service
+deploymentVerification:
+  failed: Deployment verification has failed and requires manual intervention.
 monitoringSources:
   assign: Assign
   mapMetricsToServices: Map Metric(s) to Harness Services
@@ -231,7 +233,6 @@ monitoringSources:
     mappedToHarnessService: MAPPED TO HARNESS SERVICE
     mappedToHarnessEnvironment: MAPPED TO HARNESS ENVIRONMENT
     harnessServices: HARNESS SERVICES
-    status: STATUS
     validation: VALIDATION
     tiersMappedToServices: tiers mapped to services
     errorsFound: errors found
@@ -315,7 +316,7 @@ monitoringSources:
     validation:
       queryContains: 'Query must contain '
   datadogLogs:
-    submitQueryToSeeRecords: Submit query to see records from Dataodog Logs
+    submitQueryToSeeRecords: Submit query to see records from Datadog Logs
     datadogLogsQuery: Datadog Logs Query
     logIndexesLabel: Log indexes
   newRelic:
@@ -325,6 +326,7 @@ monitoringSources:
     selectedApplications: Selected Applications
     oneMetricMappingValidationSubtext: You need to map an application to a Harness Environment and Service.
     totalMappedApplications: '{{total}} Application(s) mapped'
+    defaultNewRelicMetricName: New Relic Metric
   prometheus:
     prometheusMetrics: Prometheus Metrics
     provideQueryToSeeRecords: Provide query to see records from Prometheus
@@ -451,8 +453,8 @@ monitoredServices:
   deleteMonitoredServiceWarning: Deleting your monitored service ‘{{ name }}’ will also delete its resources.
   deleteService: Delete service
   monitoredServiceDeleted: Monitored service successfully deleted
-  monitoredServiceCreated: Monitoring Service created
-  monitoredServiceUpdated: Monitoring Service updated
+  monitoredServiceCreated: Monitored Service created
+  monitoredServiceUpdated: Monitored Service updated
   monitoredServiceToggle: 'Monitored Service successfully {{enabled}}'
   showingAllServices: Showing all Services ({{ serviceCount }})
   showingServiceAtRisk: Showing Services at Risk ({{ serviceCount }})
@@ -556,6 +558,7 @@ healthSource:
   environmentLabel: Create or select an Environment
   serviceLabel: Create or select a Service
   addHealthSource: Add New Health Source
+  newHealthSource: New Health Source
   editHealthSource: Edit Health Source
   backtoMonitoredService: Back to monitored service
   connectHealthSource: Connect Health Source
@@ -618,16 +621,25 @@ healthSource:
       selectedPathLabel: Selected path
     gco:
       selectDashboardTab: 'Select Dashboards'
+    Dynatrace:
+      servicesLabel: Find a Dynatrace service
+      servicePlaceholder: Type a service name
+      validations:
+        selectedService: Please select a service
+      defaultMetricName: Dynatrace metric
+      submitQueryLabel: Submit query to see Dynatrace metrics
+      keyRequestRequiredLabel: Only services with marked Key Requests are shown
+
 slos:
   title: SLOs
   editSLO: 'Edit SLO: {{name}}'
   deleteSLO: Delete SLO
-  newSLO: New SLO
   createSLO: Create SLO
   healthSource: Health source
   sloCreated: SLO created successfully
   sloUpdated: SLO updated successfully
-  noData: No SLOs Present.
+  noData: You don’t have any SLO created yet
+  noMatchingData: No matching data
   confirmDeleteSLO: 'Are you sure you want to delete SLO: {{ name }}?'
   sloDeleted: '{{ name }} successfully deleted'
   sli: SLI
@@ -646,9 +658,10 @@ slos:
   latencySLI: Latency SLI measures the proportion of requests that were faster than some threshold.
   pickMetricsSLI: Pick metrics powering the SLI
   configureSLIQueries: Configure SLI queries
-  sloDefinition: Define SLO identifcation
+  sloDefinition: Define SLO identification
   reviewChanges: Review changes
-  sloEditWarningMessage: It may take a few minutes to recalculate the error budget. Are you sure you want to proceed?
+  sloEditWarningMessage: It may take a few minutes to recalculate the Error Budget. Are you sure you want to proceed?
+  noSLOsStateMessage: A service level objective (SLO) is the sum of a collection of performance metrics (Service Level Indicator or SLI) such as uptime, response time, and error rate that are used to measure the services performance. At least one SLO is required to monitor a service
   validations:
     nameValidation: SLO name is required
     userJourneyRequired: User journey is required
@@ -697,12 +710,12 @@ slos:
       calendarBased: Calendar-based
       calendarBasedDefinition: Compliance periods can be set to calendar periods like a weekly, monthly or quarterly. At the end of a calendar period, you are given a performance score. The performance score, which is calculated against the performance threshold, tells you whether your service was compliant or not. Even though you may view the performance throughout the period when you use a calendar period, you only get a compliance rating for every compliance period.
       calendarBasedDefinition2: Calendar windows are more closely aligned with business planning and project work.
-
 SLO: SLO
 SLOPerformanceTrend: SLO Performance Trend
 sloRecalculationInProgress: SLO recalculation in progress
 errorBudgetRecalculationInProgress: Error Budget recalculation in progress
 errorBudgetRemaining: Error Budget Remaining (mins)
+minutesRemaining: minutes remaining
 errorBudgetBurnDown: Error Budget Burndown
 SLITriggered: SLI Triggered
 burnRatePerDay: Burn Rate/Day
@@ -746,21 +759,26 @@ oneDay: 1 day
 days: days
 nDays: '{{ n }} days'
 resetErrorBudget: Reset Error Budget
-yourExistingErrorBudgetIs: Your existing error budget is
+yourExistingErrorBudgetIs: Your existing Error Budget is
 andYouHave: and you have
 left: left
-adjustTheErrorBudgetToContinueWithDeployments: Adjust the error budget to continue with deployments.
-previousErrorBudgetResetHistory: Previous error budget reset history
-increaseErrorBudgetBy: Increase error budget by
-increaseErrorBudgetByIsRequired: Increase error budget by is required
+adjustTheErrorBudgetToContinueWithDeployments: Adjust the Error Budget to continue with deployments.
+previousErrorBudgetResetHistory: Previous Error Budget reset history
+increaseErrorBudgetBy: Increase Error Budget by
+increaseErrorBudgetByIsRequired: '"Increase Error Budget by" is required'
 reasonIsRequired: Reason is required
 updatedErrorBudget: Updated Error Budget
 remainingErrorBudget: Remaining Error Budget
+updatedRemainingErrorBudget: Updated remaining Error Budget
 minutes: minutes
-noPreviousErrorBudgetResetHistoryAvailable: No previous error budget reset history available
+noPreviousErrorBudgetResetHistoryAvailable: No previous Error Budget reset history available
 dateAndTime: Date/Time
 increaseWithPercentSign: 'Increase %'
-errorBudgetIsSuccessfullyReset: Error budget is successfully reset
+errorBudgetIsSuccessfullyReset: Error Budget is successfully reset
+queryTypeService: Service Based  (used for Health Score and SLI)
+queryTypeHost: Host Based (used for CV)
+forConfigurationYouWillNeedAtLeastOneMonitoredServiceWithAHealthSourceAndAMetric: For configuration, you’ll need at least one Monitored Service with a Health Source, and a Metric.
+newMetric: New Metric
 cvChanges:
   changeTypeFilterDefault: 'Change Types'
   sourceFilterDefault: 'Sources'
@@ -783,6 +801,7 @@ customHealthSource:
       body: Body is required.
       path: Please select path.
       pathWithoutPlaceholder: Start and end time placeholders must be included in either Path or Body.
+      queryType: Query Type is required.
       startAndEndTime: Start and end time placeholders must differ.
       startTime:
         placeholder: Please select start time placeholder

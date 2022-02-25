@@ -52,31 +52,37 @@ const CellWidth = {
   VARIATION: 180
 }
 
-export const FlagSettings: React.FC<{ target?: Target | undefined | null; gitSync: UseGitSync }> = ({
-  target,
-  gitSync
-}) => {
+export interface FlagSettingsProps {
+  target?: Target | null
+  gitSync: UseGitSync
+}
+
+export const FlagSettings: React.FC<FlagSettingsProps> = ({ target, gitSync }) => {
   const { getString } = useStrings()
   const [sortByField] = useState(FlagsSortByField.NAME)
   const [sortOrder, setSortOrder] = useState(SortOrder.ASCENDING)
-  const { accountId, orgIdentifier, projectIdentifier, targetIdentifier } = useParams<Record<string, string>>()
-  const { activeEnvironment } = useActiveEnvironment()
-  const patchParams = {
-    accountIdentifier: accountId,
+  const {
+    accountId: accountIdentifier,
     orgIdentifier,
     projectIdentifier,
-    environmentIdentifier: activeEnvironment
+    targetIdentifier
+  } = useParams<Record<string, string>>()
+  const { activeEnvironment: environmentIdentifier } = useActiveEnvironment()
+  const patchParams = {
+    accountIdentifier,
+    orgIdentifier,
+    projectIdentifier,
+    environmentIdentifier
   }
 
   const [pageNumber, setPageNumber] = useState(0)
   const [queryString, setQueryString] = useState('')
   const queryParams = useMemo(
     () => ({
-      account: accountId,
-      accountIdentifier: accountId,
-      org: orgIdentifier,
-      project: projectIdentifier as string,
-      environment: activeEnvironment,
+      accountIdentifier,
+      orgIdentifier,
+      projectIdentifier,
+      environmentIdentifier,
       targetIdentifier,
       pageSize: CF_DEFAULT_PAGE_SIZE,
       pageNumber,
@@ -85,10 +91,10 @@ export const FlagSettings: React.FC<{ target?: Target | undefined | null; gitSyn
       name: queryString
     }),
     [
-      accountId,
+      accountIdentifier,
       orgIdentifier,
       projectIdentifier,
-      activeEnvironment,
+      environmentIdentifier,
       targetIdentifier,
       pageNumber,
       sortByField,
@@ -378,11 +384,11 @@ export const VariationSelect: React.FC<VariationSelectProps> = ({
         gitDetails = gitSyncFormValues?.gitDetails
       }
 
-      await _useServeFlagVariationToTargets(feature, variations[index].identifier, [target.identifier], gitDetails)
-
       if (!gitSync?.isAutoCommitEnabled && gitSyncFormValues?.autoCommit) {
         await gitSync.handleAutoCommit(gitSyncFormValues.autoCommit)
       }
+
+      await _useServeFlagVariationToTargets(feature, variations[index].identifier, [target.identifier], gitDetails)
 
       previousSelectedIdentifier.current = index
     } catch (e: any) {
@@ -449,6 +455,7 @@ export const VariationSelect: React.FC<VariationSelectProps> = ({
           onSubmit={saveVariationChange}
           onClose={() => {
             setIsGitSyncModalOpen(false)
+            setIndex(previousSelectedIdentifier.current)
           }}
         />
       )}

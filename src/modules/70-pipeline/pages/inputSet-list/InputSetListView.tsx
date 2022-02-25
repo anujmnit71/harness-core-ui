@@ -75,6 +75,7 @@ const getIconByType = (type: InputSetSummaryResponse['inputSetType']): IconName 
   return type === 'OVERLAY_INPUT_SET' ? 'step-group' : 'yaml-builder-input-sets'
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderColumnInputSet: Renderer<CellProps<InputSetLocal>> = ({ row }) => {
   const { getString } = useStrings()
   const data = row.original
@@ -120,6 +121,7 @@ const RenderColumnInputSet: Renderer<CellProps<InputSetLocal>> = ({ row }) => {
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderColumnDescription: Renderer<CellProps<InputSetLocal>> = ({ row }) => {
   const data = row.original
   return (
@@ -129,6 +131,7 @@ const RenderColumnDescription: Renderer<CellProps<InputSetLocal>> = ({ row }) =>
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderColumnMenu: Renderer<CellProps<InputSetLocal>> = ({ row, column }) => {
   const data = row.original
   const [menuOpen, setMenuOpen] = React.useState(false)
@@ -206,6 +209,7 @@ const RenderColumnMenu: Renderer<CellProps<InputSetLocal>> = ({ row, column }) =
   )
 }
 
+// eslint-disable-next-line react/function-component-definition
 const RenderColumnActions: Renderer<CellProps<InputSetLocal>> = ({ row, column }) => {
   const rowData = row.original
 
@@ -245,7 +249,10 @@ const RenderColumnActions: Renderer<CellProps<InputSetLocal>> = ({ row, column }
         e.stopPropagation()
         runPipeline()
       }}
-      featuresProps={getFeaturePropsForRunPipelineButton((column as any).template?.data?.modules)}
+      featuresProps={getFeaturePropsForRunPipelineButton({
+        modules: (column as any).template?.data?.modules,
+        getString
+      })}
       permission={{
         resource: {
           resourceType: ResourceType.PIPELINE,
@@ -257,7 +264,7 @@ const RenderColumnActions: Renderer<CellProps<InputSetLocal>> = ({ row, column }
   )
 }
 
-export const InputSetListView: React.FC<InputSetListViewProps> = ({
+export function InputSetListView({
   data,
   gotoPage,
   goToInputSetDetail,
@@ -268,7 +275,7 @@ export const InputSetListView: React.FC<InputSetListViewProps> = ({
   onDeleteInputSet,
   onDelete,
   template
-}): JSX.Element => {
+}: InputSetListViewProps): React.ReactElement {
   const { getString } = useStrings()
   const { isGitSyncEnabled } = useAppStore()
   const columns: CustomColumn<InputSetLocal>[] = React.useMemo(

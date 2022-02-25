@@ -59,7 +59,7 @@ import {
   PRIMARY_ARTIFACT,
   TriggerDefaultFieldList,
   TriggerTypes
-} from '@pipeline/pages/triggers/utils/TriggersWizardPageUtils'
+} from '@triggers/pages/triggers/utils/TriggersWizardPageUtils'
 import { repositoryFormat } from '@pipeline/components/ArtifactsSelection/ArtifactUtils'
 import ExperimentalInput from '../PipelineSteps/K8sServiceSpec/K8sServiceSpecForms/ExperimentalInput'
 
@@ -72,7 +72,6 @@ const setSideCarInitialValues = (initialValues: K8SDirectServiceStep, formik: an
     (item: any) => item?.sidecar?.identifier === formik?.values?.selectedArtifact?.identifier
   ) || {
     artifact: {
-      identifier: '',
       type: formik?.values?.selectedArtifact?.type,
       spec: {
         store: {
@@ -95,10 +94,8 @@ const setSideCarInitialValues = (initialValues: K8SDirectServiceStep, formik: an
       if (artifactSpec.eventConditions) {
         delete artifactSpec.eventConditions
       }
-
       selectedArtifact = {
         artifact: {
-          identifier: formik?.values?.selectedArtifact?.identifier,
           type: formik?.values?.selectedArtifact?.type,
           spec: {
             ...artifactSpec
@@ -126,7 +123,6 @@ const setPrimaryInitialValues = (initialValues: K8SDirectServiceStep, formik: an
 
       selectedArtifact = {
         artifact: {
-          identifier: formik?.values?.selectedArtifact?.identifier,
           type: formik?.values?.selectedArtifact?.type,
           spec: {
             ...artifactSpec
@@ -484,7 +480,7 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
   ))
 
   const isTagSelectionDisabled = (connectorType: string, index = -1): boolean => {
-    let imagePath, connectorRef, registryHostname, region
+    let imagePath, connectorRef, registryHostname, region, repository
     if (index > -1) {
       imagePath =
         getMultiTypeFromValue(artifacts?.sidecars?.[index]?.sidecar?.spec?.imagePath) !== MultiTypeInputType.RUNTIME
@@ -503,6 +499,10 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
         getMultiTypeFromValue(artifacts?.sidecars?.[index]?.sidecar?.spec?.region) !== MultiTypeInputType.RUNTIME
           ? artifacts?.sidecars?.[index]?.sidecar?.spec?.region
           : initialValues.artifacts?.sidecars?.[index]?.sidecar?.spec?.region
+      repository =
+        getMultiTypeFromValue(artifacts?.sidecars?.[index]?.sidecar?.spec?.repository) !== MultiTypeInputType.RUNTIME
+          ? artifacts?.sidecars?.[index]?.sidecar?.spec?.repository
+          : initialValues.artifacts?.sidecars?.[index]?.sidecar?.spec?.repository
     } else {
       imagePath =
         getMultiTypeFromValue(artifacts?.primary?.spec?.imagePath) !== MultiTypeInputType.RUNTIME
@@ -520,11 +520,20 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
         getMultiTypeFromValue(artifacts?.primary?.spec?.region) !== MultiTypeInputType.RUNTIME
           ? artifacts?.primary?.spec?.region
           : initialValues.artifacts?.primary?.spec?.region
+      repository =
+        getMultiTypeFromValue(artifacts?.primary?.spec?.repository) !== MultiTypeInputType.RUNTIME
+          ? artifacts?.primary?.spec?.repository
+          : initialValues.artifacts?.primary?.spec?.repository
     }
     if (connectorType === ENABLED_ARTIFACT_TYPES.DockerRegistry) {
       return !imagePath?.length || !connectorRef?.length
     } else if (connectorType === ENABLED_ARTIFACT_TYPES.Ecr) {
       return !imagePath?.length || !connectorRef?.length || !region?.length
+    } else if (
+      connectorType === ENABLED_ARTIFACT_TYPES.NexusRegistry ||
+      connectorType === ENABLED_ARTIFACT_TYPES.ArtifactoryRegistry
+    ) {
+      return !imagePath?.length || !connectorRef?.length || !repository?.length
     } else {
       return !imagePath?.length || !connectorRef?.length || !registryHostname?.length
     }
@@ -1061,6 +1070,12 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
                                 ) !== MultiTypeInputType.RUNTIME
                                   ? artifacts?.sidecars?.[sidecarIndex]?.sidecar?.spec?.registryHostname
                                   : currentSidecarSpec?.registryHostname
+                              const repositoryNameCurrent =
+                                getMultiTypeFromValue(
+                                  artifacts?.sidecars?.[sidecarIndex]?.sidecar?.spec?.repository
+                                ) !== MultiTypeInputType.RUNTIME
+                                  ? artifacts?.sidecars?.[sidecarIndex]?.sidecar?.spec?.repository
+                                  : currentSidecarSpec?.repository
                               const tagsPath = `sidecars[${sidecarIndex}]`
                               !isTagSelectionDisabled(
                                 artifacts?.sidecars?.[sidecarIndex]?.sidecar?.type || '',
@@ -1072,7 +1087,8 @@ const ArtifactInputSetForm: React.FC<KubernetesServiceInputFormProps> = ({
                                   connectorRef: connectorRefCurrent,
                                   connectorType: artifacts?.sidecars?.[index]?.sidecar?.type,
                                   registryHostname: registryHostnameCurrent,
-                                  region: regionCurrent
+                                  region: regionCurrent,
+                                  repository: repositoryNameCurrent
                                 })
                             },
                             allowableTypes,

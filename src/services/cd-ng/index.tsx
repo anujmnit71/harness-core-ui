@@ -40,6 +40,7 @@ export interface AccessControlCheckError {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -290,6 +291,7 @@ export interface AccessControlCheckError {
     | 'INSTANCE_STATS_PROCESS_ERROR'
     | 'INSTANCE_STATS_MIGRATION_ERROR'
     | 'DEPLOYMENT_MIGRATION_ERROR'
+    | 'CG_LICENSE_USAGE_ERROR'
     | 'INSTANCE_STATS_AGGREGATION_ERROR'
     | 'UNRESOLVED_EXPRESSIONS_ERROR'
     | 'KRYO_HANDLER_NOT_FOUND_ERROR'
@@ -318,6 +320,11 @@ export interface AccessControlCheckError {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   correlationId?: string
   detailedMessage?: string
   failedPermissionChecks?: PermissionCheck[]
@@ -475,6 +482,24 @@ export interface AccountResourcesDTO {
   delegatesCount?: number
   secretsCount?: number
   templatesCount?: number
+}
+
+export interface AccountSettingConfig {
+  [key: string]: any
+}
+
+export interface AccountSettingResponse {
+  accountSettings?: AccountSettings
+  createdAt?: number
+  lastModifiedAt?: number
+}
+
+export interface AccountSettings {
+  accountIdentifier?: string
+  config: AccountSettingConfig
+  orgIdentifier?: string
+  projectIdentifier?: string
+  type: 'Connector'
 }
 
 export interface ActiveProjectsCountDTO {
@@ -712,6 +737,11 @@ export interface ArtifactSummary {
   type?: string
 }
 
+export interface ArtifactoryArtifactBuildDetailsDTO {
+  artifactName?: string
+  artifactPath?: string
+}
+
 export interface ArtifactoryAuthCredentials {
   [key: string]: any
 }
@@ -739,6 +769,12 @@ export type ArtifactoryConnector = ConnectorConfigDTO & {
   delegateSelectors?: string[]
 }
 
+export interface ArtifactoryRepoDetailsDTO {
+  repositories?: {
+    [key: string]: string
+  }
+}
+
 export interface ArtifactoryRequestDTO {
   tag?: string
   tagRegex?: string
@@ -747,6 +783,13 @@ export interface ArtifactoryRequestDTO {
 
 export interface ArtifactoryResponseDTO {
   buildDetailsList?: ArtifactoryBuildDetailsDTO[]
+}
+
+export type ArtifactoryStoreConfig = StoreConfig & {
+  artifactPaths?: string[]
+  connectorRef: string
+  metadata?: string
+  repositoryName: string
 }
 
 export type ArtifactoryUsernamePasswordAuth = ArtifactoryAuthCredentials & {
@@ -772,6 +815,7 @@ export type AuditFilterProperties = FilterProperties & {
     | 'REVOKE_INVITE'
     | 'ADD_COLLABORATOR'
     | 'REMOVE_COLLABORATOR'
+    | 'CREATE_TOKEN'
     | 'REVOKE_TOKEN'
     | 'LOGIN'
     | 'LOGIN2FA'
@@ -1385,6 +1429,10 @@ export interface ConnectorResponse {
   status?: ConnectorConnectivityDetails
 }
 
+export type ConnectorSettings = AccountSettingConfig & {
+  builtInSMDisabled?: boolean
+}
+
 export interface ConnectorStatistics {
   statusStats?: ConnectorStatusStatistics[]
   typeStats?: ConnectorTypeStatistics[]
@@ -1488,6 +1536,7 @@ export interface ContextElement {
     | 'AZURE_WEBAPP_SETUP'
     | 'HELM_CHART'
     | 'MANIFEST_VARIABLE'
+    | 'RANCHER_K8S_CLUSTER_CRITERIA'
   name?: string
   uuid?: string
 }
@@ -1536,6 +1585,10 @@ export interface CustomHealthKeyAndValue {
   key: string
   value?: string
   valueEncrypted?: boolean
+}
+
+export type CustomPolicyStepSpec = PolicySpec & {
+  payload?: string
 }
 
 export type CustomRestrictionDTO = RestrictionDTO & { [key: string]: any }
@@ -1633,6 +1686,17 @@ export interface DelegateProfileFilterProperties {
 
 export interface DelegateResponseData {
   [key: string]: any
+}
+
+export interface DelegateTokenDetails {
+  accountId?: string
+  createdAt?: number
+  createdBy?: EmbeddedUser
+  name?: string
+  ownerIdentifier?: string
+  status?: 'ACTIVE' | 'REVOKED'
+  uuid?: string
+  value?: string
 }
 
 export type DeleteManifestPathSpec = DeleteResourcesBaseSpec & {
@@ -1941,8 +2005,23 @@ export interface EntityDetail {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -1966,6 +2045,22 @@ export interface EntityDetail {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
 }
 
 export interface EntityGitDetails {
@@ -2045,7 +2140,6 @@ export interface EnvironmentRequestDTO {
     [key: string]: string
   }
   type: 'PreProduction' | 'Production'
-  version?: number
 }
 
 export interface EnvironmentResponse {
@@ -2099,6 +2193,7 @@ export interface Error {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -2349,6 +2444,7 @@ export interface Error {
     | 'INSTANCE_STATS_PROCESS_ERROR'
     | 'INSTANCE_STATS_MIGRATION_ERROR'
     | 'DEPLOYMENT_MIGRATION_ERROR'
+    | 'CG_LICENSE_USAGE_ERROR'
     | 'INSTANCE_STATS_AGGREGATION_ERROR'
     | 'UNRESOLVED_EXPRESSIONS_ERROR'
     | 'KRYO_HANDLER_NOT_FOUND_ERROR'
@@ -2377,6 +2473,11 @@ export interface Error {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   correlationId?: string
   detailedMessage?: string
   message?: string
@@ -2465,6 +2566,7 @@ export interface Failure {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -2715,6 +2817,7 @@ export interface Failure {
     | 'INSTANCE_STATS_PROCESS_ERROR'
     | 'INSTANCE_STATS_MIGRATION_ERROR'
     | 'DEPLOYMENT_MIGRATION_ERROR'
+    | 'CG_LICENSE_USAGE_ERROR'
     | 'INSTANCE_STATS_AGGREGATION_ERROR'
     | 'UNRESOLVED_EXPRESSIONS_ERROR'
     | 'KRYO_HANDLER_NOT_FOUND_ERROR'
@@ -2743,6 +2846,11 @@ export interface Failure {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   correlationId?: string
   errors?: ValidationError[]
   message?: string
@@ -2806,6 +2914,7 @@ export interface FeatureRestrictionDetailListRequestDTO {
     | 'TERRAFORM_DESTROY'
     | 'TERRAFORM_ROLLBACK'
     | 'INTEGRATED_APPROVALS_WITH_SERVICE_NOW'
+    | 'SECURITY'
     | 'DEVELOPERS'
     | 'MONTHLY_ACTIVE_USERS'
   )[]
@@ -2858,6 +2967,7 @@ export interface FeatureRestrictionDetailRequestDTO {
     | 'TERRAFORM_DESTROY'
     | 'TERRAFORM_ROLLBACK'
     | 'INTEGRATED_APPROVALS_WITH_SERVICE_NOW'
+    | 'SECURITY'
     | 'DEVELOPERS'
     | 'MONTHLY_ACTIVE_USERS'
 }
@@ -2912,6 +3022,7 @@ export interface FeatureRestrictionDetailsDTO {
     | 'TERRAFORM_DESTROY'
     | 'TERRAFORM_ROLLBACK'
     | 'INTEGRATED_APPROVALS_WITH_SERVICE_NOW'
+    | 'SECURITY'
     | 'DEVELOPERS'
     | 'MONTHLY_ACTIVE_USERS'
   restriction?: RestrictionDTO
@@ -2974,6 +3085,7 @@ export interface FeatureRestrictionMetadataDTO {
     | 'TERRAFORM_DESTROY'
     | 'TERRAFORM_ROLLBACK'
     | 'INTEGRATED_APPROVALS_WITH_SERVICE_NOW'
+    | 'SECURITY'
     | 'DEVELOPERS'
     | 'MONTHLY_ACTIVE_USERS'
   restrictionMetadata?: {
@@ -3170,8 +3282,23 @@ export interface GitEntityBranchFilterSummaryProperties {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3195,6 +3322,22 @@ export interface GitEntityBranchFilterSummaryProperties {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   )[]
   moduleType?: 'CD' | 'CI' | 'CV' | 'CF' | 'CE' | 'CORE' | 'PMS' | 'TEMPLATESERVICE'
   searchTerm?: string
@@ -3211,8 +3354,23 @@ export interface GitEntityFilterProperties {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3236,6 +3394,22 @@ export interface GitEntityFilterProperties {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   )[]
   gitSyncConfigIdentifiers?: string[]
   moduleType?: 'CD' | 'CI' | 'CV' | 'CF' | 'CE' | 'CORE' | 'PMS' | 'TEMPLATESERVICE'
@@ -3285,8 +3459,23 @@ export interface GitFullSyncEntityInfoDTO {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3310,7 +3499,23 @@ export interface GitFullSyncEntityInfoDTO {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
-  errorMessages?: string[]
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
+  errorMessage?: string
   filePath?: string
   identifier?: string
   name?: string
@@ -3334,8 +3539,23 @@ export interface GitFullSyncEntityInfoFilterKeys {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3359,6 +3579,22 @@ export interface GitFullSyncEntityInfoFilterKeys {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   )[]
   syncStatus?: 'QUEUED' | 'SUCCESS' | 'FAILED' | 'OVERRIDDEN'
 }
@@ -3460,8 +3696,23 @@ export interface GitSyncEntityDTO {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3485,6 +3736,22 @@ export interface GitSyncEntityDTO {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   folderPath?: string
   gitConnectorId?: string
   repoProviderType?: 'github' | 'gitlab' | 'bitbucket' | 'unknown'
@@ -3503,8 +3770,23 @@ export interface GitSyncEntityListDTO {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3528,6 +3810,22 @@ export interface GitSyncEntityListDTO {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   gitSyncEntities?: GitSyncEntityDTO[]
 }
 
@@ -3563,8 +3861,23 @@ export interface GitSyncErrorDTO {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -3588,6 +3901,22 @@ export interface GitSyncErrorDTO {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   errorType?: 'GIT_TO_HARNESS' | 'CONNECTIVITY_ISSUE' | 'FULL_SYNC'
   failureReason?: string
   repoId?: string
@@ -4353,6 +4682,7 @@ export type KubernetesOpenIdConnectDTO = KubernetesAuthCredentialDTO & {
 }
 
 export type KubernetesServiceAccountDTO = KubernetesAuthCredentialDTO & {
+  caCertRef?: string
   serviceAccountTokenRef: string
 }
 
@@ -5389,6 +5719,17 @@ export type PmsSlackChannel = PmsNotificationChannel & {
   webhookUrl?: string
 }
 
+export interface PolicySpec {
+  type?: string
+}
+
+export type PolicyStepInfo = StepSpecType & {
+  metadata?: string
+  policySets?: string[]
+  policySpec?: PolicySpec
+  type?: string
+}
+
 export interface PollingResponseDTO {
   pollingResponse?: string[]
 }
@@ -5595,6 +5936,13 @@ export interface ResponseAccountResourcesDTO {
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
 
+export interface ResponseAccountSettingResponse {
+  correlationId?: string
+  data?: AccountSettingResponse
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
 export interface ResponseActiveProjectsCountDTO {
   correlationId?: string
   data?: ActiveProjectsCountDTO
@@ -5633,6 +5981,13 @@ export interface ResponseApiKeyDTO {
 export interface ResponseArtifactoryBuildDetailsDTO {
   correlationId?: string
   data?: ArtifactoryBuildDetailsDTO
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseArtifactoryRepoDetailsDTO {
+  correlationId?: string
+  data?: ArtifactoryRepoDetailsDTO
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -5966,9 +6321,23 @@ export interface ResponseLicensesWithSummaryDTO {
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
 
+export interface ResponseListAccountSettings {
+  correlationId?: string
+  data?: AccountSettings[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
 export interface ResponseListApiKeyDTO {
   correlationId?: string
   data?: ApiKeyDTO[]
+  metaData?: { [key: string]: any }
+  status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
+}
+
+export interface ResponseListArtifactoryArtifactBuildDetailsDTO {
+  correlationId?: string
+  data?: ArtifactoryArtifactBuildDetailsDTO[]
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -6109,7 +6478,7 @@ export interface ResponseListServiceAccountDTO {
 
 export interface ResponseListServiceDefinitionType {
   correlationId?: string
-  data?: ('Kubernetes' | 'NativeHelm')[]
+  data?: ('Kubernetes' | 'NativeHelm' | 'Ssh')[]
   metaData?: { [key: string]: any }
   status?: 'SUCCESS' | 'FAILURE' | 'ERROR'
 }
@@ -6218,6 +6587,7 @@ export interface ResponseMessage {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -6468,6 +6838,7 @@ export interface ResponseMessage {
     | 'INSTANCE_STATS_PROCESS_ERROR'
     | 'INSTANCE_STATS_MIGRATION_ERROR'
     | 'DEPLOYMENT_MIGRATION_ERROR'
+    | 'CG_LICENSE_USAGE_ERROR'
     | 'INSTANCE_STATS_AGGREGATION_ERROR'
     | 'UNRESOLVED_EXPRESSIONS_ERROR'
     | 'KRYO_HANDLER_NOT_FOUND_ERROR'
@@ -6496,6 +6867,11 @@ export interface ResponseMessage {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   exception?: Throwable
   failureTypes?: (
     | 'EXPIRED'
@@ -6506,6 +6882,7 @@ export interface ResponseMessage {
     | 'APPLICATION_ERROR'
     | 'AUTHORIZATION_ERROR'
     | 'TIMEOUT_ERROR'
+    | 'POLICY_EVALUATION_FAILURE'
   )[]
   level?: 'INFO' | 'ERROR'
   message?: string
@@ -7086,6 +7463,22 @@ export interface RestResponseDelegateProfileDetailsNg {
   responseMessages?: ResponseMessage[]
 }
 
+export interface RestResponseDelegateTokenDetails {
+  metaData?: {
+    [key: string]: { [key: string]: any }
+  }
+  resource?: DelegateTokenDetails
+  responseMessages?: ResponseMessage[]
+}
+
+export interface RestResponseListDelegateTokenDetails {
+  metaData?: {
+    [key: string]: { [key: string]: any }
+  }
+  resource?: DelegateTokenDetails[]
+  responseMessages?: ResponseMessage[]
+}
+
 export interface RestResponseLoginSettings {
   metaData?: {
     [key: string]: { [key: string]: any }
@@ -7396,6 +7789,7 @@ export type SamlSettings = SSOSettings & {
     | 'GCP'
     | 'AZURE'
     | 'PCF'
+    | 'RANCHER'
     | 'DIRECT'
     | 'KUBERNETES_CLUSTER'
     | 'DOCKER'
@@ -7441,6 +7835,7 @@ export type SamlSettings = SSOSettings & {
     | 'SSO_SAML'
     | 'GCP_SECRETS_MANAGER'
     | 'TRIGGER'
+  userIdAttr?: string
 }
 
 export type SampleErrorMetadataDTO = ErrorMetadataDTO & {
@@ -7711,7 +8106,7 @@ export interface ServiceDashboardInfo {
 
 export interface ServiceDefinition {
   spec: ServiceSpec
-  type: 'Kubernetes' | 'NativeHelm'
+  type: 'Kubernetes' | 'NativeHelm' | 'Ssh'
 }
 
 export interface ServiceDeployment {
@@ -7847,7 +8242,6 @@ export interface ServiceRequestDTO {
   tags?: {
     [key: string]: string
   }
-  version?: number
 }
 
 export interface ServiceResponse {
@@ -8044,6 +8438,10 @@ export type SplunkConnectorDTO = ConnectorConfigDTO & {
   username?: string
 }
 
+export type SshServiceSpec = ServiceSpec & {
+  metadata?: string
+}
+
 export interface StackTraceElement {
   className?: string
   fileName?: string
@@ -8183,7 +8581,7 @@ export interface StoreConfig {
 export interface StoreConfigWrapper {
   metadata?: string
   spec: StoreConfig
-  type: 'Git' | 'Github' | 'Bitbucket' | 'GitLab' | 'Http' | 'S3' | 'Gcs'
+  type: 'Git' | 'Github' | 'Bitbucket' | 'Gitlab' | 'Http' | 'S3' | 'Gcs' | 'Artifactory'
 }
 
 export type StringNGVariable = NGVariable & {
@@ -8580,6 +8978,13 @@ export interface UserGroupDTO {
   users?: string[]
 }
 
+export interface UserGroupEntityReference {
+  accountId?: string
+  appId?: string
+  entityType?: string
+  id?: string
+}
+
 export interface UserGroupFilterDTO {
   accountIdentifier?: string
   databaseIdFilter?: string[]
@@ -8677,10 +9082,17 @@ export type VaultAuthTokenCredentialDTO = VaultCredentialDTO & {
   authToken?: string
 }
 
+export type VaultAwsIamRoleCredentialDTO = VaultCredentialDTO & {
+  awsRegion?: string
+  vaultAwsIamRole?: string
+  xvaultAwsIamServerId?: SecretRefData
+}
+
 export type VaultConnectorDTO = ConnectorConfigDTO & {
-  accessType?: 'APP_ROLE' | 'TOKEN' | 'VAULT_AGENT'
+  accessType?: 'APP_ROLE' | 'TOKEN' | 'VAULT_AGENT' | 'AWS_IAM'
   appRoleId?: string
   authToken?: string
+  awsRegion?: string
   basePath?: string
   default?: boolean
   delegateSelectors?: string[]
@@ -8692,8 +9104,11 @@ export type VaultConnectorDTO = ConnectorConfigDTO & {
   secretEngineVersion?: number
   secretId?: string
   sinkPath?: string
+  useAwsIam?: boolean
   useVaultAgent?: boolean
+  vaultAwsIamRole?: string
   vaultUrl?: string
+  xvaultAwsIamServerId?: string
 }
 
 export interface VaultCredentialDTO {
@@ -8701,7 +9116,7 @@ export interface VaultCredentialDTO {
 }
 
 export type VaultMetadataRequestSpecDTO = SecretManagerMetadataRequestSpecDTO & {
-  accessType: 'APP_ROLE' | 'TOKEN' | 'VAULT_AGENT'
+  accessType: 'APP_ROLE' | 'TOKEN' | 'VAULT_AGENT' | 'AWS_IAM'
   delegateSelectors?: string[]
   namespace?: string
   spec?: VaultCredentialDTO
@@ -8774,6 +9189,7 @@ export interface YamlSchemaMetadata {
   featureFlags?: string[]
   featureRestrictions?: string[]
   modulesSupported?: ('CD' | 'CI' | 'CV' | 'CF' | 'CE' | 'CORE' | 'PMS' | 'TEMPLATESERVICE')[]
+  namespace?: string
   yamlGroup: YamlGroup
 }
 
@@ -8801,6 +9217,8 @@ export interface YamlSnippets {
 }
 
 export type AccountDTORequestBody = AccountDTO
+
+export type AccountSettingsRequestBody = AccountSettings
 
 export type ApiKeyDTORequestBody = ApiKeyDTO
 
@@ -8844,9 +9262,9 @@ export type ScimUserRequestBody = ScimUser
 
 export type ScopingRuleDetailsNgArrayRequestBody = ScopingRuleDetailsNg[]
 
-export type SecretRequestWrapperRequestBody = void
+export type SecretRequestWrapperRequestBody = SecretRequestWrapper
 
-export type SecretRequestWrapper2RequestBody = SecretRequestWrapper
+export type SecretRequestWrapper2RequestBody = void
 
 export type ServiceAccountDTORequestBody = ServiceAccountDTO
 
@@ -8877,6 +9295,262 @@ export type UnsubscribeBodyRequestBody = string[]
 export type UpdateWhitelistedDomainsBodyRequestBody = string[]
 
 export type UploadSamlMetaDataRequestBody = void
+
+export interface GetAccountSettingQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  type: 'Connector'
+}
+
+export type GetAccountSettingProps = Omit<
+  GetProps<ResponseAccountSettingResponse, Failure | Error, GetAccountSettingQueryParams, void>,
+  'path'
+>
+
+/**
+ * Gets account setting
+ */
+export const GetAccountSetting = (props: GetAccountSettingProps) => (
+  <Get<ResponseAccountSettingResponse, Failure | Error, GetAccountSettingQueryParams, void>
+    path={`/account-setting`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseGetAccountSettingProps = Omit<
+  UseGetProps<ResponseAccountSettingResponse, Failure | Error, GetAccountSettingQueryParams, void>,
+  'path'
+>
+
+/**
+ * Gets account setting
+ */
+export const useGetAccountSetting = (props: UseGetAccountSettingProps) =>
+  useGet<ResponseAccountSettingResponse, Failure | Error, GetAccountSettingQueryParams, void>(`/account-setting`, {
+    base: getConfig('ng/api'),
+    ...props
+  })
+
+/**
+ * Gets account setting
+ */
+export const getAccountSettingPromise = (
+  props: GetUsingFetchProps<ResponseAccountSettingResponse, Failure | Error, GetAccountSettingQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<ResponseAccountSettingResponse, Failure | Error, GetAccountSettingQueryParams, void>(
+    getConfig('ng/api'),
+    `/account-setting`,
+    props,
+    signal
+  )
+
+export interface CreateAccountSettingQueryParams {
+  accountIdentifier: string
+}
+
+export type CreateAccountSettingProps = Omit<
+  MutateProps<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    CreateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Create a account setting
+ */
+export const CreateAccountSetting = (props: CreateAccountSettingProps) => (
+  <Mutate<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    CreateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >
+    verb="POST"
+    path={`/account-setting`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseCreateAccountSettingProps = Omit<
+  UseMutateProps<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    CreateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Create a account setting
+ */
+export const useCreateAccountSetting = (props: UseCreateAccountSettingProps) =>
+  useMutate<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    CreateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >('POST', `/account-setting`, { base: getConfig('ng/api'), ...props })
+
+/**
+ * Create a account setting
+ */
+export const createAccountSettingPromise = (
+  props: MutateUsingFetchProps<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    CreateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    CreateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >('POST', getConfig('ng/api'), `/account-setting`, props, signal)
+
+export interface UpdateAccountSettingQueryParams {
+  accountIdentifier: string
+}
+
+export type UpdateAccountSettingProps = Omit<
+  MutateProps<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    UpdateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Update a account setting
+ */
+export const UpdateAccountSetting = (props: UpdateAccountSettingProps) => (
+  <Mutate<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    UpdateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >
+    verb="PUT"
+    path={`/account-setting`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseUpdateAccountSettingProps = Omit<
+  UseMutateProps<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    UpdateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Update a account setting
+ */
+export const useUpdateAccountSetting = (props: UseUpdateAccountSettingProps) =>
+  useMutate<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    UpdateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >('PUT', `/account-setting`, { base: getConfig('ng/api'), ...props })
+
+/**
+ * Update a account setting
+ */
+export const updateAccountSettingPromise = (
+  props: MutateUsingFetchProps<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    UpdateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponseAccountSettingResponse,
+    Failure | Error,
+    UpdateAccountSettingQueryParams,
+    AccountSettingsRequestBody,
+    void
+  >('PUT', getConfig('ng/api'), `/account-setting`, props, signal)
+
+export interface ListAccountSettingQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  type?: 'Connector'
+}
+
+export type ListAccountSettingProps = Omit<
+  GetProps<ResponseListAccountSettings, Failure | Error, ListAccountSettingQueryParams, void>,
+  'path'
+>
+
+/**
+ * List account setting
+ */
+export const ListAccountSetting = (props: ListAccountSettingProps) => (
+  <Get<ResponseListAccountSettings, Failure | Error, ListAccountSettingQueryParams, void>
+    path={`/account-setting/list`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseListAccountSettingProps = Omit<
+  UseGetProps<ResponseListAccountSettings, Failure | Error, ListAccountSettingQueryParams, void>,
+  'path'
+>
+
+/**
+ * List account setting
+ */
+export const useListAccountSetting = (props: UseListAccountSettingProps) =>
+  useGet<ResponseListAccountSettings, Failure | Error, ListAccountSettingQueryParams, void>(`/account-setting/list`, {
+    base: getConfig('ng/api'),
+    ...props
+  })
+
+/**
+ * List account setting
+ */
+export const listAccountSettingPromise = (
+  props: GetUsingFetchProps<ResponseListAccountSettings, Failure | Error, ListAccountSettingQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<ResponseListAccountSettings, Failure | Error, ListAccountSettingQueryParams, void>(
+    getConfig('ng/api'),
+    `/account-setting/list`,
+    props,
+    signal
+  )
 
 export interface GetAccountNGPathParams {
   accountIdentifier: string
@@ -9102,8 +9776,23 @@ export interface ListActivitiesQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -9127,6 +9816,22 @@ export interface ListActivitiesQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   referredByEntityType?:
     | 'Projects'
     | 'Pipelines'
@@ -9137,8 +9842,23 @@ export interface ListActivitiesQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -9162,6 +9882,22 @@ export interface ListActivitiesQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
 }
 
 export type ListActivitiesProps = Omit<GetProps<ResponsePageActivity, unknown, ListActivitiesQueryParams, void>, 'path'>
@@ -9276,8 +10012,23 @@ export interface GetActivitiesSummaryQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -9301,6 +10052,22 @@ export interface GetActivitiesSummaryQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   referredByEntityType?:
     | 'Projects'
     | 'Pipelines'
@@ -9311,8 +10078,23 @@ export interface GetActivitiesSummaryQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -9336,6 +10118,22 @@ export interface GetActivitiesSummaryQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
 }
 
 export type GetActivitiesSummaryProps = Omit<
@@ -10277,6 +11075,82 @@ export const updateApiKeyPromise = (
     signal
   )
 
+export interface GetArtifactsBuildsDetailsForArtifactoryQueryParams {
+  connectorRef: string
+  repositoryName: string
+  filePath?: string
+  maxVersions: number
+  accountIdentifier: string
+  orgIdentifier: string
+  projectIdentifier: string
+}
+
+export type GetArtifactsBuildsDetailsForArtifactoryProps = Omit<
+  GetProps<
+    ResponseListArtifactoryArtifactBuildDetailsDTO,
+    Failure | Error,
+    GetArtifactsBuildsDetailsForArtifactoryQueryParams,
+    void
+  >,
+  'path'
+>
+
+/**
+ * Gets artifacts builds details
+ */
+export const GetArtifactsBuildsDetailsForArtifactory = (props: GetArtifactsBuildsDetailsForArtifactoryProps) => (
+  <Get<
+    ResponseListArtifactoryArtifactBuildDetailsDTO,
+    Failure | Error,
+    GetArtifactsBuildsDetailsForArtifactoryQueryParams,
+    void
+  >
+    path={`/artifacts/artifactory/artifactBuildsDetails`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseGetArtifactsBuildsDetailsForArtifactoryProps = Omit<
+  UseGetProps<
+    ResponseListArtifactoryArtifactBuildDetailsDTO,
+    Failure | Error,
+    GetArtifactsBuildsDetailsForArtifactoryQueryParams,
+    void
+  >,
+  'path'
+>
+
+/**
+ * Gets artifacts builds details
+ */
+export const useGetArtifactsBuildsDetailsForArtifactory = (props: UseGetArtifactsBuildsDetailsForArtifactoryProps) =>
+  useGet<
+    ResponseListArtifactoryArtifactBuildDetailsDTO,
+    Failure | Error,
+    GetArtifactsBuildsDetailsForArtifactoryQueryParams,
+    void
+  >(`/artifacts/artifactory/artifactBuildsDetails`, { base: getConfig('ng/api'), ...props })
+
+/**
+ * Gets artifacts builds details
+ */
+export const getArtifactsBuildsDetailsForArtifactoryPromise = (
+  props: GetUsingFetchProps<
+    ResponseListArtifactoryArtifactBuildDetailsDTO,
+    Failure | Error,
+    GetArtifactsBuildsDetailsForArtifactoryQueryParams,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<
+    ResponseListArtifactoryArtifactBuildDetailsDTO,
+    Failure | Error,
+    GetArtifactsBuildsDetailsForArtifactoryQueryParams,
+    void
+  >(getConfig('ng/api'), `/artifacts/artifactory/artifactBuildsDetails`, props, signal)
+
 export interface GetBuildDetailsForArtifactoryArtifactQueryParams {
   repository?: string
   imagePath?: string
@@ -10520,6 +11394,68 @@ export const getLastSuccessfulBuildForArtifactoryArtifactPromise = (
     ArtifactoryRequestDTO,
     void
   >('POST', getConfig('ng/api'), `/artifacts/artifactory/getLastSuccessfulBuild`, props, signal)
+
+export interface GetRepositoriesDetailsForArtifactoryQueryParams {
+  connectorRef: string
+  repositoryType?: string
+  accountIdentifier: string
+  orgIdentifier: string
+  projectIdentifier: string
+}
+
+export type GetRepositoriesDetailsForArtifactoryProps = Omit<
+  GetProps<ResponseArtifactoryRepoDetailsDTO, Failure | Error, GetRepositoriesDetailsForArtifactoryQueryParams, void>,
+  'path'
+>
+
+/**
+ * Gets repository details
+ */
+export const GetRepositoriesDetailsForArtifactory = (props: GetRepositoriesDetailsForArtifactoryProps) => (
+  <Get<ResponseArtifactoryRepoDetailsDTO, Failure | Error, GetRepositoriesDetailsForArtifactoryQueryParams, void>
+    path={`/artifacts/artifactory/repositoriesDetails`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseGetRepositoriesDetailsForArtifactoryProps = Omit<
+  UseGetProps<
+    ResponseArtifactoryRepoDetailsDTO,
+    Failure | Error,
+    GetRepositoriesDetailsForArtifactoryQueryParams,
+    void
+  >,
+  'path'
+>
+
+/**
+ * Gets repository details
+ */
+export const useGetRepositoriesDetailsForArtifactory = (props: UseGetRepositoriesDetailsForArtifactoryProps) =>
+  useGet<ResponseArtifactoryRepoDetailsDTO, Failure | Error, GetRepositoriesDetailsForArtifactoryQueryParams, void>(
+    `/artifacts/artifactory/repositoriesDetails`,
+    { base: getConfig('ng/api'), ...props }
+  )
+
+/**
+ * Gets repository details
+ */
+export const getRepositoriesDetailsForArtifactoryPromise = (
+  props: GetUsingFetchProps<
+    ResponseArtifactoryRepoDetailsDTO,
+    Failure | Error,
+    GetRepositoriesDetailsForArtifactoryQueryParams,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<
+    ResponseArtifactoryRepoDetailsDTO,
+    Failure | Error,
+    GetRepositoriesDetailsForArtifactoryQueryParams,
+    void
+  >(getConfig('ng/api'), `/artifacts/artifactory/repositoriesDetails`, props, signal)
 
 export interface ValidateArtifactServerForArtifactoryQueryParams {
   connectorRef?: string
@@ -15504,6 +16440,165 @@ export const updateSelectorsNgPromise = (
     UpdateSelectorsNgPathParams
   >('PUT', getConfig('ng/api'), `/delegate-profiles/ng/${delegateProfileId}/selectors`, props, signal)
 
+export interface GetDelegateTokensQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  status?: 'ACTIVE' | 'REVOKED'
+}
+
+export type GetDelegateTokensProps = Omit<
+  GetProps<RestResponseListDelegateTokenDetails, unknown, GetDelegateTokensQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get Delegate NG Tokens
+ */
+export const GetDelegateTokens = (props: GetDelegateTokensProps) => (
+  <Get<RestResponseListDelegateTokenDetails, unknown, GetDelegateTokensQueryParams, void>
+    path={`/delegate-token-ng`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseGetDelegateTokensProps = Omit<
+  UseGetProps<RestResponseListDelegateTokenDetails, unknown, GetDelegateTokensQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get Delegate NG Tokens
+ */
+export const useGetDelegateTokens = (props: UseGetDelegateTokensProps) =>
+  useGet<RestResponseListDelegateTokenDetails, unknown, GetDelegateTokensQueryParams, void>(`/delegate-token-ng`, {
+    base: getConfig('ng/api'),
+    ...props
+  })
+
+/**
+ * Get Delegate NG Tokens
+ */
+export const getDelegateTokensPromise = (
+  props: GetUsingFetchProps<RestResponseListDelegateTokenDetails, unknown, GetDelegateTokensQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<RestResponseListDelegateTokenDetails, unknown, GetDelegateTokensQueryParams, void>(
+    getConfig('ng/api'),
+    `/delegate-token-ng`,
+    props,
+    signal
+  )
+
+export interface CreateDelegateTokenQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  tokenName: string
+}
+
+export type CreateDelegateTokenProps = Omit<
+  MutateProps<RestResponseDelegateTokenDetails, unknown, CreateDelegateTokenQueryParams, void, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Creates Delegate NG Token
+ */
+export const CreateDelegateToken = (props: CreateDelegateTokenProps) => (
+  <Mutate<RestResponseDelegateTokenDetails, unknown, CreateDelegateTokenQueryParams, void, void>
+    verb="POST"
+    path={`/delegate-token-ng`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseCreateDelegateTokenProps = Omit<
+  UseMutateProps<RestResponseDelegateTokenDetails, unknown, CreateDelegateTokenQueryParams, void, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Creates Delegate NG Token
+ */
+export const useCreateDelegateToken = (props: UseCreateDelegateTokenProps) =>
+  useMutate<RestResponseDelegateTokenDetails, unknown, CreateDelegateTokenQueryParams, void, void>(
+    'POST',
+    `/delegate-token-ng`,
+    { base: getConfig('ng/api'), ...props }
+  )
+
+/**
+ * Creates Delegate NG Token
+ */
+export const createDelegateTokenPromise = (
+  props: MutateUsingFetchProps<RestResponseDelegateTokenDetails, unknown, CreateDelegateTokenQueryParams, void, void>,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<RestResponseDelegateTokenDetails, unknown, CreateDelegateTokenQueryParams, void, void>(
+    'POST',
+    getConfig('ng/api'),
+    `/delegate-token-ng`,
+    props,
+    signal
+  )
+
+export interface RevokeDelegateTokenQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  tokenName: string
+}
+
+export type RevokeDelegateTokenProps = Omit<
+  MutateProps<RestResponseDelegateTokenDetails, unknown, RevokeDelegateTokenQueryParams, void, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Revokes Delegate NG Token
+ */
+export const RevokeDelegateToken = (props: RevokeDelegateTokenProps) => (
+  <Mutate<RestResponseDelegateTokenDetails, unknown, RevokeDelegateTokenQueryParams, void, void>
+    verb="PUT"
+    path={`/delegate-token-ng`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseRevokeDelegateTokenProps = Omit<
+  UseMutateProps<RestResponseDelegateTokenDetails, unknown, RevokeDelegateTokenQueryParams, void, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Revokes Delegate NG Token
+ */
+export const useRevokeDelegateToken = (props: UseRevokeDelegateTokenProps) =>
+  useMutate<RestResponseDelegateTokenDetails, unknown, RevokeDelegateTokenQueryParams, void, void>(
+    'PUT',
+    `/delegate-token-ng`,
+    { base: getConfig('ng/api'), ...props }
+  )
+
+/**
+ * Revokes Delegate NG Token
+ */
+export const revokeDelegateTokenPromise = (
+  props: MutateUsingFetchProps<RestResponseDelegateTokenDetails, unknown, RevokeDelegateTokenQueryParams, void, void>,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<RestResponseDelegateTokenDetails, unknown, RevokeDelegateTokenQueryParams, void, void>(
+    'PUT',
+    getConfig('ng/api'),
+    `/delegate-token-ng`,
+    props,
+    signal
+  )
+
 export interface GetFeatureRestrictionDetailQueryParams {
   accountIdentifier: string
 }
@@ -15732,8 +16827,17 @@ export const getEnabledFeatureRestrictionDetailByAccountIdPromise = (
     void
   >(getConfig('ng/api'), `/enforcement/enabled`, props, signal)
 
+export interface GetAllFeatureRestrictionMetadataQueryParams {
+  accountIdentifier?: string
+}
+
 export type GetAllFeatureRestrictionMetadataProps = Omit<
-  GetProps<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, void, void>,
+  GetProps<
+    ResponseListFeatureRestrictionMetadataDTO,
+    Failure | Error,
+    GetAllFeatureRestrictionMetadataQueryParams,
+    void
+  >,
   'path'
 >
 
@@ -15741,7 +16845,7 @@ export type GetAllFeatureRestrictionMetadataProps = Omit<
  * Fetch All Feature Restriction Metadata
  */
 export const GetAllFeatureRestrictionMetadata = (props: GetAllFeatureRestrictionMetadataProps) => (
-  <Get<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, void, void>
+  <Get<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, GetAllFeatureRestrictionMetadataQueryParams, void>
     path={`/enforcement/metadata`}
     base={getConfig('ng/api')}
     {...props}
@@ -15749,7 +16853,12 @@ export const GetAllFeatureRestrictionMetadata = (props: GetAllFeatureRestriction
 )
 
 export type UseGetAllFeatureRestrictionMetadataProps = Omit<
-  UseGetProps<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, void, void>,
+  UseGetProps<
+    ResponseListFeatureRestrictionMetadataDTO,
+    Failure | Error,
+    GetAllFeatureRestrictionMetadataQueryParams,
+    void
+  >,
   'path'
 >
 
@@ -15757,24 +16866,29 @@ export type UseGetAllFeatureRestrictionMetadataProps = Omit<
  * Fetch All Feature Restriction Metadata
  */
 export const useGetAllFeatureRestrictionMetadata = (props: UseGetAllFeatureRestrictionMetadataProps) =>
-  useGet<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, void, void>(`/enforcement/metadata`, {
-    base: getConfig('ng/api'),
-    ...props
-  })
+  useGet<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, GetAllFeatureRestrictionMetadataQueryParams, void>(
+    `/enforcement/metadata`,
+    { base: getConfig('ng/api'), ...props }
+  )
 
 /**
  * Fetch All Feature Restriction Metadata
  */
 export const getAllFeatureRestrictionMetadataPromise = (
-  props: GetUsingFetchProps<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, void, void>,
+  props: GetUsingFetchProps<
+    ResponseListFeatureRestrictionMetadataDTO,
+    Failure | Error,
+    GetAllFeatureRestrictionMetadataQueryParams,
+    void
+  >,
   signal?: RequestInit['signal']
 ) =>
-  getUsingFetch<ResponseListFeatureRestrictionMetadataDTO, Failure | Error, void, void>(
-    getConfig('ng/api'),
-    `/enforcement/metadata`,
-    props,
-    signal
-  )
+  getUsingFetch<
+    ResponseListFeatureRestrictionMetadataDTO,
+    Failure | Error,
+    GetAllFeatureRestrictionMetadataQueryParams,
+    void
+  >(getConfig('ng/api'), `/enforcement/metadata`, props, signal)
 
 export interface FetchFeatureRestrictionMetadataQueryParams {
   accountIdentifier: string
@@ -15827,6 +16941,7 @@ export interface FetchFeatureRestrictionMetadataPathParams {
     | 'TERRAFORM_DESTROY'
     | 'TERRAFORM_ROLLBACK'
     | 'INTEGRATED_APPROVALS_WITH_SERVICE_NOW'
+    | 'SECURITY'
     | 'DEVELOPERS'
     | 'MONTHLY_ACTIVE_USERS'
 }
@@ -15949,6 +17064,7 @@ export const fetchFeatureRestrictionMetadataPromise = (
       | 'TERRAFORM_DESTROY'
       | 'TERRAFORM_ROLLBACK'
       | 'INTEGRATED_APPROVALS_WITH_SERVICE_NOW'
+      | 'SECURITY'
       | 'DEVELOPERS'
       | 'MONTHLY_ACTIVE_USERS'
   },
@@ -15978,8 +17094,23 @@ export interface ListReferredByEntitiesQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -16003,6 +17134,22 @@ export interface ListReferredByEntitiesQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   searchTerm?: string
   branch?: string
   repoIdentifier?: string
@@ -17440,409 +18587,6 @@ export const getFilterPromise = (
     signal
   )
 
-export interface TriggerFullSyncQueryParams {
-  accountIdentifier?: string
-  orgIdentifier?: string
-  projectIdentifier?: string
-}
-
-export type TriggerFullSyncProps = Omit<
-  MutateProps<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>,
-  'path' | 'verb'
->
-
-/**
- * Triggers Full Sync
- */
-export const TriggerFullSync = (props: TriggerFullSyncProps) => (
-  <Mutate<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>
-    verb="POST"
-    path={`/full-sync`}
-    base={getConfig('ng/api')}
-    {...props}
-  />
-)
-
-export type UseTriggerFullSyncProps = Omit<
-  UseMutateProps<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>,
-  'path' | 'verb'
->
-
-/**
- * Triggers Full Sync
- */
-export const useTriggerFullSync = (props: UseTriggerFullSyncProps) =>
-  useMutate<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>(
-    'POST',
-    `/full-sync`,
-    { base: getConfig('ng/api'), ...props }
-  )
-
-/**
- * Triggers Full Sync
- */
-export const triggerFullSyncPromise = (
-  props: MutateUsingFetchProps<
-    ResponseTriggerFullSyncResponseDTO,
-    Failure | Error,
-    TriggerFullSyncQueryParams,
-    void,
-    void
-  >,
-  signal?: RequestInit['signal']
-) =>
-  mutateUsingFetch<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>(
-    'POST',
-    getConfig('ng/api'),
-    `/full-sync`,
-    props,
-    signal
-  )
-
-export interface DeleteGitFullSyncConfigQueryParams {
-  accountIdentifier: string
-  orgIdentifier?: string
-  projectIdentifier?: string
-}
-
-export type DeleteGitFullSyncConfigProps = Omit<
-  MutateProps<ResponseBoolean, Failure | Error, DeleteGitFullSyncConfigQueryParams, void, void>,
-  'path' | 'verb'
->
-
-/**
- * Delete full sync configuration
- */
-export const DeleteGitFullSyncConfig = (props: DeleteGitFullSyncConfigProps) => (
-  <Mutate<ResponseBoolean, Failure | Error, DeleteGitFullSyncConfigQueryParams, void, void>
-    verb="DELETE"
-    path={`/full-sync/config`}
-    base={getConfig('ng/api')}
-    {...props}
-  />
-)
-
-export type UseDeleteGitFullSyncConfigProps = Omit<
-  UseMutateProps<ResponseBoolean, Failure | Error, DeleteGitFullSyncConfigQueryParams, void, void>,
-  'path' | 'verb'
->
-
-/**
- * Delete full sync configuration
- */
-export const useDeleteGitFullSyncConfig = (props: UseDeleteGitFullSyncConfigProps) =>
-  useMutate<ResponseBoolean, Failure | Error, DeleteGitFullSyncConfigQueryParams, void, void>(
-    'DELETE',
-    `/full-sync/config`,
-    { base: getConfig('ng/api'), ...props }
-  )
-
-/**
- * Delete full sync configuration
- */
-export const deleteGitFullSyncConfigPromise = (
-  props: MutateUsingFetchProps<ResponseBoolean, Failure | Error, DeleteGitFullSyncConfigQueryParams, void, void>,
-  signal?: RequestInit['signal']
-) =>
-  mutateUsingFetch<ResponseBoolean, Failure | Error, DeleteGitFullSyncConfigQueryParams, void, void>(
-    'DELETE',
-    getConfig('ng/api'),
-    `/full-sync/config`,
-    props,
-    signal
-  )
-
-export interface GetGitFullSyncConfigQueryParams {
-  accountIdentifier: string
-  orgIdentifier?: string
-  projectIdentifier?: string
-}
-
-export type GetGitFullSyncConfigProps = Omit<
-  GetProps<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>,
-  'path'
->
-
-/**
- * Get full sync configuration
- */
-export const GetGitFullSyncConfig = (props: GetGitFullSyncConfigProps) => (
-  <Get<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>
-    path={`/full-sync/config`}
-    base={getConfig('ng/api')}
-    {...props}
-  />
-)
-
-export type UseGetGitFullSyncConfigProps = Omit<
-  UseGetProps<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>,
-  'path'
->
-
-/**
- * Get full sync configuration
- */
-export const useGetGitFullSyncConfig = (props: UseGetGitFullSyncConfigProps) =>
-  useGet<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>(`/full-sync/config`, {
-    base: getConfig('ng/api'),
-    ...props
-  })
-
-/**
- * Get full sync configuration
- */
-export const getGitFullSyncConfigPromise = (
-  props: GetUsingFetchProps<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>,
-  signal?: RequestInit['signal']
-) =>
-  getUsingFetch<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>(
-    getConfig('ng/api'),
-    `/full-sync/config`,
-    props,
-    signal
-  )
-
-export interface CreateGitFullSyncConfigQueryParams {
-  accountIdentifier?: string
-  orgIdentifier?: string
-  projectIdentifier?: string
-}
-
-export type CreateGitFullSyncConfigProps = Omit<
-  MutateProps<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    CreateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >,
-  'path' | 'verb'
->
-
-/**
- * Create a full sync configuration
- */
-export const CreateGitFullSyncConfig = (props: CreateGitFullSyncConfigProps) => (
-  <Mutate<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    CreateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >
-    verb="POST"
-    path={`/full-sync/config`}
-    base={getConfig('ng/api')}
-    {...props}
-  />
-)
-
-export type UseCreateGitFullSyncConfigProps = Omit<
-  UseMutateProps<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    CreateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >,
-  'path' | 'verb'
->
-
-/**
- * Create a full sync configuration
- */
-export const useCreateGitFullSyncConfig = (props: UseCreateGitFullSyncConfigProps) =>
-  useMutate<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    CreateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >('POST', `/full-sync/config`, { base: getConfig('ng/api'), ...props })
-
-/**
- * Create a full sync configuration
- */
-export const createGitFullSyncConfigPromise = (
-  props: MutateUsingFetchProps<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    CreateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >,
-  signal?: RequestInit['signal']
-) =>
-  mutateUsingFetch<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    CreateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >('POST', getConfig('ng/api'), `/full-sync/config`, props, signal)
-
-export interface UpdateGitFullSyncConfigQueryParams {
-  accountIdentifier: string
-  orgIdentifier?: string
-  projectIdentifier?: string
-}
-
-export type UpdateGitFullSyncConfigProps = Omit<
-  MutateProps<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    UpdateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >,
-  'path' | 'verb'
->
-
-/**
- * Update a full sync configuration
- */
-export const UpdateGitFullSyncConfig = (props: UpdateGitFullSyncConfigProps) => (
-  <Mutate<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    UpdateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >
-    verb="PUT"
-    path={`/full-sync/config`}
-    base={getConfig('ng/api')}
-    {...props}
-  />
-)
-
-export type UseUpdateGitFullSyncConfigProps = Omit<
-  UseMutateProps<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    UpdateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >,
-  'path' | 'verb'
->
-
-/**
- * Update a full sync configuration
- */
-export const useUpdateGitFullSyncConfig = (props: UseUpdateGitFullSyncConfigProps) =>
-  useMutate<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    UpdateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >('PUT', `/full-sync/config`, { base: getConfig('ng/api'), ...props })
-
-/**
- * Update a full sync configuration
- */
-export const updateGitFullSyncConfigPromise = (
-  props: MutateUsingFetchProps<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    UpdateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >,
-  signal?: RequestInit['signal']
-) =>
-  mutateUsingFetch<
-    ResponseGitFullSyncConfigDTO,
-    Failure | Error,
-    UpdateGitFullSyncConfigQueryParams,
-    GitFullSyncConfigRequestDTORequestBody,
-    void
-  >('PUT', getConfig('ng/api'), `/full-sync/config`, props, signal)
-
-export interface ListFullSyncFilesQueryParams {
-  pageIndex?: number
-  pageSize?: number
-  sortOrders?: string[]
-  accountIdentifier: string
-  orgIdentifier?: string
-  projectIdentifier?: string
-  searchTerm?: string
-}
-
-export type ListFullSyncFilesProps = Omit<
-  MutateProps<
-    ResponsePageGitFullSyncEntityInfoDTO,
-    Failure | Error,
-    ListFullSyncFilesQueryParams,
-    GitFullSyncEntityInfoFilterKeys,
-    void
-  >,
-  'path' | 'verb'
->
-
-/**
- * List files in full sync along with their status
- */
-export const ListFullSyncFiles = (props: ListFullSyncFilesProps) => (
-  <Mutate<
-    ResponsePageGitFullSyncEntityInfoDTO,
-    Failure | Error,
-    ListFullSyncFilesQueryParams,
-    GitFullSyncEntityInfoFilterKeys,
-    void
-  >
-    verb="POST"
-    path={`/full-sync/files`}
-    base={getConfig('ng/api')}
-    {...props}
-  />
-)
-
-export type UseListFullSyncFilesProps = Omit<
-  UseMutateProps<
-    ResponsePageGitFullSyncEntityInfoDTO,
-    Failure | Error,
-    ListFullSyncFilesQueryParams,
-    GitFullSyncEntityInfoFilterKeys,
-    void
-  >,
-  'path' | 'verb'
->
-
-/**
- * List files in full sync along with their status
- */
-export const useListFullSyncFiles = (props: UseListFullSyncFilesProps) =>
-  useMutate<
-    ResponsePageGitFullSyncEntityInfoDTO,
-    Failure | Error,
-    ListFullSyncFilesQueryParams,
-    GitFullSyncEntityInfoFilterKeys,
-    void
-  >('POST', `/full-sync/files`, { base: getConfig('ng/api'), ...props })
-
-/**
- * List files in full sync along with their status
- */
-export const listFullSyncFilesPromise = (
-  props: MutateUsingFetchProps<
-    ResponsePageGitFullSyncEntityInfoDTO,
-    Failure | Error,
-    ListFullSyncFilesQueryParams,
-    GitFullSyncEntityInfoFilterKeys,
-    void
-  >,
-  signal?: RequestInit['signal']
-) =>
-  mutateUsingFetch<
-    ResponsePageGitFullSyncEntityInfoDTO,
-    Failure | Error,
-    ListFullSyncFilesQueryParams,
-    GitFullSyncEntityInfoFilterKeys,
-    void
-  >('POST', getConfig('ng/api'), `/full-sync/files`, props, signal)
-
 export interface GetClusterNamesForGcpQueryParams {
   connectorRef: string
   accountIdentifier: string
@@ -17893,6 +18637,356 @@ export const getClusterNamesForGcpPromise = (
     props,
     signal
   )
+
+export interface TriggerFullSyncQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+}
+
+export type TriggerFullSyncProps = Omit<
+  MutateProps<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Triggers Full Sync
+ */
+export const TriggerFullSync = (props: TriggerFullSyncProps) => (
+  <Mutate<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>
+    verb="POST"
+    path={`/git-full-sync`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseTriggerFullSyncProps = Omit<
+  UseMutateProps<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>,
+  'path' | 'verb'
+>
+
+/**
+ * Triggers Full Sync
+ */
+export const useTriggerFullSync = (props: UseTriggerFullSyncProps) =>
+  useMutate<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>(
+    'POST',
+    `/git-full-sync`,
+    { base: getConfig('ng/api'), ...props }
+  )
+
+/**
+ * Triggers Full Sync
+ */
+export const triggerFullSyncPromise = (
+  props: MutateUsingFetchProps<
+    ResponseTriggerFullSyncResponseDTO,
+    Failure | Error,
+    TriggerFullSyncQueryParams,
+    void,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<ResponseTriggerFullSyncResponseDTO, Failure | Error, TriggerFullSyncQueryParams, void, void>(
+    'POST',
+    getConfig('ng/api'),
+    `/git-full-sync`,
+    props,
+    signal
+  )
+
+export interface GetGitFullSyncConfigQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+}
+
+export type GetGitFullSyncConfigProps = Omit<
+  GetProps<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get full sync configuration
+ */
+export const GetGitFullSyncConfig = (props: GetGitFullSyncConfigProps) => (
+  <Get<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>
+    path={`/git-full-sync/config`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseGetGitFullSyncConfigProps = Omit<
+  UseGetProps<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>,
+  'path'
+>
+
+/**
+ * Get full sync configuration
+ */
+export const useGetGitFullSyncConfig = (props: UseGetGitFullSyncConfigProps) =>
+  useGet<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>(
+    `/git-full-sync/config`,
+    { base: getConfig('ng/api'), ...props }
+  )
+
+/**
+ * Get full sync configuration
+ */
+export const getGitFullSyncConfigPromise = (
+  props: GetUsingFetchProps<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>,
+  signal?: RequestInit['signal']
+) =>
+  getUsingFetch<ResponseGitFullSyncConfigDTO, Failure | Error, GetGitFullSyncConfigQueryParams, void>(
+    getConfig('ng/api'),
+    `/git-full-sync/config`,
+    props,
+    signal
+  )
+
+export interface CreateGitFullSyncConfigQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+}
+
+export type CreateGitFullSyncConfigProps = Omit<
+  MutateProps<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    CreateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Create a full sync configuration
+ */
+export const CreateGitFullSyncConfig = (props: CreateGitFullSyncConfigProps) => (
+  <Mutate<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    CreateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >
+    verb="POST"
+    path={`/git-full-sync/config`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseCreateGitFullSyncConfigProps = Omit<
+  UseMutateProps<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    CreateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Create a full sync configuration
+ */
+export const useCreateGitFullSyncConfig = (props: UseCreateGitFullSyncConfigProps) =>
+  useMutate<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    CreateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >('POST', `/git-full-sync/config`, { base: getConfig('ng/api'), ...props })
+
+/**
+ * Create a full sync configuration
+ */
+export const createGitFullSyncConfigPromise = (
+  props: MutateUsingFetchProps<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    CreateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    CreateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >('POST', getConfig('ng/api'), `/git-full-sync/config`, props, signal)
+
+export interface UpdateGitFullSyncConfigQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+}
+
+export type UpdateGitFullSyncConfigProps = Omit<
+  MutateProps<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    UpdateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Update a full sync configuration
+ */
+export const UpdateGitFullSyncConfig = (props: UpdateGitFullSyncConfigProps) => (
+  <Mutate<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    UpdateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >
+    verb="PUT"
+    path={`/git-full-sync/config`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseUpdateGitFullSyncConfigProps = Omit<
+  UseMutateProps<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    UpdateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * Update a full sync configuration
+ */
+export const useUpdateGitFullSyncConfig = (props: UseUpdateGitFullSyncConfigProps) =>
+  useMutate<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    UpdateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >('PUT', `/git-full-sync/config`, { base: getConfig('ng/api'), ...props })
+
+/**
+ * Update a full sync configuration
+ */
+export const updateGitFullSyncConfigPromise = (
+  props: MutateUsingFetchProps<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    UpdateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponseGitFullSyncConfigDTO,
+    Failure | Error,
+    UpdateGitFullSyncConfigQueryParams,
+    GitFullSyncConfigRequestDTORequestBody,
+    void
+  >('PUT', getConfig('ng/api'), `/git-full-sync/config`, props, signal)
+
+export interface ListFullSyncFilesQueryParams {
+  accountIdentifier: string
+  orgIdentifier?: string
+  projectIdentifier?: string
+  pageIndex?: number
+  pageSize?: number
+  sortOrders?: string[]
+  searchTerm?: string
+}
+
+export type ListFullSyncFilesProps = Omit<
+  MutateProps<
+    ResponsePageGitFullSyncEntityInfoDTO,
+    Failure | Error,
+    ListFullSyncFilesQueryParams,
+    GitFullSyncEntityInfoFilterKeys,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * List files in full sync along with their status
+ */
+export const ListFullSyncFiles = (props: ListFullSyncFilesProps) => (
+  <Mutate<
+    ResponsePageGitFullSyncEntityInfoDTO,
+    Failure | Error,
+    ListFullSyncFilesQueryParams,
+    GitFullSyncEntityInfoFilterKeys,
+    void
+  >
+    verb="POST"
+    path={`/git-full-sync/files`}
+    base={getConfig('ng/api')}
+    {...props}
+  />
+)
+
+export type UseListFullSyncFilesProps = Omit<
+  UseMutateProps<
+    ResponsePageGitFullSyncEntityInfoDTO,
+    Failure | Error,
+    ListFullSyncFilesQueryParams,
+    GitFullSyncEntityInfoFilterKeys,
+    void
+  >,
+  'path' | 'verb'
+>
+
+/**
+ * List files in full sync along with their status
+ */
+export const useListFullSyncFiles = (props: UseListFullSyncFilesProps) =>
+  useMutate<
+    ResponsePageGitFullSyncEntityInfoDTO,
+    Failure | Error,
+    ListFullSyncFilesQueryParams,
+    GitFullSyncEntityInfoFilterKeys,
+    void
+  >('POST', `/git-full-sync/files`, { base: getConfig('ng/api'), ...props })
+
+/**
+ * List files in full sync along with their status
+ */
+export const listFullSyncFilesPromise = (
+  props: MutateUsingFetchProps<
+    ResponsePageGitFullSyncEntityInfoDTO,
+    Failure | Error,
+    ListFullSyncFilesQueryParams,
+    GitFullSyncEntityInfoFilterKeys,
+    void
+  >,
+  signal?: RequestInit['signal']
+) =>
+  mutateUsingFetch<
+    ResponsePageGitFullSyncEntityInfoDTO,
+    Failure | Error,
+    ListFullSyncFilesQueryParams,
+    GitFullSyncEntityInfoFilterKeys,
+    void
+  >('POST', getConfig('ng/api'), `/git-full-sync/files`, props, signal)
 
 export interface ListGitSyncQueryParams {
   projectIdentifier?: string
@@ -18344,8 +19438,23 @@ export interface ListGitSyncEntitiesByTypePathParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -18369,6 +19478,22 @@ export interface ListGitSyncEntitiesByTypePathParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
 }
 
 export type ListGitSyncEntitiesByTypeProps = Omit<
@@ -18447,8 +19572,23 @@ export const listGitSyncEntitiesByTypePromise = (
       | 'JiraApproval'
       | 'HarnessApproval'
       | 'Barrier'
+      | 'FlagConfiguration'
       | 'ShellScript'
       | 'K8sCanaryDeploy'
+      | 'K8sApply'
+      | 'K8sBlueGreenDeploy'
+      | 'K8sRollingDeploy'
+      | 'K8sRollingRollback'
+      | 'K8sScale'
+      | 'K8sDelete'
+      | 'K8sBGSwapServices'
+      | 'K8sCanaryDelete'
+      | 'TerraformApply'
+      | 'TerraformPlan'
+      | 'TerraformDestroy'
+      | 'TerraformRollback'
+      | 'HelmDeploy'
+      | 'HelmRollback'
       | 'Connectors'
       | 'Secrets'
       | 'Service'
@@ -18472,6 +19612,22 @@ export const listGitSyncEntitiesByTypePromise = (
       | 'GitRepositories'
       | 'FeatureFlags'
       | 'ServiceNowApproval'
+      | 'GovernancePolicies'
+      | 'POLICY_STEP'
+      | 'Run'
+      | 'RunTests'
+      | 'Plugin'
+      | 'RestoreCacheGCS'
+      | 'RestoreCacheS3'
+      | 'SaveCacheGCS'
+      | 'SaveCacheS3'
+      | 'Security'
+      | 'ArtifactoryUpload'
+      | 'GCSUpload'
+      | 'S3Upload'
+      | 'BuildAndPushGCR'
+      | 'BuildAndPushECR'
+      | 'BuildAndPushDockerRegistry'
   },
   signal?: RequestInit['signal']
 ) =>
@@ -21698,8 +22854,23 @@ export interface GetStepYamlSchemaQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -21723,6 +22894,22 @@ export interface GetStepYamlSchemaQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   yamlGroup?: string
 }
 
@@ -22010,7 +23197,7 @@ export const getServiceDefinitionTypesPromise = (
   )
 
 export interface GetStepsQueryParams {
-  serviceDefinitionType: 'Kubernetes' | 'NativeHelm'
+  serviceDefinitionType: 'Kubernetes' | 'NativeHelm' | 'Ssh'
 }
 
 export type GetStepsProps = Omit<GetProps<ResponseStepCategory, Failure | Error, GetStepsQueryParams, void>, 'path'>
@@ -22147,7 +23334,7 @@ export const getProvisionerExecutionStrategyYamlPromise = (
   )
 
 export interface GetExecutionStrategyYamlQueryParams {
-  serviceDefinitionType: 'Kubernetes' | 'NativeHelm'
+  serviceDefinitionType: 'Kubernetes' | 'NativeHelm' | 'Ssh'
   strategyType: 'Basic' | 'Canary' | 'BlueGreen' | 'Rolling' | 'Default'
   includeVerify?: boolean
 }
@@ -29627,7 +30814,7 @@ export type PostSecretProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     void
   >,
   'path' | 'verb'
@@ -29637,7 +30824,7 @@ export type PostSecretProps = Omit<
  * Create a secret
  */
 export const PostSecret = (props: PostSecretProps) => (
-  <Mutate<ResponseSecretResponseWrapper, Failure | Error, PostSecretQueryParams, SecretRequestWrapper2RequestBody, void>
+  <Mutate<ResponseSecretResponseWrapper, Failure | Error, PostSecretQueryParams, SecretRequestWrapperRequestBody, void>
     verb="POST"
     path={`/v2/secrets`}
     base={getConfig('ng/api')}
@@ -29650,7 +30837,7 @@ export type UsePostSecretProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     void
   >,
   'path' | 'verb'
@@ -29664,7 +30851,7 @@ export const usePostSecret = (props: UsePostSecretProps) =>
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     void
   >('POST', `/v2/secrets`, { base: getConfig('ng/api'), ...props })
 
@@ -29676,7 +30863,7 @@ export const postSecretPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     void
   >,
   signal?: RequestInit['signal']
@@ -29685,7 +30872,7 @@ export const postSecretPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     void
   >('POST', getConfig('ng/api'), `/v2/secrets`, props, signal)
 
@@ -30078,7 +31265,7 @@ export type PostSecretViaYamlProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     void
   >,
   'path' | 'verb'
@@ -30092,7 +31279,7 @@ export const PostSecretViaYaml = (props: PostSecretViaYamlProps) => (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     void
   >
     verb="POST"
@@ -30107,7 +31294,7 @@ export type UsePostSecretViaYamlProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     void
   >,
   'path' | 'verb'
@@ -30121,7 +31308,7 @@ export const usePostSecretViaYaml = (props: UsePostSecretViaYamlProps) =>
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     void
   >('POST', `/v2/secrets/yaml`, { base: getConfig('ng/api'), ...props })
 
@@ -30133,7 +31320,7 @@ export const postSecretViaYamlPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     void
   >,
   signal?: RequestInit['signal']
@@ -30142,7 +31329,7 @@ export const postSecretViaYamlPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PostSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     void
   >('POST', getConfig('ng/api'), `/v2/secrets/yaml`, props, signal)
 
@@ -30277,7 +31464,7 @@ export type PutSecretProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     PutSecretPathParams
   >,
   'path' | 'verb'
@@ -30292,7 +31479,7 @@ export const PutSecret = ({ identifier, ...props }: PutSecretProps) => (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     PutSecretPathParams
   >
     verb="PUT"
@@ -30307,7 +31494,7 @@ export type UsePutSecretProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     PutSecretPathParams
   >,
   'path' | 'verb'
@@ -30322,7 +31509,7 @@ export const usePutSecret = ({ identifier, ...props }: UsePutSecretProps) =>
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     PutSecretPathParams
   >('PUT', (paramsInPath: PutSecretPathParams) => `/v2/secrets/${paramsInPath.identifier}`, {
     base: getConfig('ng/api'),
@@ -30341,7 +31528,7 @@ export const putSecretPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     PutSecretPathParams
   > & { identifier: string },
   signal?: RequestInit['signal']
@@ -30350,7 +31537,7 @@ export const putSecretPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretQueryParams,
-    SecretRequestWrapper2RequestBody,
+    SecretRequestWrapperRequestBody,
     PutSecretPathParams
   >('PUT', getConfig('ng/api'), `/v2/secrets/${identifier}`, props, signal)
 
@@ -30369,7 +31556,7 @@ export type PutSecretViaYamlProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     PutSecretViaYamlPathParams
   >,
   'path' | 'verb'
@@ -30384,7 +31571,7 @@ export const PutSecretViaYaml = ({ identifier, ...props }: PutSecretViaYamlProps
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     PutSecretViaYamlPathParams
   >
     verb="PUT"
@@ -30399,7 +31586,7 @@ export type UsePutSecretViaYamlProps = Omit<
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     PutSecretViaYamlPathParams
   >,
   'path' | 'verb'
@@ -30414,7 +31601,7 @@ export const usePutSecretViaYaml = ({ identifier, ...props }: UsePutSecretViaYam
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     PutSecretViaYamlPathParams
   >('PUT', (paramsInPath: PutSecretViaYamlPathParams) => `/v2/secrets/${paramsInPath.identifier}/yaml`, {
     base: getConfig('ng/api'),
@@ -30433,7 +31620,7 @@ export const putSecretViaYamlPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     PutSecretViaYamlPathParams
   > & { identifier: string },
   signal?: RequestInit['signal']
@@ -30442,7 +31629,7 @@ export const putSecretViaYamlPromise = (
     ResponseSecretResponseWrapper,
     Failure | Error,
     PutSecretViaYamlQueryParams,
-    SecretRequestWrapperRequestBody,
+    SecretRequestWrapper2RequestBody,
     PutSecretViaYamlPathParams
   >('PUT', getConfig('ng/api'), `/v2/secrets/${identifier}/yaml`, props, signal)
 
@@ -30507,8 +31694,23 @@ export interface GetYamlSchemaQueryParams {
     | 'JiraApproval'
     | 'HarnessApproval'
     | 'Barrier'
+    | 'FlagConfiguration'
     | 'ShellScript'
     | 'K8sCanaryDeploy'
+    | 'K8sApply'
+    | 'K8sBlueGreenDeploy'
+    | 'K8sRollingDeploy'
+    | 'K8sRollingRollback'
+    | 'K8sScale'
+    | 'K8sDelete'
+    | 'K8sBGSwapServices'
+    | 'K8sCanaryDelete'
+    | 'TerraformApply'
+    | 'TerraformPlan'
+    | 'TerraformDestroy'
+    | 'TerraformRollback'
+    | 'HelmDeploy'
+    | 'HelmRollback'
     | 'Connectors'
     | 'Secrets'
     | 'Service'
@@ -30532,6 +31734,22 @@ export interface GetYamlSchemaQueryParams {
     | 'GitRepositories'
     | 'FeatureFlags'
     | 'ServiceNowApproval'
+    | 'GovernancePolicies'
+    | 'POLICY_STEP'
+    | 'Run'
+    | 'RunTests'
+    | 'Plugin'
+    | 'RestoreCacheGCS'
+    | 'RestoreCacheS3'
+    | 'SaveCacheGCS'
+    | 'SaveCacheS3'
+    | 'Security'
+    | 'ArtifactoryUpload'
+    | 'GCSUpload'
+    | 'S3Upload'
+    | 'BuildAndPushGCR'
+    | 'BuildAndPushECR'
+    | 'BuildAndPushDockerRegistry'
   subtype?:
     | 'K8sCluster'
     | 'Git'

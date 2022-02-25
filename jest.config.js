@@ -36,6 +36,7 @@ module.exports = {
     '!src/**/CreateConnectorFromYamlPage.tsx',
     '!src/**/CreateSecretFromYamlPage.tsx',
     '!src/**/PipelineYamlView.tsx',
+    '!src/**/TemplateYamlView.tsx',
     '!src/**/RouteDestinations.tsx',
     '!src/modules/10-common/RouteDefinitions.ts',
     '!src/modules/10-common/utils/testUtils.tsx',
@@ -45,19 +46,14 @@ module.exports = {
     '!src/modules/70-pipeline/components/PipelineStudio/ExecutionGraph/**',
     '!src/modules/25-governance/**', // 25-governance will be moved to a separate micro-frontend repository shortly
     // To be used when we pick up the K8 refactoring
-    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/KubernetesServiceSpecInputSetMode.tsx',
-    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/KubernetesArtifacts.tsx',
-    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/KubernetesSidecars.tsx',
     '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/KubernetesManifests/KubernetesManifests.tsx',
-    '!src/modules/75-cd/factory/**',
-    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/DockerArtifactSource.tsx',
-    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/ECRArtifactSource.tsx',
-    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/GCRArtifactSource.tsx'
+    '!src/modules/75-cd/components/PipelineSteps/K8sServiceSpec/ManifestSource/**',
+    '!src/modules/75-cd/factory/**'
   ],
   coverageReporters: ['lcov', 'json-summary', 'json'],
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
-    '^.+\\.js$': 'ts-jest',
+    '^.+\\.jsx?$': 'ts-jest',
     '^.+\\.ya?ml$': '<rootDir>/scripts/jest/yaml-transform.js',
     '^.+\\.gql$': '<rootDir>/scripts/jest/gql-loader.js'
   },
@@ -76,10 +72,10 @@ module.exports = {
   },
   coverageThreshold: {
     global: {
-      statements: 60,
-      branches: 40,
-      functions: 40,
-      lines: 60
+      statements: 65,
+      branches: 50,
+      functions: 50,
+      lines: 65
     }
   },
   transformIgnorePatterns: ['node_modules/(?!(date-fns|lodash-es|p-debounce)/)'],

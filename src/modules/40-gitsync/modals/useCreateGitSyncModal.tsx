@@ -6,14 +6,13 @@
  */
 
 import React, { useState } from 'react'
-import { Button, StepWizard } from '@wings-software/uicore'
+import { Button, ButtonVariation, StepWizard } from '@wings-software/uicore'
 import { useModalHook } from '@harness/use-modal'
 import { Dialog, IDialogProps } from '@blueprintjs/core'
 import { useParams } from 'react-router-dom'
 import type { GitSyncConfig } from 'services/cd-ng'
 import { useStrings } from 'framework/strings'
 import type { ProjectPathProps } from '@common/interfaces/RouteInterfaces'
-import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 import GitSyncRepoFormStep from '@gitsync/pages/steps/GitSyncRepoFormStep'
 import GitConnection from '@gitsync/components/GitConnection/GitConnection'
 import { GitFullSyncStep } from '@gitsync/pages/steps/GitFullSyncStep/GitFullSyncStep'
@@ -45,6 +44,7 @@ const useCreateGitSyncModal = (props: UseCreateGitSyncModalProps): UseCreateGitS
     enforceFocus: false,
     style: {
       width: 1200,
+      minHeight: 720,
       borderLeft: 0,
       paddingBottom: 0,
       position: 'relative',
@@ -52,8 +52,6 @@ const useCreateGitSyncModal = (props: UseCreateGitSyncModalProps): UseCreateGitS
     }
   })
   const { accountId, projectIdentifier, orgIdentifier } = useParams<ProjectPathProps>()
-
-  const { NG_GIT_FULL_SYNC } = useFeatureFlags()
 
   const handleSuccess = (data?: GitSyncConfig): void => {
     props.onSuccess?.(data)
@@ -88,21 +86,24 @@ const useCreateGitSyncModal = (props: UseCreateGitSyncModalProps): UseCreateGitS
             onSuccess={(data?: GitSyncConfig) => {
               handleSuccess(data)
             }}
-            isLastStep={!NG_GIT_FULL_SYNC}
+            isLastStep={false}
           />
-          {NG_GIT_FULL_SYNC ? (
-            <GitFullSyncStep
-              name={getString('gitsync.branchToSync')}
-              orgIdentifier={orgIdentifier}
-              projectIdentifier={projectIdentifier}
-              onClose={closeHandler}
-              onSuccess={(data?: GitSyncConfig) => {
-                handleSuccess(data)
-              }}
-            />
-          ) : null}
+          <GitFullSyncStep
+            name={getString('gitsync.branchToSync')}
+            onClose={closeHandler}
+            onSuccess={(data?: GitSyncConfig) => {
+              handleSuccess(data)
+            }}
+          />
         </StepWizard>
-        <Button minimal icon="cross" iconProps={{ size: 18 }} className={css.crossIcon} onClick={closeHandler} />
+        <Button
+          minimal
+          variation={ButtonVariation.ICON}
+          icon="cross"
+          iconProps={{ size: 18 }}
+          className={css.crossIcon}
+          onClick={closeHandler}
+        />
       </Dialog>
     ) : (
       <Dialog {...modalProps}>
@@ -119,7 +120,14 @@ const useCreateGitSyncModal = (props: UseCreateGitSyncModalProps): UseCreateGitS
           }}
           onClose={closeHandler}
         />
-        <Button minimal icon="cross" iconProps={{ size: 18 }} className={css.crossIcon} onClick={closeHandler} />
+        <Button
+          minimal
+          variation={ButtonVariation.ICON}
+          icon="cross"
+          iconProps={{ size: 18 }}
+          className={css.crossIcon}
+          onClick={closeHandler}
+        />
       </Dialog>
     )
   }, [isEditMode, syncRepo, isNewUser])

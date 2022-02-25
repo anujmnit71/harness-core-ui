@@ -38,15 +38,17 @@ import { ResourceType } from '@rbac/interfaces/ResourceType'
 import { PermissionIdentifier } from '@rbac/interfaces/PermissionIdentifier'
 import { useAppStore } from 'framework/AppStore/AppStoreContext'
 import GitPopover from '@pipeline/components/GitPopover/GitPopover'
+import { TemplateYaml } from '@pipeline/components/PipelineStudio/TemplateYaml/TemplateYaml'
 import type { ModulePathParams, ProjectPathProps } from '@common/interfaces/RouteInterfaces'
+import { getVersionLabelText } from '@templates-library/utils/templatesUtils'
 import { TemplateContext } from '../TemplateStudio/TemplateContext/TemplateContext'
 import { TemplateInputs } from '../TemplateInputs/TemplateInputs'
-import { TemplateYaml } from '../TemplateYaml/TemplateYaml'
 import { TemplateActivityLog } from '../TemplateActivityLog/TemplateActivityLog'
 import css from './TemplateDetails.module.scss'
 
 export interface TemplateDetailsProps {
   template: TemplateSummaryResponse
+  defaultVersionLabel?: string
   allowStableSelection?: boolean
   setTemplate?: (template: TemplateSummaryResponse) => void
 }
@@ -65,7 +67,7 @@ export enum ParentTemplateTabs {
 const DefaultStableVersionValue = '-1'
 
 export const TemplateDetails: React.FC<TemplateDetailsProps> = props => {
-  const { template, allowStableSelection = false, setTemplate } = props
+  const { template, defaultVersionLabel, allowStableSelection = false, setTemplate } = props
   const { getString } = useStrings()
   const history = useHistory()
   const [versionOptions, setVersionOptions] = React.useState<SelectOption[]>([])
@@ -120,11 +122,7 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = props => {
   React.useEffect(() => {
     const newVersionOptions: SelectOption[] = templates.map(item => {
       return {
-        label: isEmpty(item.versionLabel)
-          ? getString('templatesLibrary.alwaysUseStableVersion')
-          : item.stableTemplate
-          ? getString('templatesLibrary.stableVersion', { entity: item.versionLabel })
-          : item.versionLabel,
+        label: getVersionLabelText(item, getString),
         value: defaultTo(item.versionLabel, DefaultStableVersionValue)
       } as SelectOption
     })
@@ -132,17 +130,20 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = props => {
   }, [templates])
 
   React.useEffect(() => {
-    const allVersions = [...(templateData?.data?.content || [])]
-    if (allowStableSelection) {
-      const stableVersion = { ...allVersions.find(item => item.stableTemplate) }
-      if (stableVersion) {
+    if (templateData?.data?.content) {
+      const allVersions = [...templateData.data.content]
+      if (allowStableSelection) {
+        const stableVersion = { ...allVersions.find(item => item.stableTemplate) }
         delete stableVersion.versionLabel
         allVersions.unshift(stableVersion)
       }
+      setTemplates(allVersions)
+      const selectedVersionLabel = allowStableSelection
+        ? defaultVersionLabel
+        : defaultTo(defaultVersionLabel, template.versionLabel)
+      setSelectedTemplate(allVersions.find(item => item.versionLabel === selectedVersionLabel))
     }
-    setTemplates(allVersions)
-    setSelectedTemplate(allVersions.find(item => item.versionLabel === template.versionLabel))
-  }, [templateData?.data?.content])
+  }, [templateData])
 
   const goToTemplateStudio = () => {
     if (selectedTemplate) {
@@ -298,7 +299,7 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = props => {
                             <Tab
                               id={TemplateTabs.YAML}
                               title={getString('yaml')}
-                              panel={<TemplateYaml templateYaml={selectedTemplate.yaml} />}
+                              panel={<TemplateYaml templateYaml={defaultTo(selectedTemplate.yaml, '')} />}
                             />
                             <Tab
                               id={TemplateTabs.REFERENCEDBY}

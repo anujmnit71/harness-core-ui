@@ -36,12 +36,14 @@ import { useStrings } from 'framework/strings'
 import { MultiTypeTextField } from '@common/components/MultiTypeText/MultiTypeText'
 import MultiTypeListInputSet from '@common/components/MultiTypeListInputSet/MultiTypeListInputSet'
 import MultiTypeDelegateSelector from '@common/components/MultiTypeDelegateSelector/MultiTypeDelegateSelector'
+import { MultiTypeMapInputSet } from '@common/components/MultiTypeMapInputSet/MultiTypeMapInputSet'
 import type { ProjectPathProps } from '@common/interfaces/RouteInterfaces'
 import type { TemplateStepNode } from 'services/pipeline-ng'
 import { TEMPLATE_INPUT_PATH } from '@pipeline/utils/templateUtils'
 import { useGitScope } from '@pipeline/utils/CIUtils'
 import { ConnectorRefWidth } from '@pipeline/utils/constants'
 import { FormMultiTypeConnectorField } from '@connectors/components/ConnectorReferenceField/FormMultiTypeConnectorField'
+import type { StringsMap } from 'stringTypes'
 import factory from '../PipelineSteps/PipelineStepFactory'
 import { StepType } from '../PipelineSteps/PipelineStepInterface'
 
@@ -386,7 +388,7 @@ function ExecutionWrapperInputSetForm(props: {
   )
 }
 
-export const StageInputSetFormInternal: React.FC<StageInputSetFormProps> = ({
+export function StageInputSetFormInternal({
   deploymentStageTemplate,
   deploymentStage,
   path,
@@ -395,7 +397,7 @@ export const StageInputSetFormInternal: React.FC<StageInputSetFormProps> = ({
   viewType,
   stageIdentifier,
   allowableTypes
-}) => {
+}: StageInputSetFormProps): React.ReactElement {
   const deploymentStageInputSet = get(formik?.values, path, {})
   const { getString } = useStrings()
   const { expressions } = useVariablesExpression()
@@ -407,6 +409,29 @@ export const StageInputSetFormInternal: React.FC<StageInputSetFormProps> = ({
     orgIdentifier: string
     accountId: string
   }>()
+
+  const renderMultiTypeMapInputSet = React.useCallback(
+    (fieldName: string, stringKey: keyof StringsMap): React.ReactElement => (
+      <MultiTypeMapInputSet
+        appearance={'minimal'}
+        cardStyle={{ width: '50%' }}
+        name={fieldName}
+        valueMultiTextInputProps={{ expressions, allowableTypes }}
+        multiTypeFieldSelectorProps={{
+          label: (
+            <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
+              {getString(stringKey)}
+            </Text>
+          ),
+          disableTypeSelection: true,
+          allowedTypes: [MultiTypeInputType.FIXED]
+        }}
+        disabled={readonly}
+        formik={formik}
+      />
+    ),
+    []
+  )
 
   return (
     <>
@@ -590,6 +615,13 @@ export const StageInputSetFormInternal: React.FC<StageInputSetFormProps> = ({
                 disabled={readonly}
               />
             )}
+            {(deploymentStageTemplate.infrastructure as any).spec?.annotations &&
+              renderMultiTypeMapInputSet(
+                `${isEmpty(path) ? '' : `${path}.`}infrastructure.spec.annotations`,
+                'ci.annotations'
+              )}
+            {(deploymentStageTemplate.infrastructure as any).spec?.labels &&
+              renderMultiTypeMapInputSet(`${isEmpty(path) ? '' : `${path}.`}infrastructure.spec.labels`, 'ci.labels')}
           </div>
           <div className={css.nestedAccordions}>
             {deploymentStageTemplate.infrastructure?.environmentRef && (
@@ -645,7 +677,7 @@ export const StageInputSetFormInternal: React.FC<StageInputSetFormProps> = ({
               <ExecutionWrapperInputSetForm
                 stepsTemplate={deploymentStageTemplate.infrastructure.infrastructureDefinition?.provisioner?.steps}
                 path={`${path}.infrastructure.infrastructureDefinition.provisioner.steps`}
-                allValues={deploymentStageTemplate.infrastructure.infrastructureDefinition?.provisioner?.steps}
+                allValues={deploymentStage?.infrastructure.infrastructureDefinition?.provisioner?.steps}
                 values={deploymentStageInputSet?.infrastructure?.infrastructureDefinition?.provisioner?.steps}
                 formik={formik}
                 readonly={readonly}
@@ -659,7 +691,7 @@ export const StageInputSetFormInternal: React.FC<StageInputSetFormProps> = ({
                   deploymentStageTemplate.infrastructure.infrastructureDefinition?.provisioner?.rollbackSteps
                 }
                 path={`${path}.infrastructure.infrastructureDefinition.provisioner.rollbackSteps`}
-                allValues={deploymentStageTemplate.infrastructure.infrastructureDefinition?.provisioner?.rollbackSteps}
+                allValues={deploymentStage?.infrastructure.infrastructureDefinition?.provisioner?.rollbackSteps}
                 values={deploymentStageInputSet?.infrastructure?.infrastructureDefinition?.provisioner?.rollbackSteps}
                 formik={formik}
                 readonly={readonly}

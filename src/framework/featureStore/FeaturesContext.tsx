@@ -64,6 +64,7 @@ export interface FeaturesContextProps {
   requestLimitFeature: (featureRequest: FeatureRequest) => void
   checkLimitFeature: (featureName: FeatureIdentifier) => CheckFeatureReturn
   getRestrictionType: (props: GetRestrictionTypeProps) => RestrictionType | undefined
+  getHighestEdition: (props: GetHighestEditionProps) => Editions
 }
 
 const defaultReturn = {
@@ -88,6 +89,9 @@ export const FeaturesContext = createContext<FeaturesContextProps>({
   },
   getRestrictionType: () => {
     return undefined
+  },
+  getHighestEdition: () => {
+    return Editions.FREE
   }
 })
 
@@ -118,7 +122,11 @@ export function FeaturesProvider(props: React.PropsWithChildren<unknown>): React
     lazy: true
   })
 
-  const { data: metadata, error: gettingFeatureMetadataError } = useGetAllFeatureRestrictionMetadata({})
+  const { data: metadata, error: gettingFeatureMetadataError } = useGetAllFeatureRestrictionMetadata({
+    queryParams: {
+      accountIdentifier: accountId
+    }
+  })
 
   useEffect(() => {
     if (!isEmpty(enabledFeatureList)) {
@@ -308,6 +316,8 @@ export function FeaturesProvider(props: React.PropsWithChildren<unknown>): React
     return Editions.FREE
   }
 
+  // this is to return highest edition from all module licenses: FREE, COMMUNITY < TEAM < ENTERPRISE
+  // if no module licenses, then return FREE as default
   function getHighestEdition({ licenseInformation, licenseState }: GetHighestEditionProps): Editions {
     let edition = Editions.FREE
 
@@ -338,9 +348,9 @@ export function FeaturesProvider(props: React.PropsWithChildren<unknown>): React
     licenseState,
     isCommunity
   }: GetEditionProps): Editions | undefined {
-    // if no license available, reture undefined for default
+    // if no license available, reture Free for default
     if (licenseInformation === undefined || isEmpty(licenseInformation)) {
-      return undefined
+      return Editions.FREE
     }
 
     if (isCommunity) {
@@ -420,7 +430,8 @@ export function FeaturesProvider(props: React.PropsWithChildren<unknown>): React
         requestLimitFeature,
         checkLimitFeature,
         checkFeature,
-        getRestrictionType
+        getRestrictionType,
+        getHighestEdition
       }}
     >
       {props.children}
