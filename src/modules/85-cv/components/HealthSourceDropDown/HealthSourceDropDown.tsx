@@ -39,6 +39,7 @@ export function HealthSourceDropDown(props: HealthSourceDropDownProps): JSX.Elem
 
   return (
     <Select
+      name="healthsources-select"
       items={healthSources}
       className={classNames(css.maxDropDownWidth, className)}
       key={healthSources?.[0]?.value as string}

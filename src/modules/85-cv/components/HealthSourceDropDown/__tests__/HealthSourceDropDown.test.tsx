@@ -5,15 +5,25 @@
  * https://polyformproject.org/wp-content/uploads/2020/06/PolyForm-Shield-1.0.0.txt.
  */
 
+import React from 'react'
+import { render, act, waitFor, fireEvent, findByText } from '@testing-library/react'
 import type { StringKeys } from 'framework/strings'
 import type { RestResponseSetHealthSourceDTO } from 'services/cv'
+import { TestWrapper } from '@common/utils/testUtils'
 import { VerificationType } from '../HealthSourceDropDown.constants'
 import { getDropdownOptions } from '../HealthSourceDropDown.utils'
 import { mockedHealthSourcesData, mockedMultipleHealthSourcesData } from './HealthSourceDropDown.mock'
+import { HealthSourceDropDown } from '../HealthSourceDropDown'
 
 function getString(key: StringKeys): StringKeys {
   return key
 }
+
+jest.mock('services/cv', () => ({
+  useGetAllHealthSourcesForServiceAndEnvironment: jest
+    .fn()
+    .mockImplementation(() => ({ loading: false, data: mockedHealthSourcesData, error: null }))
+}))
 
 describe('Unit tests for HealthSourceDropDown', () => {
   const dropdownData = {
@@ -58,5 +68,35 @@ describe('Unit tests for HealthSourceDropDown', () => {
         value: 'Appd_Monitored_service/Prometheus_Health_source'
       }
     ])
+  })
+
+  test('Should be able to select the healthsources coming from the api', async () => {
+    const props = {
+      onChange: jest.fn(),
+      serviceIdentifier: 'service_1',
+      environmentIdentifier: 'env_1',
+      verificationType: VerificationType.TIME_SERIES
+    }
+
+    const { getByPlaceholderText, container } = render(
+      <TestWrapper>
+        <HealthSourceDropDown {...props} />
+      </TestWrapper>
+    )
+    const healthSourcesDropDown = getByPlaceholderText(
+      'pipeline.verification.healthSourcePlaceholder'
+    ) as HTMLInputElement
+
+    const selectCaret = container
+      .querySelector(`[name="healthsources-select"] + [class*="bp3-input-action"]`)
+      ?.querySelector('[data-icon="chevron-down"]')
+    await waitFor(() => {
+      fireEvent.click(selectCaret!)
+    })
+    const typeToSelect = await findByText(container, 'Appd Health source')
+    act(() => {
+      fireEvent.click(typeToSelect)
+    })
+    expect(healthSourcesDropDown.value).toBe('Appd Health source')
   })
 })
