@@ -249,7 +249,7 @@ GCR:
   stepTwoName: 'Google Container Registry Details'
   registryHostname: 'GCR Registry URL'
 ACR:
-  name: Azure Container Registry
+  name: ACR
 azure:
   clientId: '{{ $.common.clientId }}'
   clientIdPlaceholder: 'Client ID (Application ID)'

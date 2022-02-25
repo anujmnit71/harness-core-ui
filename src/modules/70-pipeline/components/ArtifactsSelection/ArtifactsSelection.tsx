@@ -523,7 +523,10 @@ export default function ArtifactsSelection({
       const iconProps: IconProps = {
         name: ArtifactIconByType[selectedArtifact]
       }
-      if (selectedArtifact === ENABLED_ARTIFACT_TYPES.DockerRegistry) {
+      if (
+        selectedArtifact === ENABLED_ARTIFACT_TYPES.DockerRegistry ||
+        selectedArtifact === ENABLED_ARTIFACT_TYPES.Acr
+      ) {
         iconProps.color = Color.WHITE
       }
       return iconProps

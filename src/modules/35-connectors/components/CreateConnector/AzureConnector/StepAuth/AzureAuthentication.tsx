@@ -61,8 +61,8 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
   const { getString } = useStrings()
 
   const environments = {
-    AZURE_GLOBAL: 'AZURE_GLOBAL',
-    US_GOVERNMENT: 'US_GOVERNMENT'
+    AZURE_GLOBAL: 'AZURE',
+    US_GOVERNMENT: 'AZURE_US_GOVERNMENT'
   }
 
   const environmentOptions: SelectOption[] = [
@@ -125,7 +125,6 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
           ...props.prevStepData
         }}
         formName="azureAuthForm"
-        // TODO: required fileds schema
         validationSchema={Yup.object().shape({
           delegateType: Yup.string().required(getString('connectors.chooseMethodForAzureConnection')),
           environment: Yup.string().required(getString('connectors.azure.validation.environment')),
@@ -163,7 +162,7 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
                     placeholder={getString('connectors.tenantId')}
                     label={getString('connectors.azure.tenantIdPlaceholder')}
                   />
-                  <SecretInput name={'password'} label={getString('encryptedKeyLabel')} type={'SecretFile'} />
+                  <SecretInput name={'password'} label={getString('common.clientSecret')} />
                 </>
               ) : null}
             </Container>
