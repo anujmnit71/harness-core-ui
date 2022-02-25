@@ -75,8 +75,8 @@ export default function CVSideNav(): React.ReactElement {
             <SidebarLink
               label="Error Tracking"
               to={routes.toErrorTracking({ accountId, projectIdentifier, orgIdentifier })}
-            />)
-          }
+            />
+          )}
           <ProjectSetupMenu module="cv" />
         </React.Fragment>
       ) : null}
