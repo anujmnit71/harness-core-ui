@@ -9,23 +9,161 @@ import { BannerType } from '@common/layouts/Constants'
 import { getBannerText } from '../UsageLimitUtils'
 
 describe('Usage Limit Utils', () => {
-  test('should return correct message under free plan and under limit', () => {
+  const limit = 25000
+  describe('when user has the Free Plan', () => {
     const additionalLicenseProps = {
       isFreeEdition: true,
       isEnterpriseEdition: false,
       isTeamEdition: false
     }
 
-    const limit = 25000
-    const count = 24000
+    test('it should not display message or banner when usage is below 90%', () => {
+      const count = 22000
+      const expectedMessage = undefined
+      const getString = jest.fn().mockReturnValue(expectedMessage)
 
-    const expectedMessage =
-      'You have used 0.96% of Monthly Active Users (MAU) included in the free plan. After 25K MAUs, flag management will be restricted.'
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
 
-    const getString = jest.fn().mockReturnValue(expectedMessage)
-    const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(undefined)
+    })
 
-    expect(message).toEqual(expectedMessage)
-    expect(bannerType).toEqual(BannerType.INFO)
+    test('it should return correct message when usage is above 90% and less than 100%', () => {
+      const count = 24000
+      const expectedMessage =
+        'You have used 96% of Monthly Active Users (MAU) included in the free plan. After 25K MAUs, flag management will be restricted.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.INFO)
+    })
+
+    test('it should return correct message when usage is above 99%', () => {
+      const count = 24999
+
+      const expectedMessage =
+        'You have used 0.96% of Monthly Active Users (MAU) included in the free plan. After 25K MAUs, flag management will be restricted.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.INFO)
+    })
+
+    test('it should display warning message when usage is 100%', () => {
+      const count = 25000
+      const expectedMessage =
+        'You have used 25k / 25k  free Monthly Active Users (MAU) this month. Consider upgrading to manage more MAUs.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.LEVEL_UP)
+    })
+
+    test('it should display warning message when usage is greater than 100%', () => {
+      const count = 25001
+      const expectedMessage =
+        'You have used 25k / 25k  free Monthly Active Users (MAU) this month. Consider upgrading to manage more MAUs.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.LEVEL_UP)
+    })
   })
+
+  describe('when user has the Team or Enterprise Plan', () => {
+    const additionalLicenseProps = {
+      isFreeEdition: false,
+      isEnterpriseEdition: true,
+      isTeamEdition: true
+    }
+
+    test('it should not display message or banner when usage is below 90%', () => {
+      const count = 22000
+      const expectedMessage = undefined
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(undefined)
+    })
+
+    test('it should display message and banner when usage is 90%', () => {
+      const count = 22500
+      const expectedMessage = 'You have used 90% of your Monthly Active Users (MAU) subscription limit.'
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.INFO)
+    })
+
+    test('it should return correct message when usage is above 90% and less than 100%', () => {
+      const count = 24000
+      const expectedMessage = 'You have used 96% of your Monthly Active Users (MAU) subscription limit.'
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.INFO)
+    })
+
+    test('it should return correct message when usage is above 90% and less than 100%', () => {
+      const count = 24000
+      const expectedMessage = 'You have used 96% of your Monthly Active Users (MAU) subscription limit.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.INFO)
+    })
+
+    test('it should return correct message when usage is above 99%', () => {
+      const count = 24999
+      const expectedMessage = 'You have used 99% of your Monthly Active Users (MAU) subscription limit.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.INFO)
+    })
+
+    test('it should display warning message when usage is 100%', () => {
+      const count = 25000
+      const expectedMessage = 'You have exceeded your Monthly Active Users (MAU) subscription limit.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.LEVEL_UP)
+    })
+
+    test('it should display warning message when usage is greater than 100%', () => {
+      const count = 25001
+      const expectedMessage = 'You have exceeded your Monthly Active Users (MAU) subscription limit.'
+
+      const getString = jest.fn().mockReturnValue(expectedMessage)
+      const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+      expect(message).toEqual(expectedMessage)
+      expect(bannerType).toEqual(BannerType.LEVEL_UP)
+    })
+  })
+
+  //   If MAUs < 90 dont show a banner
+  // If MAUs >= 90 then show the info banner.
+  // If MAUs >= 100 show level up banner
 })
