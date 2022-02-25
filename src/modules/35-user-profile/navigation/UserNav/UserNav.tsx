@@ -39,7 +39,7 @@ export default function UserNav(): React.ReactElement {
       AppStorage.clear()
       if (response?.logoutUrl) {
         // if BE returns a logoutUrl, redirect there. Used by some customers in onprem
-        window.location = response.logoutUrl
+        window.location.href = response.logoutUrl
       } else {
         history.push({ pathname: routes.toRedirect(), search: returnUrlParams(getLoginPageURL({})) })
       }
@@ -63,6 +63,7 @@ export default function UserNav(): React.ReactElement {
           iconProps={{ size: 16, padding: { right: 'small' } }}
           onClick={signOut}
           className={css.text}
+          data-testid="signout-link"
         >
           {getString('signOut')}
         </Text>
