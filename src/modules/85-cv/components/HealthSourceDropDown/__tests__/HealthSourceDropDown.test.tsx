@@ -6,23 +6,23 @@
  */
 
 import React from 'react'
-import { render, act, waitFor, fireEvent, findByText } from '@testing-library/react'
-import type { StringKeys } from 'framework/strings'
-import type { RestResponseSetHealthSourceDTO } from 'services/cv'
+import { render, waitFor } from '@testing-library/react'
 import { TestWrapper } from '@common/utils/testUtils'
+import type { StringKeys } from 'framework/strings'
+import * as cvService from 'services/cv'
+import { HealthSourceDropDown } from '../HealthSourceDropDown'
 import { VerificationType } from '../HealthSourceDropDown.constants'
 import { getDropdownOptions } from '../HealthSourceDropDown.utils'
 import { mockedHealthSourcesData, mockedMultipleHealthSourcesData } from './HealthSourceDropDown.mock'
-import { HealthSourceDropDown } from '../HealthSourceDropDown'
 
 function getString(key: StringKeys): StringKeys {
   return key
 }
 
 jest.mock('services/cv', () => ({
-  useGetAllHealthSourcesForServiceAndEnvironment: jest
-    .fn()
-    .mockImplementation(() => ({ loading: false, data: mockedHealthSourcesData, error: null }))
+  useGetAllHealthSourcesForMonitoredServiceIdentifier: jest.fn().mockImplementation(() => {
+    return { data: mockedHealthSourcesData, error: null, loading: false }
+  })
 }))
 
 describe('Unit tests for HealthSourceDropDown', () => {
@@ -38,7 +38,10 @@ describe('Unit tests for HealthSourceDropDown', () => {
   })
 
   test('Should return the health source option when loading is false and there is only one health source', async () => {
-    const newDropdownData = { ...dropdownData, data: mockedHealthSourcesData as RestResponseSetHealthSourceDTO }
+    const newDropdownData = {
+      ...dropdownData,
+      data: mockedHealthSourcesData as cvService.RestResponseSetHealthSourceDTO
+    }
     expect(getDropdownOptions(newDropdownData, getString)).toEqual([
       {
         label: 'Appd Health source',
@@ -51,7 +54,10 @@ describe('Unit tests for HealthSourceDropDown', () => {
   })
 
   test('Should also return the All option whenever there are multiple health sources of same verificationType', async () => {
-    const newDropdownData = { ...dropdownData, data: mockedMultipleHealthSourcesData as RestResponseSetHealthSourceDTO }
+    const newDropdownData = {
+      ...dropdownData,
+      data: mockedMultipleHealthSourcesData as cvService.RestResponseSetHealthSourceDTO
+    }
     expect(getDropdownOptions(newDropdownData, getString)).toEqual([
       {
         icon: {
@@ -70,33 +76,22 @@ describe('Unit tests for HealthSourceDropDown', () => {
     ])
   })
 
-  test('Should be able to select the healthsources coming from the api', async () => {
-    const props = {
-      onChange: jest.fn(),
-      serviceIdentifier: 'service_1',
-      environmentIdentifier: 'env_1',
-      verificationType: VerificationType.TIME_SERIES
-    }
-
-    const { getByPlaceholderText, container } = render(
+  test('should ensure that useGetAllHealthSourcesForMonitoredServiceIdentifier is called with monitoredServiceIdentifier', async () => {
+    render(
       <TestWrapper>
-        <HealthSourceDropDown {...props} />
+        <HealthSourceDropDown monitoredServiceIdentifier="monitored_service_identifier" onChange={jest.fn()} />
       </TestWrapper>
     )
-    const healthSourcesDropDown = getByPlaceholderText(
-      'pipeline.verification.healthSourcePlaceholder'
-    ) as HTMLInputElement
 
-    const selectCaret = container
-      .querySelector(`[name="healthsources-select"] + [class*="bp3-input-action"]`)
-      ?.querySelector('[data-icon="chevron-down"]')
-    await waitFor(() => {
-      fireEvent.click(selectCaret!)
-    })
-    const typeToSelect = await findByText(container, 'Appd Health source')
-    act(() => {
-      fireEvent.click(typeToSelect)
-    })
-    expect(healthSourcesDropDown.value).toBe('Appd Health source')
+    await waitFor(() =>
+      expect(cvService.useGetAllHealthSourcesForMonitoredServiceIdentifier).toHaveBeenLastCalledWith({
+        monitoredServiceIdentifier: 'monitored_service_identifier',
+        queryParams: {
+          accountId: undefined,
+          orgIdentifier: undefined,
+          projectIdentifier: undefined
+        }
+      })
+    )
   })
 })
