@@ -47,6 +47,23 @@ import { ErrorsStrip } from '../ErrorsStrip/ErrorsStrip'
 import { StepViewType } from '../AbstractSteps/Step'
 import css from './InputSetForm.module.scss'
 
+export const showPipelineInputSetForm = (
+  templateRefsResolvedPipeline: ResponseTemplateMergeResponse | null,
+  template: ResponseInputSetTemplateWithReplacedExpressionsResponse | null
+): boolean => {
+  return (
+    templateRefsResolvedPipeline?.data?.mergedPipelineYaml &&
+    template?.data?.inputSetTemplateYaml &&
+    parse(template.data.inputSetTemplateYaml)
+  )
+}
+
+export const isYamlPresent = (
+  template: ResponseInputSetTemplateWithReplacedExpressionsResponse | null,
+  pipeline: ResponsePMSPipelineResponseDTO | null
+): string | undefined => {
+  return template?.data?.inputSetTemplateYaml && pipeline?.data?.yamlPipeline
+}
 interface FormikInputSetFormProps {
   inputSet: InputSetDTO | InputSetType
   template: ResponseInputSetTemplateWithReplacedExpressionsResponse | null
@@ -153,11 +170,11 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
                 errors = { [err.path]: err.message }
               }
             }
-            if (values.pipeline && template?.data?.inputSetTemplateYaml && pipeline?.data?.yamlPipeline) {
+            if (values.pipeline && isYamlPresent(template, pipeline)) {
               errors.pipeline = validatePipeline({
                 pipeline: values.pipeline,
-                template: parse(template.data.inputSetTemplateYaml).pipeline,
-                originalPipeline: parse(pipeline.data.yamlPipeline).pipeline,
+                template: parse(defaultTo(template?.data?.inputSetTemplateYaml, '')).pipeline,
+                originalPipeline: parse(defaultTo(pipeline?.data?.yamlPipeline, '')).pipeline,
                 getString,
                 viewType: StepViewType.InputSet
               }) as any
@@ -216,17 +233,17 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
                                 />
                               </GitSyncStoreProvider>
                             )}
-                            {templateRefsResolvedPipeline?.data?.mergedPipelineYaml &&
-                              template?.data?.inputSetTemplateYaml &&
-                              parse(template.data.inputSetTemplateYaml) && (
-                                <PipelineInputSetForm
-                                  path="pipeline"
-                                  readonly={!isEditable}
-                                  originalPipeline={parse(templateRefsResolvedPipeline?.data?.mergedPipelineYaml)}
-                                  template={parse(defaultTo(template.data?.inputSetTemplateYaml, '')).pipeline}
-                                  viewType={StepViewType.InputSet}
-                                />
-                              )}
+                            {showPipelineInputSetForm(templateRefsResolvedPipeline, template) && (
+                              <PipelineInputSetForm
+                                path="pipeline"
+                                readonly={!isEditable}
+                                originalPipeline={parse(
+                                  defaultTo(templateRefsResolvedPipeline?.data?.mergedPipelineYaml, '')
+                                )}
+                                template={parse(defaultTo(template?.data?.inputSetTemplateYaml, '')).pipeline}
+                                viewType={StepViewType.InputSet}
+                              />
+                            )}
                           </Layout.Vertical>
                         )}
                         <Layout.Horizontal className={css.footer} padding="xlarge">
@@ -238,8 +255,8 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
                               formikProps.validateForm().then(errors => {
                                 setFormErrors(errors)
                                 if (
-                                  formikProps?.values?.name?.length &&
-                                  formikProps?.values?.identifier?.length &&
+                                  formikProps?.values.name?.length &&
+                                  formikProps?.values.identifier?.length &&
                                   isEmpty(formikProps.errors)
                                 ) {
                                   handleSubmit(formikProps.values, {
