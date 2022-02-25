@@ -72,7 +72,7 @@ RbacFactory.registerResourceTypeHandler(ResourceType.DELEGATECONFIGURATION, {
 const delTokenLabel = 'common.delegateTokenLabel'
 AuditTrailFactory.registerResourceHandler(ResourceType.DELEGATE_TOKEN, {
   moduleIcon: {
-    name: 'nav-settings'
+    name: 'delegates-icon'
   },
   moduleIconLabel: delTokenLabel,
   resourceUrl: (_: ResourceDTO, resourceScope: ResourceScope, module?: Module) => {
