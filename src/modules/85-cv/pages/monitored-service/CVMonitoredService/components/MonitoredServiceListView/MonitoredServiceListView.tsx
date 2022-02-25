@@ -57,7 +57,7 @@ const RenderServiceName: Renderer<CellProps<MonitoredServiceListItemDTO>> = ({ r
           module: 'cv'
         })}
       >
-        <Text color={Color.PRIMARY_7} font={{ align: 'left', size: 'normal', weight: 'semi-bold' }}>
+        <Text color={Color.PRIMARY_7} className={css.monitoredServiceName}  title={monitoredService.serviceName} font={{ align: 'left', size: 'normal', weight: 'semi-bold' }}>
           {monitoredService.serviceName}
         </Text>
       </Link>
