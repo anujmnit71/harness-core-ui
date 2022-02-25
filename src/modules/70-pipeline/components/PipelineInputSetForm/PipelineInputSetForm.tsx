@@ -175,7 +175,7 @@ export function StageForm({
   )
 }
 
-function PipelineInputSetFormInternal(props: PipelineInputSetFormProps): React.ReactElement {
+export function PipelineInputSetFormInternal(props: PipelineInputSetFormProps): React.ReactElement {
   const {
     originalPipeline,
     template,

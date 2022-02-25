@@ -24,6 +24,7 @@ export type AuditFilterProperties = FilterProperties & {
     | 'REVOKE_INVITE'
     | 'ADD_COLLABORATOR'
     | 'REMOVE_COLLABORATOR'
+    | 'CREATE_TOKEN'
     | 'REVOKE_TOKEN'
     | 'LOGIN'
     | 'LOGIN2FA'
@@ -179,6 +180,21 @@ export interface EntityDetailProtoDTO {
     | 'VERIFY_STEP'
     | 'OPAPOLICIES'
     | 'POLICY_STEP'
+    | 'ARTIFACTORY_UPLOAD'
+    | 'GCS_UPLOAD'
+    | 'S3_UPLOAD'
+    | 'BUILD_AND_PUSH_GCR'
+    | 'BUILD_AND_PUSH_ECR'
+    | 'BUILD_AND_PUSH_DOCKER_REGISTRY'
+    | 'RUN_STEP'
+    | 'RUN_TEST'
+    | 'PLUGIN'
+    | 'RESTORE_CACHE_GCS'
+    | 'RESTORE_CACHE_S3'
+    | 'SAVE_CACHE_GCS'
+    | 'SAVE_CACHE_S3'
+    | 'FLAG_CONFIGURATION'
+    | 'SECURITY'
     | 'UNRECOGNIZED'
   typeValue?: number
   unknownFields?: UnknownFieldSet
@@ -283,6 +299,7 @@ export interface Error {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -561,6 +578,11 @@ export interface Error {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   correlationId?: string
   detailedMessage?: string
   message?: string
@@ -592,6 +614,7 @@ export interface Failure {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -870,6 +893,11 @@ export interface Failure {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   correlationId?: string
   errors?: ValidationError[]
   message?: string
@@ -1565,6 +1593,7 @@ export interface ResponseMessage {
     | 'USER_DOMAIN_NOT_ALLOWED'
     | 'MAX_FAILED_ATTEMPT_COUNT_EXCEEDED'
     | 'RESOURCE_NOT_FOUND'
+    | 'INVALID_FORMAT'
     | 'ROLE_DOES_NOT_EXIST'
     | 'EMAIL_NOT_VERIFIED'
     | 'EMAIL_VERIFICATION_TOKEN_NOT_FOUND'
@@ -1843,6 +1872,11 @@ export interface ResponseMessage {
     | 'GIT_SYNC_ERROR'
     | 'TEMPLATE_EXCEPTION'
     | 'ENTITY_REFERENCE_EXCEPTION'
+    | 'INVALID_INPUT_SET'
+    | 'INVALID_OVERLAY_INPUT_SET'
+    | 'RESOURCE_ALREADY_EXISTS'
+    | 'INVALID_JSON_PAYLOAD'
+    | 'POLICY_EVALUATION_FAILURE'
   exception?: Throwable
   failureTypes?: (
     | 'EXPIRED'
@@ -1853,6 +1887,7 @@ export interface ResponseMessage {
     | 'APPLICATION_ERROR'
     | 'AUTHORIZATION_ERROR'
     | 'TIMEOUT_ERROR'
+    | 'POLICY_EVALUATION_FAILURE'
   )[]
   level?: 'INFO' | 'ERROR'
   message?: string
@@ -2020,7 +2055,7 @@ export interface TemplateFilterProperties {
   tags?: {
     [key: string]: string
   }
-  templateEntityTypes?: ('Step' | 'Stage')[]
+  templateEntityTypes?: ('Step' | 'Stage' | 'Pipeline')[]
   templateIdentifiers?: string[]
   templateNames?: string[]
 }
@@ -2114,7 +2149,7 @@ export interface TemplateResponse {
   tags?: {
     [key: string]: string
   }
-  templateEntityType?: 'Step' | 'Stage'
+  templateEntityType?: 'Step' | 'Stage' | 'Pipeline'
   templateScope?: 'account' | 'org' | 'project' | 'unknown'
   version?: number
   versionLabel?: string
@@ -2265,7 +2300,7 @@ export interface YamlProperties {
 
 export type FilterDTORequestBody = FilterDTO
 
-export type CreateTemplateBodyRequestBody = string
+export type UpdateExistingTemplateLabelBodyRequestBody = string
 
 export interface GetFilterListQueryParams {
   pageIndex?: number
@@ -2605,7 +2640,7 @@ export type CreateTemplateProps = Omit<
     ResponseTemplateWrapperResponse,
     Failure | Error,
     CreateTemplateQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >,
   'path' | 'verb'
@@ -2619,7 +2654,7 @@ export const CreateTemplate = (props: CreateTemplateProps) => (
     ResponseTemplateWrapperResponse,
     Failure | Error,
     CreateTemplateQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >
     verb="POST"
@@ -2634,7 +2669,7 @@ export type UseCreateTemplateProps = Omit<
     ResponseTemplateWrapperResponse,
     Failure | Error,
     CreateTemplateQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >,
   'path' | 'verb'
@@ -2648,7 +2683,7 @@ export const useCreateTemplate = (props: UseCreateTemplateProps) =>
     ResponseTemplateWrapperResponse,
     Failure | Error,
     CreateTemplateQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >('POST', `/templates`, { base: getConfig('template/api'), ...props })
 
@@ -2660,7 +2695,7 @@ export const createTemplatePromise = (
     ResponseTemplateWrapperResponse,
     Failure | Error,
     CreateTemplateQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >,
   signal?: RequestInit['signal']
@@ -2669,7 +2704,7 @@ export const createTemplatePromise = (
     ResponseTemplateWrapperResponse,
     Failure | Error,
     CreateTemplateQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >('POST', getConfig('template/api'), `/templates`, props, signal)
 
@@ -2968,7 +3003,7 @@ export type GetTemplateReferencesProps = Omit<
     ResponseListEntityDetailProtoDTO,
     Failure | Error,
     GetTemplateReferencesQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >,
   'path' | 'verb'
@@ -2979,7 +3014,7 @@ export const GetTemplateReferences = (props: GetTemplateReferencesProps) => (
     ResponseListEntityDetailProtoDTO,
     Failure | Error,
     GetTemplateReferencesQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >
     verb="POST"
@@ -2994,7 +3029,7 @@ export type UseGetTemplateReferencesProps = Omit<
     ResponseListEntityDetailProtoDTO,
     Failure | Error,
     GetTemplateReferencesQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >,
   'path' | 'verb'
@@ -3005,7 +3040,7 @@ export const useGetTemplateReferences = (props: UseGetTemplateReferencesProps) =
     ResponseListEntityDetailProtoDTO,
     Failure | Error,
     GetTemplateReferencesQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >('POST', `/templates/templateReferences`, { base: getConfig('template/api'), ...props })
 
@@ -3014,7 +3049,7 @@ export const getTemplateReferencesPromise = (
     ResponseListEntityDetailProtoDTO,
     Failure | Error,
     GetTemplateReferencesQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >,
   signal?: RequestInit['signal']
@@ -3023,7 +3058,7 @@ export const getTemplateReferencesPromise = (
     ResponseListEntityDetailProtoDTO,
     Failure | Error,
     GetTemplateReferencesQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     void
   >('POST', getConfig('template/api'), `/templates/templateReferences`, props, signal)
 
@@ -3052,7 +3087,7 @@ export type UpdateExistingTemplateLabelProps = Omit<
     ResponseTemplateWrapperResponse,
     Failure | Error,
     UpdateExistingTemplateLabelQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     UpdateExistingTemplateLabelPathParams
   >,
   'path' | 'verb'
@@ -3071,7 +3106,7 @@ export const UpdateExistingTemplateLabel = ({
     ResponseTemplateWrapperResponse,
     Failure | Error,
     UpdateExistingTemplateLabelQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     UpdateExistingTemplateLabelPathParams
   >
     verb="PUT"
@@ -3086,7 +3121,7 @@ export type UseUpdateExistingTemplateLabelProps = Omit<
     ResponseTemplateWrapperResponse,
     Failure | Error,
     UpdateExistingTemplateLabelQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     UpdateExistingTemplateLabelPathParams
   >,
   'path' | 'verb'
@@ -3105,7 +3140,7 @@ export const useUpdateExistingTemplateLabel = ({
     ResponseTemplateWrapperResponse,
     Failure | Error,
     UpdateExistingTemplateLabelQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     UpdateExistingTemplateLabelPathParams
   >(
     'PUT',
@@ -3126,7 +3161,7 @@ export const updateExistingTemplateLabelPromise = (
     ResponseTemplateWrapperResponse,
     Failure | Error,
     UpdateExistingTemplateLabelQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     UpdateExistingTemplateLabelPathParams
   > & { templateIdentifier: string; versionLabel: string },
   signal?: RequestInit['signal']
@@ -3135,7 +3170,7 @@ export const updateExistingTemplateLabelPromise = (
     ResponseTemplateWrapperResponse,
     Failure | Error,
     UpdateExistingTemplateLabelQueryParams,
-    CreateTemplateBodyRequestBody,
+    UpdateExistingTemplateLabelBodyRequestBody,
     UpdateExistingTemplateLabelPathParams
   >('PUT', getConfig('template/api'), `/templates/update/${templateIdentifier}/${versionLabel}`, props, signal)
 
