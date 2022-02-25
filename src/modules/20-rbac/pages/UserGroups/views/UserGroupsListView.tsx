@@ -115,9 +115,15 @@ const RenderColumnMembers: Renderer<CellProps<UserGroupAggregateDTO>> = ({ row, 
     ;(column as any).openUserGroupModal(data.userGroupDTO, true)
   }
 
-  const disableTooltipText = data.userGroupDTO.ssoLinked
-    ? getString('rbac.userDetails.linkToSSOProviderModal.btnDisabledTooltipText')
-    : undefined
+  let disableTooltipText
+
+  if (data.userGroupDTO.ssoLinked) {
+    disableTooltipText = getString('rbac.userDetails.linkToSSOProviderModal.btnDisabledTooltipText')
+  } else if (data.userGroupDTO.externallyManaged) {
+    disableTooltipText = getString('rbac.unableToEditSCIMMembership')
+  }
+
+  const disabled = data.userGroupDTO.ssoLinked || data.userGroupDTO.externallyManaged
   const avatarTooltip = disableTooltipText ? <Text padding="medium">{disableTooltipText}</Text> : undefined
 
   return avatars.length ? (
@@ -137,7 +143,7 @@ const RenderColumnMembers: Renderer<CellProps<UserGroupAggregateDTO>> = ({ row, 
         },
         permission: PermissionIdentifier.MANAGE_USERGROUP
       }}
-      disabled={data.userGroupDTO.ssoLinked}
+      disabled={disabled}
       onAddTooltip={avatarTooltip}
     />
   ) : (
@@ -149,7 +155,7 @@ const RenderColumnMembers: Renderer<CellProps<UserGroupAggregateDTO>> = ({ row, 
         className={css.roleButton}
         resourceType={ResourceType.USERGROUP}
         resourceIdentifier={identifier}
-        disabled={data.userGroupDTO.ssoLinked}
+        disabled={disabled}
         tooltip={disableTooltipText}
       />
     </Layout.Horizontal>

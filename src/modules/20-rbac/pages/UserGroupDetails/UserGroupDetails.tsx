@@ -64,6 +64,13 @@ const UserGroupDetails: React.FC = () => {
 
   useDocumentTitle([userGroup?.name || '', getString('common.userGroups')])
 
+  let membersBtnTooltipText
+  if (userGroup?.ssoLinked) {
+    membersBtnTooltipText = getString('rbac.userDetails.linkToSSOProviderModal.btnDisabledTooltipText')
+  } else if (userGroup?.externallyManaged) {
+    membersBtnTooltipText = getString('rbac.unableToEditSCIMMembership')
+  }
+
   if (loading) return <PageSpinner />
   if (error) return <PageError message={(error.data as Error)?.message || error.message} onClick={() => refetch()} />
   if (!userGroup) return <></>
@@ -129,6 +136,7 @@ const UserGroupDetails: React.FC = () => {
             </Layout.Horizontal>
             <Layout.Horizontal className={cx({ [css.buttonPadding]: userGroup.ssoLinked })}>
               <ManagePrincipalButton
+                disabled={userGroup.externallyManaged}
                 text={
                   userGroup.ssoLinked
                     ? getString('rbac.userDetails.linkToSSOProviderModal.delinkLabel')
@@ -139,16 +147,13 @@ const UserGroupDetails: React.FC = () => {
                 onClick={() => {
                   openLinkToSSOProviderModal(userGroup)
                 }}
+                tooltip={userGroup.externallyManaged ? getString('rbac.unableToEditSCIMMembership') : undefined}
                 resourceType={ResourceType.USERGROUP}
                 resourceIdentifier={userGroupIdentifier}
               />
               <ManagePrincipalButton
-                disabled={userGroup.ssoLinked}
-                tooltip={
-                  userGroup.ssoLinked
-                    ? getString('rbac.userDetails.linkToSSOProviderModal.btnDisabledTooltipText')
-                    : undefined
-                }
+                disabled={userGroup.ssoLinked || userGroup.externallyManaged}
+                tooltip={membersBtnTooltipText}
                 text={getString('common.plusNumber', { number: getString('members') })}
                 variation={ButtonVariation.LINK}
                 onClick={() => {
