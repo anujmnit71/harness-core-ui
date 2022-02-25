@@ -75,6 +75,16 @@ export const getActiveUsageNumber = (feature?: CheckFeatureReturn) => {
   return featureDetail?.limit && featureDetail.count && Math.floor((featureDetail.count * 100) / featureDetail.limit)
 }
 
+export const getPercentageNumber = (feature?: CheckFeatureReturn) => {
+  const featureDetail = feature?.featureDetail
+
+  return (
+    featureDetail?.limit &&
+    featureDetail.count &&
+    Math.min(Math.floor((featureDetail.count / featureDetail.limit) * 100), 100)
+  )
+}
+
 function getBannerClassNameByType(type: BannerType): string {
   switch (type) {
     case BannerType.INFO:

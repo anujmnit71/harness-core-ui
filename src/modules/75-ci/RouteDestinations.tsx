@@ -46,7 +46,8 @@ import {
   isFeatureCountActive,
   isFeatureWarningActive,
   isFeatureLimitMet,
-  getActiveUsageNumber
+  getActiveUsageNumber,
+  getPercentageNumber
 } from '@common/layouts/FeatureBanner'
 import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
 import featureFactory from 'framework/featureStore/FeaturesFactory'
@@ -216,7 +217,7 @@ featureFactory.registerFeaturesByModule('ci', {
       activeCommittersFeatureDetail.featureDetail.limit &&
       isTeamOrEnterprise
     ) {
-      const usagePercent = getActiveUsageNumber(maxTotalBuildsFeatureDetail)
+      const usagePercent = getPercentageNumber(maxTotalBuildsFeatureDetail)
 
       warningMessageString = getString('pipeline.featureRestriction.subscription90PercentLimit', { usagePercent })
     }
