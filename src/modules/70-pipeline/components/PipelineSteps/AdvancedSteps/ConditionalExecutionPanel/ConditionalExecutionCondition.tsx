@@ -11,8 +11,7 @@ import {
   ExpressionAndRuntimeType,
   getMultiTypeFromValue,
   HarnessDocTooltip,
-  MultiTypeInputType,
-  Utils
+  MultiTypeInputType
 } from '@wings-software/uicore'
 import { Checkbox } from '@blueprintjs/core'
 import type { FormikProps } from 'formik'
@@ -49,10 +48,6 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
   const { getString } = useStrings()
   const { formikProps, mode, isReadonly, enableConfigureOptions = true } = props
 
-  // Helps to reset the ExpressionAndRuntimeType controlled component when the value is changed due to
-  // external factors - example - enable disable toggle
-  const [conditionMultiInputResetKey, setConditionMultiInputKey] = React.useState(Utils.randomId())
-
   const conditionValue = formikProps.values?.condition
   const isDisabled = !formikProps.values.enableJEXL || isReadonly
 
@@ -60,7 +55,6 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
 
   const expressionAndRuntimeTypeComponent = (
     <ExpressionAndRuntimeType
-      key={conditionMultiInputResetKey}
       name={'condition'}
       value={conditionValue}
       fixedTypeComponentProps={{
@@ -73,6 +67,7 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
       onChange={val => formikProps.setFieldValue('condition', val)}
       onTypeChange={setMultiType}
       btnClassName={multiType === MultiTypeInputType.FIXED ? multiBtnCss.multiButtonForFixedType : ''}
+      multitypeInputValue={multiType}
     />
   )
 
@@ -93,8 +88,6 @@ export default function ConditionalExecutionCondition(props: ConditionalExecutio
           const isChecked = e.currentTarget.checked
           formikProps.setFieldValue('enableJEXL', isChecked)
           if (!isChecked) {
-            // Reset form
-            setConditionMultiInputKey(Utils.randomId())
             formikProps.setFieldValue('condition', null)
             setMultiType(MultiTypeInputType.FIXED)
           }
