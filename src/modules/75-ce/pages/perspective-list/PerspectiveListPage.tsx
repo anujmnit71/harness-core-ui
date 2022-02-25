@@ -251,7 +251,6 @@ const PerspectiveListGridView: (props: PerspectiveListGridViewProps) => JSX.Elem
   recentViewList,
   navigateToPerspectiveDetailsPage,
   deletePerpsective,
-  createNewPerspective,
   clonePerspective,
   filteredPerspectiveData,
   view
@@ -334,7 +333,7 @@ const PerspectiveListGridView: (props: PerspectiveListGridViewProps) => JSX.Elem
             pespectiveData={recentViewList}
             navigateToPerspectiveDetailsPage={navigateToPerspectiveDetailsPage}
             deletePerpsective={deletePerpsective}
-            clonePerspective={createNewPerspective}
+            clonePerspective={clonePerspective}
           />
         </Container>
       ) : null}
@@ -353,7 +352,7 @@ const PerspectiveListGridView: (props: PerspectiveListGridViewProps) => JSX.Elem
         pespectiveData={filteredPerspectiveData}
         navigateToPerspectiveDetailsPage={navigateToPerspectiveDetailsPage}
         deletePerpsective={deletePerpsective}
-        clonePerspective={createNewPerspective}
+        clonePerspective={clonePerspective}
       />
     </>
   )
@@ -445,15 +444,17 @@ const PerspectiveListPage: React.FC = () => {
         },
         pathParams: {
           perspectiveId: perspectiveId
-        }
+        },
+        headers: { 'content-type': 'application/json' }
       })
-      const uuid = response?.data?.uuid
 
+      const uuid = response?.data?.uuid
       if (uuid) {
         history.push(
-          routes.toCECreatePerspective({
+          routes.toPerspectiveDetails({
             accountId: accountId,
-            perspectiveId: uuid
+            perspectiveId: uuid,
+            perspectiveName: cloneName
           })
         )
       }

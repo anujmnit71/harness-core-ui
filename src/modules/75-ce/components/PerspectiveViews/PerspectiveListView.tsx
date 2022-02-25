@@ -37,7 +37,7 @@ interface PerspectiveListViewProps {
     viewType: ViewType
   ) => void
   deletePerpsective: (perspectiveId: string, perspectiveName: string) => void
-  clonePerspective: (values: QlceView | Record<string, string>, isClone: boolean) => void
+  clonePerspective: (perspectiveId: string, perspectiveName: string) => void
 }
 
 const PerspectiveListView: React.FC<PerspectiveListViewProps> = ({
@@ -160,7 +160,7 @@ const PerspectiveListView: React.FC<PerspectiveListViewProps> = ({
     const onCloneClick: (e: any) => void = e => {
       e.stopPropagation()
       setMenuOpen(false)
-      clonePerspective(row.original, true)
+      row.original.id && row.original.name && clonePerspective(row.original.id, row.original.name)
     }
 
     return (
