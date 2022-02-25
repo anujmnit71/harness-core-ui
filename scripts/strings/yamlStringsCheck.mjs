@@ -39,7 +39,6 @@ function validateReferences(str, path, restricedModules = [], isOld) {
 
   while ((match = REFERENCE_REGEX1.exec(str))) {
     const [, ref] = match
-    console.log(ref)
 
     restricedModules.forEach(mod => {
       if (ref.startsWith(mod)) {
