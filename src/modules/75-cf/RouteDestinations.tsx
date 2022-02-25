@@ -72,10 +72,13 @@ featureFactory.registerFeaturesByModule('cf', {
   features: [FeatureIdentifier.MAUS],
   renderMessage: (props, getString, additionalLicenseProps = {}) => {
     const monthlyActiveUsers = props.features.get(FeatureIdentifier.MAUS)
-    const { message, bannerType } = getBannerText(getString, monthlyActiveUsers, additionalLicenseProps)
+    const count = monthlyActiveUsers?.featureDetail?.count
+    const limit = monthlyActiveUsers?.featureDetail?.limit
+
+    const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
 
     return {
-      message,
+      message: () => message,
       bannerType
     }
   }

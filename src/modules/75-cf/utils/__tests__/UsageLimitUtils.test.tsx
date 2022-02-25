@@ -6,42 +6,26 @@
  */
 
 import { BannerType } from '@common/layouts/Constants'
-import type { CheckFeatureReturn } from 'framework/featureStore/featureStoreUtil'
-import { FeatureIdentifier } from 'framework/featureStore/FeatureIdentifier'
-import * as UsageLimitUtils from '../UsageLimitUtils'
-
-const getString = jest.fn()
+import { getBannerText } from '../UsageLimitUtils'
 
 describe('Usage Limit Utils', () => {
-  const { getBannerText } = UsageLimitUtils
   test('should return correct message under free plan and under limit', () => {
-    const feature = new Map<FeatureIdentifier, CheckFeatureReturn>()
-    feature.set(FeatureIdentifier.MAUS, {
-      enabled: true,
-      featureDetail: {
-        featureName: FeatureIdentifier.MAUS,
-        enabled: true,
-        moduleType: 'CF',
-        limit: 25000,
-        count: 200,
-        apiFail: false
-      }
-    })
-
     const additionalLicenseProps = {
       isFreeEdition: true,
       isEnterpriseEdition: false,
       isTeamEdition: false
     }
 
-    const monthlyActiveUsers = feature.get(FeatureIdentifier.MAUS)
+    const limit = 25000
+    const count = 24000
 
-    const message =
-      'You have used 0.8% of Monthly Active Users (MAU) included in the free plan. After 25K MAUs, flag management will be restricted.'
+    const expectedMessage =
+      'You have used 0.96% of Monthly Active Users (MAU) included in the free plan. After 25K MAUs, flag management will be restricted.'
 
-    expect(getBannerText(getString, monthlyActiveUsers, additionalLicenseProps)).toStrictEqual({
-      message: () => message,
-      bannerType: BannerType.INFO
-    })
+    const getString = jest.fn().mockReturnValue(expectedMessage)
+    const { message, bannerType } = getBannerText(getString, additionalLicenseProps, count, limit)
+
+    expect(message).toEqual(expectedMessage)
+    expect(bannerType).toEqual(BannerType.INFO)
   })
 })

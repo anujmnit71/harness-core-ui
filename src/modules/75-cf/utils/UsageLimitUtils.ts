@@ -6,24 +6,24 @@
  */
 
 import { BannerType } from '@common/layouts/Constants'
-import type { CheckFeatureReturn } from 'framework/featureStore/featureStoreUtil'
 import { formatToCompactNumber } from '@cf/utils/CFUtils'
 import type { UseStringsReturn } from 'framework/strings'
 
 interface BannerText {
-  message: () => string
+  message: string
   bannerType: BannerType
 }
 
 export const getBannerText = (
   getString: UseStringsReturn['getString'],
-  monthlyActiveUsers: CheckFeatureReturn | undefined,
-  additionalLicenseProps: Record<string, any>
+  additionalLicenseProps: Record<string, any>,
+  count?: number,
+  limit?: number
 ): BannerText => {
   const { isEnterpriseEdition, isFreeEdition, isTeamEdition } = additionalLicenseProps
 
-  const clientMauUsageCount = Number(monthlyActiveUsers?.featureDetail?.count)
-  const clientMauPlanLimit = Number(monthlyActiveUsers?.featureDetail?.limit)
+  const clientMauUsageCount = Number(count)
+  const clientMauPlanLimit = Number(limit)
 
   const clientMauUsagePercentage = Math.trunc((clientMauUsageCount / clientMauPlanLimit) * 100)
   const clientMauPlanLimitFormatted = formatToCompactNumber(clientMauPlanLimit)
@@ -37,21 +37,19 @@ export const getBannerText = (
   if (isFreeEdition) {
     if (showInfoBanner) {
       return {
-        message: () =>
-          getString('cf.planEnforcement.freePlan.approachingLimit', {
-            clientMauUsagePercentage,
-            clientMauPlanLimitFormatted
-          }),
+        message: getString('cf.planEnforcement.freePlan.approachingLimit', {
+          clientMauUsagePercentage,
+          clientMauPlanLimitFormatted
+        }),
         bannerType: BannerType.INFO
       }
     }
 
     if (showWarningBanner) {
       return {
-        message: () =>
-          getString('cf.planEnforcement.freePlan.upgradeRequired', {
-            clientMauPlanLimitFormatted
-          }),
+        message: getString('cf.planEnforcement.freePlan.upgradeRequired', {
+          clientMauPlanLimitFormatted
+        }),
         bannerType: BannerType.LEVEL_UP
       }
     }
@@ -60,24 +58,23 @@ export const getBannerText = (
   if (isTeamEdition || isEnterpriseEdition) {
     if (showInfoBanner) {
       return {
-        message: () =>
-          getString('cf.planEnforcement.teamEnterprisePlan.approachingLimit', {
-            clientMauUsagePercentage
-          }),
+        message: getString('cf.planEnforcement.teamEnterprisePlan.approachingLimit', {
+          clientMauUsagePercentage
+        }),
         bannerType: BannerType.INFO
       }
     }
 
     if (showWarningBanner) {
       return {
-        message: () => getString('cf.planEnforcement.teamEnterprisePlan.upgradeRequired'),
+        message: getString('cf.planEnforcement.teamEnterprisePlan.upgradeRequired'),
         bannerType: BannerType.LEVEL_UP
       }
     }
   }
 
   return {
-    message: () => message,
+    message,
     bannerType
   }
 }
