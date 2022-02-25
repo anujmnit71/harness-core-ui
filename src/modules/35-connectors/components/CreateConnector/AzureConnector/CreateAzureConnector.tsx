@@ -17,7 +17,7 @@ import {
 } from '@connectors/constants'
 import VerifyOutOfClusterDelegate from '@connectors/common/VerifyOutOfClusterDelegate/VerifyOutOfClusterDelegate'
 import { getConnectorIconByType, getConnectorTitleIdByType } from '@connectors/pages/connectors/utils/ConnectorHelper'
-import { buildGcpPayload } from '@connectors/pages/connectors/utils/ConnectorUtils'
+import { buildAzurePayload } from '@connectors/pages/connectors/utils/ConnectorUtils'
 import { useStrings } from 'framework/strings'
 import AzureAuthentication from './StepAuth/AzureAuthentication'
 import DelegateSelectorStep from '../commonSteps/DelegateSelectorStep/DelegateSelectorStep'
@@ -29,10 +29,10 @@ const CreateAzureConnector: React.FC<CreateConnectorModalProps> = props => {
     <StepWizard
       icon={getConnectorIconByType(Connectors.AZURE)}
       iconProps={{ size: 37 }}
-      title={getString(getConnectorTitleIdByType(Connectors.Azure))}
+      title={getString(getConnectorTitleIdByType(Connectors.AZURE))}
     >
       <ConnectorDetailsStep
-        type={Connectors.Azure}
+        type={Connectors.AZURE}
         name={getString('overview')}
         isEditMode={props.isEditMode}
         connectorInfo={props.connectorInfo}
@@ -48,7 +48,7 @@ const CreateAzureConnector: React.FC<CreateConnectorModalProps> = props => {
         name={getString('delegate.DelegateselectionLabel')}
         isEditMode={props.isEditMode}
         setIsEditMode={props.setIsEditMode}
-        buildPayload={buildGcpPayload}
+        buildPayload={buildAzurePayload}
         hideModal={props.onClose}
         onConnectorCreated={props.onSuccess}
         connectorInfo={props.connectorInfo}
@@ -58,7 +58,7 @@ const CreateAzureConnector: React.FC<CreateConnectorModalProps> = props => {
         connectorInfo={props.connectorInfo}
         isStep={true}
         isLastStep={true}
-        type={Connectors.Azure}
+        type={Connectors.AZURE}
         onClose={props.onClose}
         stepIndex={TESTCONNECTION_STEP_INDEX}
       />
