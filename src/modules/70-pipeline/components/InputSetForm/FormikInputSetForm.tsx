@@ -94,6 +94,49 @@ const yamlBuilderReadOnlyModeProps: YamlBuilderProps = {
   }
 }
 
+function useValidateValues(
+  template: ResponseInputSetTemplateWithReplacedExpressionsResponse | null,
+  pipeline: ResponsePMSPipelineResponseDTO | null,
+  formErrors: Record<string, unknown>,
+  setFormErrors: React.Dispatch<React.SetStateAction<Record<string, unknown>>>
+): { validateValues: (values: InputSetDTO & GitContextProps) => Promise<FormikErrors<InputSetDTO>> } {
+  const { getString } = useStrings()
+  const NameIdSchema = Yup.object({
+    name: NameSchema(),
+    identifier: IdentifierSchema()
+  })
+  return {
+    validateValues: async (values: InputSetDTO & GitContextProps): Promise<FormikErrors<InputSetDTO>> => {
+      let errors: FormikErrors<InputSetDTO> = {}
+      try {
+        await NameIdSchema.validate(values)
+      } catch (err: any) {
+        if (err.name === 'ValidationError') {
+          errors = { [err.path]: err.message }
+        }
+      }
+      if (values.pipeline && isYamlPresent(template, pipeline)) {
+        errors.pipeline = validatePipeline({
+          pipeline: values.pipeline,
+          template: parse(defaultTo(template?.data?.inputSetTemplateYaml, '')).pipeline,
+          originalPipeline: parse(defaultTo(pipeline?.data?.yamlPipeline, '')).pipeline,
+          getString,
+          viewType: StepViewType.InputSet
+        }) as any
+
+        if (isEmpty(errors.pipeline)) {
+          delete errors.pipeline
+        }
+      }
+
+      if (!isEmpty(formErrors)) {
+        setFormErrors(errors)
+      }
+
+      return errors
+    }
+  }
+}
 export default function FormikInputSetForm(props: FormikInputSetFormProps): React.ReactElement {
   const {
     inputSet,
@@ -137,11 +180,12 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
     [projectIdentifier, orgIdentifier, accountId, pipelineIdentifier]
   )
 
+  const { validateValues } = useValidateValues(template, pipeline, formErrors, setFormErrors)
+
   const NameIdSchema = Yup.object({
     name: NameSchema(),
     identifier: IdentifierSchema()
   })
-
   const formRefDom = React.useRef<HTMLElement | undefined>()
 
   return (
@@ -161,35 +205,7 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
           enableReinitialize={true}
           formName="inputSetForm"
           validationSchema={NameIdSchema}
-          validate={async values => {
-            let errors: FormikErrors<InputSetDTO> = {}
-            try {
-              await NameIdSchema.validate(values)
-            } catch (err: any) {
-              if (err.name === 'ValidationError') {
-                errors = { [err.path]: err.message }
-              }
-            }
-            if (values.pipeline && isYamlPresent(template, pipeline)) {
-              errors.pipeline = validatePipeline({
-                pipeline: values.pipeline,
-                template: parse(defaultTo(template?.data?.inputSetTemplateYaml, '')).pipeline,
-                originalPipeline: parse(defaultTo(pipeline?.data?.yamlPipeline, '')).pipeline,
-                getString,
-                viewType: StepViewType.InputSet
-              }) as any
-
-              if (isEmpty(errors.pipeline)) {
-                delete errors.pipeline
-              }
-            }
-
-            if (!isEmpty(formErrors)) {
-              setFormErrors(errors)
-            }
-
-            return errors
-          }}
+          validate={validateValues}
           onSubmit={values => {
             handleSubmit(values, { repoIdentifier: values.repo, branch: values.branch })
           }}

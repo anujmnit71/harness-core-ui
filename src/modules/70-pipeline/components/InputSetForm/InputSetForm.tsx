@@ -32,7 +32,8 @@ import {
   ResponseInputSetResponse,
   useGetMergeInputSetFromPipelineTemplateWithListInput,
   ResponsePMSPipelineResponseDTO,
-  EntityGitDetails
+  EntityGitDetails,
+  ResponseInputSetTemplateWithReplacedExpressionsResponse
 } from 'services/pipeline-ng'
 
 import { useToaster } from '@common/exports'
@@ -52,7 +53,7 @@ import { changeEmptyValuesToRunTimeInput } from '@pipeline/utils/stageHelpers'
 import { yamlStringify } from '@common/utils/YamlHelperMethods'
 import { NGBreadcrumbs } from '@common/components/NGBreadcrumbs/NGBreadcrumbs'
 import { useGetYamlWithTemplateRefsResolved } from 'services/template-ng'
-import type { CreateUpdateInputSetsReturnType, InputSetDTO } from '@pipeline/utils/types'
+import type { CreateUpdateInputSetsReturnType, InputSetDTO, InputSetType } from '@pipeline/utils/types'
 import { clearRuntimeInput } from '../PipelineStudio/StepUtil'
 import GitPopover from '../GitPopover/GitPopover'
 import FormikInputSetForm from './FormikInputSetForm'
@@ -109,6 +110,59 @@ const getUpdatedGitDetails = (
   return updatedGitDetails
 }
 
+const getInputSet = (
+  orgIdentifier: string,
+  projectIdentifier: string,
+  inputSetResponse: ResponseInputSetResponse | null,
+  template: ResponseInputSetTemplateWithReplacedExpressionsResponse | null,
+  mergeTemplate?: string,
+  isGitSyncEnabled?: boolean
+): InputSetDTO | InputSetType => {
+  if (inputSetResponse?.data) {
+    const inputSetObj = inputSetResponse?.data
+
+    const parsedInputSetObj = parse(defaultTo(inputSetObj?.inputSetYaml, ''))
+    /*
+      Context of the below if block
+      We need to populate existing values of input set in the form.
+      The values are to be filled come from 'merge' API i.e. mergeTemplate object
+      But if the merge API fails (due to invalid input set or any other reason) - we populate the value from the input set response recevied (parsedInputSetObj).
+    */
+    const parsedPipelineWithValues = mergeTemplate
+      ? defaultTo(parse(defaultTo(mergeTemplate, ''))?.pipeline, {})
+      : parsedInputSetObj?.inputSet?.pipeline
+
+    if (isGitSyncEnabled && parsedInputSetObj && parsedInputSetObj.inputSet) {
+      return {
+        name: parsedInputSetObj.inputSet.name,
+        tags: parsedInputSetObj.inputSet.tags,
+        identifier: parsedInputSetObj.inputSet.identifier,
+        description: parsedInputSetObj.inputSet.description,
+        orgIdentifier: parsedInputSetObj.inputSet.orgIdentifier,
+        projectIdentifier: parsedInputSetObj.inputSet.projectIdentifier,
+        pipeline: clearRuntimeInput(parsedPipelineWithValues),
+        gitDetails: defaultTo(inputSetObj.gitDetails, {}),
+        entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
+      }
+    }
+    return {
+      name: inputSetObj.name,
+      tags: inputSetObj.tags,
+      identifier: defaultTo(inputSetObj.identifier, ''),
+      description: inputSetObj?.description,
+      orgIdentifier,
+      projectIdentifier,
+      pipeline: clearRuntimeInput(parsedPipelineWithValues),
+      gitDetails: defaultTo(inputSetObj.gitDetails, {}),
+      entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
+    }
+  }
+  return getDefaultInputSet(
+    clearRuntimeInput(parse(defaultTo(template?.data?.inputSetTemplateYaml, ''))?.pipeline),
+    orgIdentifier,
+    projectIdentifier
+  )
+}
 export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   const { executionView } = props
   const { getString } = useStrings()
@@ -235,51 +289,8 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
     }
   )
 
-  const inputSet = React.useMemo(() => {
-    if (inputSetResponse?.data) {
-      const inputSetObj = inputSetResponse?.data
-
-      const parsedInputSetObj = parse(defaultTo(inputSetObj?.inputSetYaml, ''))
-      /*
-        Context of the below if block
-        We need to populate existing values of input set in the form.
-        The values are to be filled come from 'merge' API i.e. mergeTemplate object
-        But if the merge API fails (due to invalid input set or any other reason) - we populate the value from the input set response recevied (parsedInputSetObj).
-      */
-      const parsedPipelineWithValues = mergeTemplate
-        ? defaultTo(parse(defaultTo(mergeTemplate, ''))?.pipeline, {})
-        : parsedInputSetObj?.inputSet?.pipeline
-
-      if (isGitSyncEnabled && parsedInputSetObj && parsedInputSetObj.inputSet) {
-        return {
-          name: parsedInputSetObj.inputSet.name,
-          tags: parsedInputSetObj.inputSet.tags,
-          identifier: parsedInputSetObj.inputSet.identifier,
-          description: parsedInputSetObj.inputSet.description,
-          orgIdentifier: parsedInputSetObj.inputSet.orgIdentifier,
-          projectIdentifier: parsedInputSetObj.inputSet.projectIdentifier,
-          pipeline: clearRuntimeInput(parsedPipelineWithValues),
-          gitDetails: defaultTo(inputSetObj.gitDetails, {}),
-          entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
-        }
-      }
-      return {
-        name: inputSetObj.name,
-        tags: inputSetObj.tags,
-        identifier: defaultTo(inputSetObj.identifier, ''),
-        description: inputSetObj?.description,
-        orgIdentifier,
-        projectIdentifier,
-        pipeline: clearRuntimeInput(parsedPipelineWithValues),
-        gitDetails: defaultTo(inputSetObj.gitDetails, {}),
-        entityValidityDetails: defaultTo(inputSetObj.entityValidityDetails, {})
-      }
-    }
-    return getDefaultInputSet(
-      clearRuntimeInput(parse(defaultTo(template?.data?.inputSetTemplateYaml, ''))?.pipeline),
-      orgIdentifier,
-      projectIdentifier
-    )
+  const inputSet: InputSetDTO | InputSetType = React.useMemo(() => {
+    return getInputSet(orgIdentifier, projectIdentifier, inputSetResponse, template, mergeTemplate, isGitSyncEnabled)
   }, [mergeTemplate, inputSetResponse?.data, template?.data?.inputSetTemplateYaml, isGitSyncEnabled])
 
   const [disableVisualView, setDisableVisualView] = React.useState(inputSet.entityValidityDetails?.valid === false)
