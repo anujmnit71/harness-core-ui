@@ -85,6 +85,30 @@ export interface InputSetFormProps {
   executionView?: boolean
 }
 
+interface GetUpdatedGitDetailsReturnType extends EntityGitDetails {
+  lastObjectId?: string
+  baseBranch?: string
+}
+
+const getUpdatedGitDetails = (
+  isEdit: boolean,
+  gitDetails: SaveToGitFormInterface | undefined,
+  lastObjectId: string,
+  initialGitDetails: EntityGitDetails
+): GetUpdatedGitDetailsReturnType => {
+  let updatedGitDetails: GetUpdatedGitDetailsReturnType = {}
+  if (gitDetails) {
+    updatedGitDetails = { ...gitDetails }
+    if (isEdit) {
+      updatedGitDetails['lastObjectId'] = lastObjectId
+    }
+    if (gitDetails.isNewBranch) {
+      updatedGitDetails['baseBranch'] = initialGitDetails.branch
+    }
+  }
+  return updatedGitDetails
+}
+
 export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   const { executionView } = props
   const { getString } = useStrings()
@@ -206,7 +230,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
         getDefaultFromOtherRepo: true
       },
       body: {
-        originalEntityYaml: yamlStringify(parse(pipeline?.data?.yamlPipeline || '')?.pipeline)
+        originalEntityYaml: yamlStringify(parse(defaultTo(pipeline?.data?.yamlPipeline, ''))?.pipeline)
       }
     }
   )
@@ -290,7 +314,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
         })
         .catch(e => {
           setMergeTemplate(undefined)
-          showError(e?.data?.message || e?.message, undefined, 'pipeline.get.template')
+          showError(getErrorInfoFromErrorObject(e), undefined, 'pipeline.get.template')
         })
     } else {
       refetchTemplate()
@@ -301,14 +325,14 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   }, [inputSetIdentifier])
 
   useDocumentTitle([
-    parse(pipeline?.data?.yamlPipeline || '')?.pipeline?.name || getString('pipelines'),
-    isEdit ? inputSetResponse?.data?.name || '' : getString('inputSets.newInputSetLabel')
+    defaultTo(parse(defaultTo(pipeline?.data?.yamlPipeline, ''))?.pipeline?.name, getString('pipelines')),
+    isEdit ? defaultTo(inputSetResponse?.data?.name, '') : getString('inputSets.newInputSetLabel')
   ])
 
   const handleModeSwitch = React.useCallback(
     (view: SelectedView) => {
       if (view === SelectedView.VISUAL) {
-        const yaml = yamlHandler?.getLatestYaml() || /* istanbul ignore next */ ''
+        const yaml = defaultTo(yamlHandler?.getLatestYaml(), '')
         const inputSetYamlVisual = parse(yaml).inputSet as InputSetDTO
         if (inputSetYamlVisual) {
           inputSet.name = inputSetYamlVisual.name
@@ -335,11 +359,12 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
   ): CreateUpdateInputSetsReturnType => {
     let response: ResponseInputSetResponse | null = null
     try {
+      const updatedGitDetails = getUpdatedGitDetails(isEdit, gitDetails, objectId, initialGitDetails)
       if (isEdit) {
         if (inputSetObj.identifier) {
           response = await updateInputSet(yamlStringify({ inputSet: clearNullUndefined(inputSetObj) }) as any, {
             pathParams: {
-              inputSetIdentifier: inputSetObj.identifier || /* istanbul ignore next */ ''
+              inputSetIdentifier: defaultTo(inputSetObj.identifier, '')
             },
             queryParams: {
               accountIdentifier: accountId,
@@ -348,8 +373,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
               projectIdentifier,
               pipelineRepoID: repoIdentifier,
               pipelineBranch: branch,
-              ...(gitDetails ? { ...gitDetails, lastObjectId: objectId } : {}),
-              ...(gitDetails && gitDetails.isNewBranch ? { baseBranch: initialGitDetails.branch } : {})
+              ...updatedGitDetails
             }
           })
         } else {
@@ -364,8 +388,7 @@ export function InputSetForm(props: InputSetFormProps): React.ReactElement {
             projectIdentifier,
             pipelineRepoID: repoIdentifier,
             pipelineBranch: branch,
-            ...(gitDetails ?? {}),
-            ...(gitDetails && gitDetails.isNewBranch ? { baseBranch: initialGitDetails.branch } : {})
+            ...updatedGitDetails
           }
         })
       }
