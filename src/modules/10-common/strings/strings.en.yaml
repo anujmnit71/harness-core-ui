@@ -158,6 +158,7 @@ validation:
     required: Email is required
     format: Please input valid email address
   repositoryName: Repository Name is required
+  environmentIsRequired: 'Environment is required'
 specify: Specify
 role: Role
 projectViewer: Project Viewer

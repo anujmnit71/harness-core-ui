@@ -79,6 +79,8 @@ export const ConnectorWizard: React.FC<CreateConnectorWizardProps> = props => {
     'setConnectivityMode'
   ])
   const { ERROR_TRACKING_ENABLED } = useFeatureFlags()
+  // const { NG_AZURE } = useFeatureFlags()
+
   switch (type) {
     case Connectors.CUSTOM:
       return <CreateCustomHealthConnector {...commonProps} />
@@ -148,7 +150,7 @@ export const ConnectorWizard: React.FC<CreateConnectorWizardProps> = props => {
       return ERROR_TRACKING_ENABLED ? <CreateErrorTrackingConnector {...commonProps} /> : null
     case Connectors.AZURE:
       return <CreateAzureConnector {...commonProps} />
-
+    // return NG_AZURE ? <CreateAzureConnector {...commonProps} /> : null
     default:
       return null
   }

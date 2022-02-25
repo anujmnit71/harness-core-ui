@@ -62,7 +62,7 @@ import ArtifactWizard from './ArtifactWizard/ArtifactWizard'
 import { DockerRegistryArtifact } from './ArtifactRepository/ArtifactLastSteps/DockerRegistryArtifact/DockerRegistryArtifact'
 import { ECRArtifact } from './ArtifactRepository/ArtifactLastSteps/ECRArtifact/ECRArtifact'
 import { GCRImagePath } from './ArtifactRepository/ArtifactLastSteps/GCRImagePath/GCRImagePath'
-import { AzureArtifact } from './ArtifactRepository/ArtifactLastSteps/AcrArtifact/AcrArtifact'
+import { AcrArtifact } from './ArtifactRepository/ArtifactLastSteps/AcrArtifact/AcrArtifact'
 import ArtifactListView, { ModalViewFor } from './ArtifactListView/ArtifactListView'
 import type {
   ArtifactsSelectionProps,
@@ -82,6 +82,7 @@ import { useVariablesExpression } from '../PipelineStudio/PiplineHooks/useVariab
 import NexusArtifact from './ArtifactRepository/ArtifactLastSteps/NexusArtifact/NexusArtifact'
 import Artifactory from './ArtifactRepository/ArtifactLastSteps/Artifactory/Artifactory'
 import css from './ArtifactsSelection.module.scss'
+// import { useFeatureFlags } from '@common/hooks/useFeatureFlag'
 
 export default function ArtifactsSelection({
   isForOverrideSets = false,
@@ -100,6 +101,8 @@ export default function ArtifactsSelection({
     isReadonly,
     allowableTypes
   } = usePipelineContext()
+
+  // const { NG_AZURE } = useFeatureFlags()
 
   const [isEditMode, setIsEditMode] = useState(false)
   const [selectedArtifact, setSelectedArtifact] = useState<ArtifactType | null>(null)
@@ -589,7 +592,7 @@ export default function ArtifactsSelection({
     isStep: true,
     isLastStep: false
   }
-  const getNewConnectorSteps = useCallback((): JSX.Element => {
+  const getNewConnectorSteps = useCallback((): JSX.Element | null => {
     switch (selectedArtifact) {
       case ENABLED_ARTIFACT_TYPES.DockerRegistry:
         return (
@@ -648,8 +651,8 @@ export default function ArtifactsSelection({
             />
           </StepWizard>
         )
-      // TODO: add connector steps for Azure
       case ENABLED_ARTIFACT_TYPES.Acr:
+        // return !NG_AZURE ? null :
         return (
           <StepWizard title={stepWizardTitle}>
             <ConnectorDetailsStep type={ArtifactToConnectorMap[selectedArtifact]} {...connectorDetailStepProps} />
@@ -678,7 +681,7 @@ export default function ArtifactsSelection({
       case ENABLED_ARTIFACT_TYPES.ArtifactoryRegistry:
         return <Artifactory {...artifactLastStepProps()} />
       case ENABLED_ARTIFACT_TYPES.Acr:
-        return <AzureArtifact {...artifactLastStepProps()} />
+        return <AcrArtifact {...artifactLastStepProps()} />
       case ENABLED_ARTIFACT_TYPES.DockerRegistry:
       default:
         return <DockerRegistryArtifact {...artifactLastStepProps()} />

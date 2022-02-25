@@ -683,6 +683,7 @@ export interface StringsMap {
   'common.validation.email.format': string
   'common.validation.email.required': string
   'common.validation.entityIdIsRequired': string
+  'common.validation.environmentIsRequired': string
   'common.validation.fieldCannotbeLongerThanN': string
   'common.validation.fieldIsRequired': string
   'common.validation.fieldMustBeAlphanumeric': string
@@ -1375,6 +1376,8 @@ export interface StringsMap {
   'connectors.azure.clientId': string
   'connectors.azure.clientIdPlaceholder': string
   'connectors.azure.tenantIdPlaceholder': string
+  'connectors.azure.validation.clientId': string
+  'connectors.azure.validation.environment': string
   'connectors.azureKeyVault.labels.fetchVault': string
   'connectors.azureKeyVault.labels.setupVault': string
   'connectors.azureKeyVault.labels.subscription': string

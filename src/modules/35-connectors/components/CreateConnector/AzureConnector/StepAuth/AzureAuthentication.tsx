@@ -33,7 +33,6 @@ import type { ConnectorConfigDTO, ConnectorInfoDTO } from 'services/cd-ng'
 import type { AccountPathProps } from '@common/interfaces/RouteInterfaces'
 import SecretInput from '@secrets/components/SecretInput/SecretInput'
 import { useStrings } from 'framework/strings'
-// import css from '../CreateAzureConnector.module.scss'
 
 interface AzureAuthenticationProps {
   name: string
@@ -61,8 +60,18 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
   const { accountId } = useParams<AccountPathProps>()
   const { getString } = useStrings()
 
+  const environments = {
+    AZURE_GLOBAL: 'AZURE_GLOBAL',
+    US_GOVERNMENT: 'US_GOVERNMENT'
+  }
+
+  const environmentOptions: SelectOption[] = [
+    { label: 'Azure Global', value: environments.AZURE_GLOBAL },
+    { label: 'US Government', value: environments.US_GOVERNMENT }
+  ]
+
   const defaultInitialFormData: AzureFormInterface = {
-    environment: undefined,
+    environment: environments.AZURE_GLOBAL,
     clientId: undefined,
     tenantId: undefined,
     password: undefined
@@ -80,11 +89,6 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
       type: DelegateTypes.DELEGATE_IN_CLUSTER,
       info: getString('connectors.GCP.delegateInClusterInfo')
     }
-  ]
-
-  const ENVIRONMENTS: SelectOption[] = [
-    { label: 'Azure Global', value: 'AZURE_GLOBAL' },
-    { label: 'US Government', value: 'US_GOVERNMENT' }
   ]
 
   useEffect(() => {
@@ -112,7 +116,7 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
   ) : (
     <Layout.Vertical height={'inherit'} spacing="medium">
       {/* className={css.secondStep}> */}
-      <Text font={{ variation: FontVariation.H3 }} tooltipProps={{ dataTooltipId: 'gcpAuthenticationDetails' }}>
+      <Text font={{ variation: FontVariation.H3 }} tooltipProps={{ dataTooltipId: 'azureAuthenticationDetails' }}>
         {getString('details')}
       </Text>
       <Formik
@@ -124,6 +128,9 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
         // TODO: required fileds schema
         validationSchema={Yup.object().shape({
           delegateType: Yup.string().required(getString('connectors.chooseMethodForAzureConnection')),
+          environment: Yup.string().required(getString('connectors.azure.validation.environment')),
+          clientId: Yup.string().required(getString('connectors.azure.validation.clientId')),
+          tenantId: Yup.string().required(getString('connectors.tenantIdRequired')),
           password: Yup.object().when('delegateType', {
             is: DelegateTypes.DELEGATE_OUT_CLUSTER,
             then: Yup.object().required(getString('validation.encryptedKey'))
@@ -145,12 +152,7 @@ const AzureAuthentication: React.FC<StepProps<StepConfigureProps> & AzureAuthent
               />
               {DelegateTypes.DELEGATE_OUT_CLUSTER === formikProps.values.delegateType ? (
                 <>
-                  <FormInput.Select
-                    name="environment"
-                    label={getString('environment')}
-                    items={ENVIRONMENTS}
-                    style={{ width: 120 }}
-                  />
+                  <FormInput.Select name="environment" label={getString('environment')} items={environmentOptions} />
                   <FormInput.Text
                     name={'clientId'}
                     placeholder={getString('connectors.azure.clientId')}
