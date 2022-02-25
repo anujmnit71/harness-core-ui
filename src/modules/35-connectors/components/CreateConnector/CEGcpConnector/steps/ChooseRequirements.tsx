@@ -139,20 +139,18 @@ const ChooseRequirements: React.FC<StepProps<CEGcpConnectorDTO>> = ({ prevStepDa
       <Text color="grey800">{getString('connectors.ceAws.crossAccountRoleStep1.description')}</Text>
       <Container>
         <Text font={{ italic: true }}>{getString('connectors.ceAws.crossAccountRoleStep1.info')}</Text>
-        <div style={{ flex: 1 }}>
-          <div className={css.cards}>
-            <CardSelect
-              data={featureCards}
-              selected={selectedCards}
-              multi={true}
-              className={css.grid}
-              onChange={item => {
-                handleCardSelection(item)
-              }}
-              cornerSelected={true}
-              renderItem={item => <RequirementCard {...item} />}
-            />
-          </div>
+        <div>
+          <CardSelect
+            data={featureCards}
+            selected={selectedCards}
+            multi={true}
+            className={css.cardsGrid}
+            onChange={item => {
+              handleCardSelection(item)
+            }}
+            cornerSelected={true}
+            renderItem={item => <RequirementCard {...item} />}
+          />
           <Layout.Horizontal className={css.buttonPanel} spacing="small">
             <Button text={getString('previous')} icon="chevron-left" onClick={handleprev}></Button>
             <Button

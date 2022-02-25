@@ -9,7 +9,7 @@
 declare const styles: {
   readonly bigQueryPage: string
   readonly buttonPanel: string
-  readonly cards: string
+  readonly cardsGrid: string
   readonly command: string
   readonly commandsContainer: string
   readonly connectorExistBox: string
@@ -18,7 +18,6 @@ declare const styles: {
   readonly gcpConnector: string
   readonly grantPermissionSteps: string
   readonly gray: string
-  readonly grid: string
   readonly header: string
   readonly info: string
   readonly infobox: string
