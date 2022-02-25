@@ -137,6 +137,23 @@ function useValidateValues(
     }
   }
 }
+
+const onSubmitClick = (
+  formikProps: FormikProps<InputSetDTO & GitContextProps>,
+  setFormErrors: React.Dispatch<React.SetStateAction<Record<string, unknown>>>,
+  handleSubmit: (inputSetObjWithGitInfo: InputSetDTO, gitDetails?: EntityGitDetails | undefined) => Promise<void>
+): void => {
+  formikProps.validateForm().then(errors => {
+    setFormErrors(errors)
+    if (formikProps?.values.name?.length && formikProps?.values.identifier?.length && isEmpty(formikProps.errors)) {
+      handleSubmit(formikProps.values, {
+        repoIdentifier: formikProps.values.repo,
+        branch: formikProps.values.branch
+      })
+    }
+  })
+}
+
 export default function FormikInputSetForm(props: FormikInputSetFormProps): React.ReactElement {
   const {
     inputSet,
@@ -268,19 +285,7 @@ export default function FormikInputSetForm(props: FormikInputSetFormProps): Reac
                             type="submit"
                             onClick={e => {
                               e.preventDefault()
-                              formikProps.validateForm().then(errors => {
-                                setFormErrors(errors)
-                                if (
-                                  formikProps?.values.name?.length &&
-                                  formikProps?.values.identifier?.length &&
-                                  isEmpty(formikProps.errors)
-                                ) {
-                                  handleSubmit(formikProps.values, {
-                                    repoIdentifier: formikProps.values.repo,
-                                    branch: formikProps.values.branch
-                                  })
-                                }
-                              })
+                              onSubmitClick(formikProps, setFormErrors, handleSubmit)
                             }}
                             text={getString('save')}
                             disabled={!isEditable}
