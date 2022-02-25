@@ -106,9 +106,10 @@ const FeatureFlagsDetailPage: React.FC = () => {
         </Layout.Vertical>
       </section>
       <section>
-        {!loading && featureFlag && (
+        {featureFlag && (
           <FlagActivation
             refetchFlag={refetchFlag}
+            refetchFlagLoading={loading}
             gitSync={gitSync}
             projectIdentifier={projectIdentifier as string}
             flagData={featureFlag}

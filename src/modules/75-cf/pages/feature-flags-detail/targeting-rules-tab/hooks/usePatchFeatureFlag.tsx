@@ -15,19 +15,21 @@ import { showToaster } from '@cf/utils/CFUtils'
 import { useStrings } from 'framework/strings'
 import type { TargetingRulesFormValues } from '../TargetingRulesTab'
 
-interface UsePatchFeatureFlagProps {
+export interface UsePatchFeatureFlagProps {
   featureFlagIdentifier: string
   initialValues: TargetingRulesFormValues
+  refetchFlag: () => Promise<unknown>
 }
 
 interface UsePatchFeatureFlagReturn {
-  saveChanges: (values: TargetingRulesFormValues, onSuccess: () => void) => void
+  saveChanges: (values: TargetingRulesFormValues) => void
   loading: boolean
 }
 
 const usePatchFeatureFlag = ({
   featureFlagIdentifier,
-  initialValues
+  initialValues,
+  refetchFlag
 }: UsePatchFeatureFlagProps): UsePatchFeatureFlagReturn => {
   const { projectIdentifier, orgIdentifier, accountId: accountIdentifier } = useParams<Record<string, string>>()
   const { activeEnvironment: environmentIdentifier } = useActiveEnvironment()
@@ -44,24 +46,22 @@ const usePatchFeatureFlag = ({
     } as PatchFeatureQueryParams
   })
 
-  const saveChanges = (values: TargetingRulesFormValues, onSuccess: () => void): void => {
+  const saveChanges = (values: TargetingRulesFormValues): void => {
     if (values.state !== initialValues.state) {
       patch.feature.addInstruction(patch.creators.setFeatureFlagState(values?.state as FeatureState))
     }
-
-    try {
-      patch.feature.onPatchAvailable(async data => {
+    patch.feature.onPatchAvailable(async data => {
+      try {
+        // throw { data: { message: 'error' } }
         await patchFeature(data)
 
+        patch.feature.reset()
+        await refetchFlag()
         showToaster(getString('cf.messages.flagUpdated'))
-
-        onSuccess()
-      })
-
-      patch.feature.reset()
-    } catch (error: any) {
-      showError(get(error, 'data.message', error?.message), 0)
-    }
+      } catch (error: any) {
+        showError(get(error, 'data.message', error?.message), 0)
+      }
+    })
   }
   return {
     saveChanges,

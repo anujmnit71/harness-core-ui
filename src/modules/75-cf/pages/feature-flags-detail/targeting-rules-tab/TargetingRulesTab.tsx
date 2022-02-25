@@ -8,7 +8,7 @@
 import { Button, ButtonVariation, Card, Container, Formik, FormikForm, Layout } from '@harness/uicore'
 import React, { ReactElement } from 'react'
 import FlagToggleSwitch from '@cf/components/EditFlagTabs/FlagToggleSwitch'
-import type { Feature, Serve } from 'services/cf'
+import type { Feature } from 'services/cf'
 import { FeatureFlagActivationStatus } from '@cf/utils/CFUtils'
 import { useStrings } from 'framework/strings'
 import usePatchFeatureFlag from './hooks/usePatchFeatureFlag'
@@ -18,32 +18,30 @@ export interface TargetingRulesFormValues {
   state: string
 }
 
-interface TargetingRulesTabProps {
-  featureFlag: Feature
+export interface TargetingRulesTabProps {
+  featureFlagData: Feature
+  refetchFlag: () => Promise<unknown>
+  refetchFlagLoading: boolean
 }
 
-const TargetingRulesTab = ({ featureFlag }: TargetingRulesTabProps): ReactElement => {
+const TargetingRulesTab = ({
+  featureFlagData: featureFlagData,
+  refetchFlag,
+  refetchFlagLoading
+}: TargetingRulesTabProps): ReactElement => {
   const { getString } = useStrings()
 
   const initialValues = {
-    state: featureFlag.envProperties?.state as string,
-    onVariation: featureFlag.envProperties?.defaultServe.variation
-      ? featureFlag.envProperties?.defaultServe.variation
-      : featureFlag.defaultOnVariation,
-    offVariation: featureFlag.envProperties?.offVariation as string,
-    defaultServe: featureFlag.envProperties?.defaultServe as Serve,
-    variationMap:
-      featureFlag.envProperties?.variationMap?.filter(variationMapItem => !!variationMapItem?.targets?.length) ?? [],
-    flagName: featureFlag.name,
-    flagIdentifier: featureFlag.identifier
+    state: featureFlagData.envProperties?.state as string
   }
 
-  const { saveChanges, loading } = usePatchFeatureFlag({
+  const { saveChanges, loading: patchFeatureLoading } = usePatchFeatureFlag({
     initialValues,
-    featureFlagIdentifier: featureFlag.identifier
+    featureFlagIdentifier: featureFlagData.identifier,
+    refetchFlag
   })
 
-  const formDisabled = loading
+  const isLoading = patchFeatureLoading || refetchFlagLoading
 
   return (
     <Formik
@@ -52,8 +50,8 @@ const TargetingRulesTab = ({ featureFlag }: TargetingRulesTabProps): ReactElemen
       validateOnBlur={false}
       formName="targeting-rules-form"
       initialValues={initialValues}
-      onSubmit={(values, formikBag) => {
-        saveChanges(values, () => formikBag.resetForm({ ...values }))
+      onSubmit={values => {
+        saveChanges(values)
       }}
     >
       {formikProps => {
@@ -63,9 +61,9 @@ const TargetingRulesTab = ({ featureFlag }: TargetingRulesTabProps): ReactElemen
               <Layout.Vertical spacing="small" padding={{ left: 'xlarge', right: 'xlarge' }}>
                 <Card elevation={0}>
                   <FlagToggleSwitch
-                    disabled={formDisabled}
+                    disabled={isLoading}
                     currentState={formikProps.values.state}
-                    currentEnvironmentState={featureFlag.envProperties?.state}
+                    currentEnvironmentState={featureFlagData.envProperties?.state}
                     handleToggle={() =>
                       formikProps.setFieldValue(
                         'state',
@@ -81,23 +79,32 @@ const TargetingRulesTab = ({ featureFlag }: TargetingRulesTabProps): ReactElemen
               </Layout.Vertical>
 
               {formikProps.dirty && (
-                <Layout.Horizontal padding="medium" spacing="small" className={css.actionButtons}>
-                  <Button
-                    type="submit"
-                    text={getString('save')}
-                    loading={formDisabled}
-                    disabled={formDisabled}
-                    variation={ButtonVariation.PRIMARY}
-                    onClick={e => {
-                      e.preventDefault()
-                      formikProps.submitForm()
-                    }}
-                  />
+                <Layout.Horizontal
+                  data-testid="targeting-rules-footer"
+                  padding="medium"
+                  spacing="small"
+                  className={css.actionButtons}
+                >
+                  {isLoading && (
+                    <Button type="submit" text={getString('save')} loading variation={ButtonVariation.PRIMARY} />
+                  )}
+
+                  {!isLoading && (
+                    <Button
+                      type="submit"
+                      text={getString('save')}
+                      variation={ButtonVariation.PRIMARY}
+                      onClick={e => {
+                        e.preventDefault()
+                        formikProps.submitForm()
+                      }}
+                    />
+                  )}
 
                   <Button
                     variation={ButtonVariation.TERTIARY}
                     text={getString('cancel')}
-                    disabled={formDisabled}
+                    disabled={isLoading}
                     onClick={e => {
                       e.preventDefault()
                       formikProps.handleReset()

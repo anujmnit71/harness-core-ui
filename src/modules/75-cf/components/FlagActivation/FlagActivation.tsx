@@ -74,6 +74,7 @@ interface FlagActivationProps {
   flagData: Feature
   gitSync: UseGitSync
   refetchFlag: () => Promise<unknown>
+  refetchFlagLoading: boolean
 }
 
 export interface FlagActivationFormValues {
@@ -99,7 +100,7 @@ const fromVariationMapToObj = (variationMap: VariationMap[]) =>
   }, {})
 
 const FlagActivation: React.FC<FlagActivationProps> = props => {
-  const { flagData, projectIdentifier, refetchFlag, gitSync } = props
+  const { flagData, projectIdentifier, refetchFlag, refetchFlagLoading, gitSync } = props
   const { showError } = useToaster()
   const [editing, setEditing] = useState(false)
   const [, setLoadingFlags] = useState(false)
@@ -520,7 +521,11 @@ const FlagActivation: React.FC<FlagActivationProps> = props => {
                         panel={
                           <>
                             {FFM_1513 ? (
-                              <TargetingRulesTab featureFlag={flagData} />
+                              <TargetingRulesTab
+                                featureFlagData={flagData}
+                                refetchFlag={refetchFlag}
+                                refetchFlagLoading={refetchFlagLoading}
+                              />
                             ) : (
                               <TabTargeting
                                 formikProps={formikProps}
