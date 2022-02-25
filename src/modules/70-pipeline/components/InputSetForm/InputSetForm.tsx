@@ -116,7 +116,7 @@ const getInputSet = (
   inputSetResponse: ResponseInputSetResponse | null,
   template: ResponseInputSetTemplateWithReplacedExpressionsResponse | null,
   mergeTemplate?: string,
-  isGitSyncEnabled?: boolean
+  isGitSyncEnabled = false
 ): InputSetDTO | InputSetType => {
   if (inputSetResponse?.data) {
     const inputSetObj = inputSetResponse?.data
