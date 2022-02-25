@@ -44,7 +44,7 @@ export function HealthSourceDropDown(props: HealthSourceDropDownProps): JSX.Elem
       key={healthSources?.[0]?.value as string}
       inputProps={{ placeholder: getString('pipeline.verification.healthSourcePlaceholder') }}
       onChange={item => {
-        onChange(item?.value === 'all' ? '' : (item.value as string))
+        onChange(item?.value as string)
       }}
     />
   )

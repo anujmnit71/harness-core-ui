@@ -122,7 +122,7 @@ export const listRiskCountDataEmptyResponse = {
       { count: 0, displayName: 'Unhealthy', identifier: 'UNHEALTHY' },
       { count: 0, displayName: 'Need Attention', identifier: 'NEED_ATTENTION' },
       { count: 0, displayName: 'Observe', identifier: 'OBSERVE' },
-      { count: 1, displayName: 'Healthy', identifier: 'HEALTHY' }
+      { count: 0, displayName: 'Healthy', identifier: 'HEALTHY' }
     ]
   },
   metaData: null,
